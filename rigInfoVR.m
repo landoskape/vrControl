@@ -62,7 +62,7 @@ classdef rigInfoVR < handle
                     RigInfo.photodiodePos  = 'right';
                     RigInfo.photodiodeSize = [650 190];  %% Enny: CHECK   %[250 75];
                     RigInfo.rotEncPos = 'left'; 
-                    RigInfo.rotEncSign = -1; % -1 for left, 1 for right
+                    RigInfo.rotEncSign = -1;
 
                     % Saving directories: remote
                     RigInfo.dirSave = 'C:\Users\Experiment\Documents\vrAndrew\animalData';

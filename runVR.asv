@@ -64,7 +64,7 @@ expInfo.centralLogName = [rigInfo.dirSave filesep 'centralLog'];
 expInfo.animalLogName  = [expInfo.AnimalDir filesep expInfo.animalName '_log'];
 
 % Load VR Environment File(s)
-frameDS = 6;
+frameDS = 4;
 env2use = {'vrEnvironment_001.tif','vrEnvironment_003.tif'};
 vrEnvPath = 'C:\Users\Experiment\Documents\vrAndrew\vrEnvironments';
 numEnv = length(env2use);

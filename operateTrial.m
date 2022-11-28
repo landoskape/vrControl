@@ -66,7 +66,9 @@ while ~runInfo.move2NextTrial && ~TRIAL.info.abort
     % hwInfo.rotEnc.zero();
     roomMovement = dbx / expInfo.EXP.wheelToVR * expInfo.EXP.wheelCircumference;
     roomMovement = nansum([roomMovement 0]); % ensure that movement is valid number (#ATL: seems smart, but why would this be a nan?)
+    % fprintf('Wheel Position: %.1f, Room Movement: %.1f\n', wheelPosition, roomMovement);
     runInfo.roomPosition = runInfo.roomPosition + roomMovement;
+    
     % tell user if mouse speed was unusually fast...
     if roomMovement/prefRefreshTime >= expInfo.EXP.maxSpeed
         fprintf(2, 'Mouse speed was recorded as %.2f cm/s!!!\n', roomMovement/prefRefreshTime);
