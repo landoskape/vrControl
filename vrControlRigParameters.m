@@ -44,6 +44,10 @@ rigInfo.sendUDPmessage = @sendUDPmessage;
 rigInfo.updateTTL = @updateTTL;
 rigInfo.closeUDPports = @closeUDPports;
 
+if contains(upper(hostname), 'ANDREWS-MBP')
+    hostname = upper('Andrews-MacBook-Pro.local');
+end
+
 % Rig Specific Settings
 switch upper(hostname)              
     case 'ZINKO'
@@ -101,7 +105,10 @@ switch upper(hostname)
         
     case 'DESKTOP-C0GU3US'
         rigInfo.dirSave = 'C:\Users\andrew\Documents\GitHub\vrControl\settingsFolder';
-
+    
+    case upper('Andrews-MacBook-Pro.local')
+        rigInfo.dirSave = '/Users/landauland/Documents/GitHub/vrControl/settingsFolder';
+        
     otherwise
         error('hostname not recognized!!');
 end 
