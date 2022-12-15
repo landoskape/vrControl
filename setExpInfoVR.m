@@ -70,8 +70,6 @@ if createExperimentData
     
     % Screen Parameters (& Photodiode)
     exp.PrefRefreshRate = 30;
-    exp.syncSquareSize = 75; 
-    exp.syncSquareSizeX = 250;
 end
 
 save(fullfile(animalDir,'exp'),'exp');

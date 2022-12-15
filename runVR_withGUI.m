@@ -1,4 +1,4 @@
-function runVR(animalName, lickEncoder, runLocal)
+function runVR_withGUI(animalName, lickEncoder, runLocal)
 %---------------------------------------
 % Usage:    MouseBallExp
 %           MouseBallExp(replay_in, offline_in, animal_in,lickencoder present)

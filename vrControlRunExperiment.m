@@ -1,46 +1,27 @@
-function runVR(animalName, lickEncoder, runLocal)
-%---------------------------------------
-% Usage:    MouseBallExp
-%           MouseBallExp(replay_in, offline_in, animal_in,lickencoder present)
-%           MouseBallExp(1): To replay an experiment, 0: normal
-%           MouseBallExp(x,1): To run/debug on computers that not
-%           connected, 0: online
-%           MouseBallExp(x,x,'animal'): animal name given in the command
-%           line
-% Adapted from original code written by Asli Ayaz and Aman Saleem and Mika
-% Diamanti
-% EB 2021-03: Streamlining scripts, add flickering for frequency tagging
-% AA 2009-12: virtual reality for training mice
-% AS 2012-15: Current update is of 2015 (Aman Saleem).
-
-% rigInfo : Rig related parameters (is an object)
-% hwInfo  : Hardware objects (more related to IO)
-% expInfo : Experiment related parameters
-% runInfo : Variables that change across multiple functions of the program
-
-
-% -- ATL -- runVR performs a blenderVR mouse experience 
-%
-% Currently working on updating the giveReward code, it catches some frames
-% when reward is given... why? Using masterCounter to find out. 
-% I added a green square when mouse in reward zone...
+function vrControlRunExperiment(expSettings)
+% vrControlRunExperiment takes in a settings structure (which is the output
+% of the vrControlGUI)
 % 
-
+% -- ATL -- vrControlRunExperiment performs a blenderVR mouse experience  
+% -- ATL -- Note that many evalc commands are used to minimize the output
+% to the workspace from PsychToolbox, which I find annoying and distracting
+% from what's relevant.
+% 
+% -- ATL -- In Progress / Needs Updates:
+% Currently working on updating the giveReward code, it catches some frames
+% when reward is given... why? 
+%
 
 %% Initialize, settings, saving directories
-
-% Switch for running on PC without using 2P rig
-if nargin < 3, runLocal = false; end
-
 intializePsychToolboxString = 'Screen(''Preference'',''VisualDebugLevel'', 0)';
 evalc(intializePsychToolboxString);
 Screen('Preference', 'SkipSyncTests', 1);
 
 runInfo = [];
-rigInfo = rigInfoVR;
-expInfo.animalName = animalName;
-expInfo.lickEncoder = lickEncoder;
-expInfo.sessionName = 701; % use as seed for selection of session names (start @701 as unique session IDs for ATL)
+rigInfo = expSettings.rigInfo;
+expInfo.animalName = expSettings.animalName;
+expInfo.lickEncoder = expSettings.lickEncoderAvailable;
+expInfo.sessionName = expSettings.sessionOffset + 1;
 
 while true
     expInfo.ExpRef = dat.constructExpRef(expInfo.animalName,now,expInfo.sessionName);
@@ -67,9 +48,17 @@ expInfo.centralLogName = [rigInfo.dirSave filesep 'centralLog'];
 expInfo.animalLogName  = [expInfo.AnimalDir filesep expInfo.animalName '_log'];
 
 % Load VR Environment File(s)
-frameDS = 6;
-env2use = {'vrEnvironment_001.tif','vrEnvironment_003.tif'};
-vrEnvPath = 'C:\Users\Experiment\Documents\vrAndrew\vrEnvironments';
+vrEnvPath = expSettings.vrDirectory;
+vrInUse = expSettings.vrInUse;
+vrExtension = expSettings.vrExtension;
+vrFiles = cellfun(@(name) [name, vrExtension], vrInUse, 'uni', 0);
+idxActive = vrControlReturnOrder(expSettings.vrOrder, expSettings.vrActive);
+vrLength = expSettings.vrLength(idxActive);
+vrFrames = expSettings.vrFrames(idxActive);
+vrDSFactor = expSettings.vrDSFactor(idxActive);
+vrRewPos = expSettings.vrRewPos(idxActive);
+vrRewTol = expSettings.vrRewTol(idxActive);
+
 numEnv = length(env2use);
 vrEnvs = cell(1,numEnv);
 fprintf(2, '#ATL: need handshake between vrEnvs and setExpInfoVR!!!\n');

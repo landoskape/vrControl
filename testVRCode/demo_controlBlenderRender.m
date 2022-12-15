@@ -4,7 +4,7 @@ close all;
 clearvars('-except','vrEnv','vrEnvFilt');
 
 % Load VR Environment File
-vrEnvPath = 'C:\Users\Experiment\Documents\vrAndrew\vrEnvironments\vrEnvironment_001.tif';
+vrEnvPath = 'C:\Users\andrew\Documents\Blender\vrEnvironmentLibrary\vrEnvironment_001.tif';
 vrTifInfo = imfinfo(vrEnvPath);
 height = vrTifInfo(1).Height;
 width = vrTifInfo(1).Width;
@@ -14,12 +14,9 @@ numVrFrames = numRenderFrames/frameDS;
 fprintf(1,'#ATL: Downsampling vrMovie from %d to %d frames! (dsratio:%d)...\n',...
     numRenderFrames,numVrFrames,frameDS);
 vrEnv = zeros(height,width,3,numVrFrames, 'uint8');
-% for f = 1:numVrFrames
-%     vrEnv(:,:,:,f) = imread(vrEnvPath,(f-1)*frameDS+1);
-% end
-% mdFiltDepth = 11;
-% vrEnvFilt = uint8(medfilt1(vrEnv,mdFiltDepth,[],4));
-% vrEnv = uint8(vrEnv);
+for f = 1:numVrFrames
+    vrEnv(:,:,:,f) = uint8(imread(vrEnvPath,(f-1)*frameDS+1));
+end
 
 % Here we call some default settings for setting up Psychtoolbox
 PsychDefaultSetup(2);
