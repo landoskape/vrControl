@@ -12,6 +12,10 @@ function vrControlRunExperiment(expSettings)
 % when reward is given... why? 
 %
 
+
+%% Convert Experiment Settings into Trial Structure
+trialStructure = vrControlTrialStructure(expSettings);
+
 %% Initialize, settings, saving directories
 intializePsychToolboxString = 'Screen(''Preference'',''VisualDebugLevel'', 0)';
 evalc(intializePsychToolboxString);
@@ -20,7 +24,6 @@ Screen('Preference', 'SkipSyncTests', 1);
 runInfo = [];
 rigInfo = expSettings.rigInfo;
 expInfo.animalName = expSettings.animalName;
-expInfo.lickEncoder = expSettings.lickEncoderAvailable;
 expInfo.sessionName = expSettings.sessionOffset + 1;
 
 while true
