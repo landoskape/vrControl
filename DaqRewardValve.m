@@ -80,6 +80,37 @@ classdef DaqRewardValve < hw.RewardController
       durations = [obj.MeasuredDeliveries.durationSecs];
       ul = interp1(durations, volumes, duration, 'cubic');
     end
+    function prepareDelivery(obj, size, unitytype)
+      % size is the volume to deliver in microlitres (ul). This is turned
+      % into an open duration for the valve using interpolation of the
+      % calibration measurements.
+      if nargin<3
+          unitytype = 'ul';
+      end
+      if strcmp(unitytype,'s')
+          duration = size;
+      elseif strcmp(unitytype,'ul')
+          duration = openDurationFor(obj, size);
+      else
+          disp('assumed input is required size in ul, if not specify unity type')
+          duration = openDurationFor(obj, size);
+      end
+      sampleRate = obj.DaqSession.Rate;
+      nOpenSamples = round(duration*sampleRate);
+      samples = [obj.OpenValue*ones(nOpenSamples, 1) ; ...
+        obj.ClosedValue*ones(3,1)];
+      if obj.DaqSession.IsRunning
+        obj.DaqSession.wait();
+      end
+%       fprintf('Delivering %gul by opening valve for %gms\n', size, 1000*duration);
+      obj.DaqSession.queueOutputData(samples);
+    end
+    function performDelivery(obj)
+      obj.DaqSession.startBackground();
+      time = obj.Clock.now;
+      obj.CurrValue = obj.ClosedValue;
+      logSample(obj, time);
+    end
     function deliverBackground(obj, size, unitytype)
       % size is the volume to deliver in microlitres (ul). This is turned
       % into an open duration for the valve using interpolation of the

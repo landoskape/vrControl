@@ -139,8 +139,8 @@ if expInfo.lickEncoder
     hwInfo.likEnc = hwInfo.likEnc.createDaqChannel;
 end
 
-hwInfo.sessionVal = daq.createSession('ni');
-hwInfo.sessionVal.Rate = rigInfo.NIsessRate;
+% hwInfo.sessionVal = daq.createSession('ni');
+% hwInfo.sessionVal.Rate = rigInfo.NIsessRate;
 
 hwInfo.rewVal = DaqRewardValve;
 load(rigInfo.WaterCalibrationFile);
