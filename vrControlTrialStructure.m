@@ -14,9 +14,6 @@ initBlockLength = 1*(settings.initBlock * settings.initTrials);
 trialStructure.envIndex = nan(trialStructure.maxTrials,1);
 trialStructure.envIndex(1:initBlockLength) = settings.initEnvIdx;
 
-% Keep this here so I know to fix it up when(if) I add it
-if app.customBlocks.Value,  end
-
 % Prepare environment selection across block structure
 if sum(settings.blockType)~=1, error('Settings file has multiple block types selected...'); end
 blockType = settings.blockTypeNames{settings.blockType};
@@ -116,7 +113,7 @@ if ~settings.condGain
             trialStructure.mvmtGain = settings.movementGain * (diff(gainRange)*rand(trialStructure.maxTrials,1) + gainRange(1));
         end
     else
-        trialStructure.mvmtGain = app.movementGain.Value * ones(trialStructure.maxTrials,1);
+        trialStructure.mvmtGain = settings.movementGain * ones(trialStructure.maxTrials,1);
     end
 end
 

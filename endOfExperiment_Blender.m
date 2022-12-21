@@ -17,8 +17,8 @@ VRLogMessage(expInfo);
 rigInfo.closeUDPports;
 
 try
-    disp(['Copy data from '  expInfo.TheDir ' to ' expInfo.ServerDir])
-    copyfile(expInfo.TheDir,expInfo.ServerDir)
+    disp(['Copy data from '  expInfo.LocalDir ' to ' expInfo.ServerDir])
+    copyfile(expInfo.LocalDir, expInfo.ServerDir)
 catch ME
     disp(ME)
 end
