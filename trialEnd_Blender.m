@@ -1,12 +1,10 @@
-function [fhandle, runInfo] = trialEnd_Blender(rigInfo, ~, expInfo, runInfo, ~)
-
-global TRIAL;
+function [fhandle, runInfo, trialInfo] = trialEnd_Blender(rigInfo, ~, expInfo, runInfo, trialInfo)
 
 VRmessage = ['TrialEnd ' expInfo.animalName ' ' expInfo.dateStr ' ' expInfo.sessionName];
 rigInfo.sendUDPmessage(VRmessage);
 VRLogMessage(expInfo, VRmessage);
 
-if TRIAL.info.no > 0
+if runInfo.currTrial > 0
     s = sprintf('%s_trial', expInfo.SESSION_NAME);
     EXP    = expInfo.EXP;
     REWARD = runInfo.REWARD;

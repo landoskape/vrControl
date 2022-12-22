@@ -16,7 +16,7 @@ function vrControlRunExperiment(expSettings)
 % 2. expInfo: this contains experiment settings, including trial type data
 % 3. hwInfo: this contains hwInformation like the rotary/lick encoders
 % 4. runInfo: this is continuously updated throughout each trial 
-
+% 5. trialInfo: this is a struct that stores data collected each trial
 
 %% 1. Retrieve rigInfo (hard coded parameters in vrControlRigParameters() function)
 
@@ -58,9 +58,9 @@ trialStructure = vrControlTrialStructure(expSettings); % convert expSettings to 
 % Load VR Environment File(s)
 numOptions = length(expSettings.vrOptions);
 idxInUse = unique(trialStructure.envIndex);
-vrEnvs = cell(1,numOptions);
+expInfo.vrEnvs = cell(1,numOptions);
 for vrOpt = 1:numOptions
-    if ~ismember(vrOpt, idxInUse), continue, end
+    if ~ismember(vrOpt, idxInUse), continue, end % only load environments that are in use
     cpath = trialStructure.getEnvPath(vrOpt);
     vrTifInfo = imfinfo(cpath);
     height = vrTifInfo(1).Height;
@@ -71,17 +71,18 @@ for vrOpt = 1:numOptions
     numVrFrames = expSettings.vrFramesDS(vrOpt);
     fprintf(1, '#ATL: Loading %s, downsampling from %i frames to %i frames (dsratio:%i)...\n',...
         cpath, expSettings.vrFrames(vrOpt), expSettings.vrFramesDS(vrOpt), expSettings.vrDSFactor(vrOpt));
-    vrEnvs{vrOpt} = zeros(height,width,3,numVrFrames,'uint8');
+    expInfo.vrEnvs{vrOpt} = zeros(height,width,3,numVrFrames,'uint8');
     for f = 1:numVrFrames
-        vrEnvs{vrOpt}(:,:,:,f) = uint8(imread(cpath,(f-1)*frameDS+1));
+        expInfo.vrEnvs{vrOpt}(:,:,:,f) = uint8(imread(cpath,(f-1)*frameDS+1));
     end
 end
 
 % Copy trial data from trial structure to expInfo
-fields2copy = {'envIndex','roomLength','rewardPosition','rewardTolerance',...
+fields2copy = {'maxTrials','maxDuration','envIndex','roomLength','rewardPosition','rewardTolerance',...
     'intertrialInterval','probReward','activeLick','mvmtGain','activeStop'};
 for f = 1:length(fields2copy), expInfo.(fields2copy{f}) = trialStructure.(fields2copy{f}); end
 
+expInfo.lickEncoder = any(expInfo.activeLick); % use for dynamically engaging with the lick encoder hardware
 
 %% 3. Prepare hwInfo structure
 
@@ -143,9 +144,54 @@ hwInfo.rewVal.close;
 
 runInfo = [];
 runInfo.rewardStartT = timer('TimerFcn', 'reward(0.0)');
-runInfo.STOPrewardStopT= timer('TimerFcn', 'reward(1.0)','StartDelay', expInfo.EXP.STOPvalveTime );
-runInfo.BASErewardStopT= timer('TimerFcn', 'reward(1.0)','StartDelay', expInfo.EXP.BASEvalveTime );
+runInfo.STOPrewardStopT= timer('TimerFcn', 'reward(1.0)','StartDelay', rigInfo.STOPvalveTime );
+runInfo.BASErewardStopT= timer('TimerFcn', 'reward(1.0)','StartDelay', rigInfo.BASEvalveTime );
 runInfo.currTrial = 0;
+runInfo.flipIdx = 0; % Counts flips throughout trial to store data in trialInfo
+runInfo.roomPosition = rigInfo.minimumPosition; % current position
+runInfo.move2NextTrial = 0;
+runInfo.rewardAvailable = 1; % FLAG to determine if reward has been delivered on current trial (set to 0 if delivered)
+runInfo.abort = 0; % turns to 1 if user aborts using the escape key
+runInfo.inRewardZone = false;
+runInfo.rewZoneTimerActive = false;
+runInfo.timeInRewardZone = [];
+runInfo.vrEnvIdx = [];
+runInfo.pdLevel = 0; % always start at 0 because we have a ramp up from 0 indicating the ITI!
+runInfo.totalValveOpenTime = 0; % for tracking duration of reward delivery
+runInfo.trialStartTime = []; % timer for tracking duration of trial
+
+
+%% 5. Prepare trialInfo structure
+
+% We need to preallocate arrays for storing trial info from each vr frame
+% There's an estimated maximum number of frames per trial based on the
+% preferred refresh rate and the maximum trial duration
+% This overAllocate factor overestimates that to make sure no failure
+% occurs during the experiment
+overAllocate = 1.1 * (2*rigInfo.PrefRefreshRate) * expSettings.maxTrialDuration; 
+
+% Preallocate arrays for tracking data related to each trial
+trialInfo.trialIdx = nan(expSettings.maxTrialNumber,1); % trial idx (should count up)
+trialInfo.startTime = nan(expSettings.maxTrialNumber,1); % timestamp of trial start
+trialInfo.startPosition = nan(expSettings.maxTrialNumber,1); % initial position within virtual environment
+trialInfo.activeLicking = nan(expSettings.maxTrialNumber,1); % copy here for easy saving
+trialInfo.activeStopping = nan(expSettings.maxTrialNumber,1); % copy here for easy saving
+trialInfo.rewardPosition = nan(expSettings.maxTrialNumber,1); % copy here for easy saving
+trialInfo.rewardTolerance = nan(expSettings.maxTrialNumber,1); % copy here for easy saving
+trialInfo.vrEnvIdx = nan(expSettings.maxTrialNumber,1); % copy here for easy saving
+trialInfo.iti = nan(expSettings.maxTrialNumber,1); % duration of true ITI (always greater than minimum requested)
+trialInfo.outcome = nan(expSettings.maxTrialNumber,1); % was a reward delivered
+trialInfo.rewardDeliveryFrame = nan(expSettings.maxTrialNumber,1); % the "count"(flip idx) in which reward delivered
+trialInfo.rewardAvailable = nan(expSettings.maxTrialNumber,1); % boolean if reward was available on trial 
+trialInfo.userRewardNumber = nan(expSettings.maxTrialNumber,1); % the number of user rewards given (using spacebar)
+trialInfo.userRewardFrames = cell(expSettings.maxTrialNumber,1); % the frame idx during user reward delivery
+
+% Preallocate arrays for tracking data related to each frame
+trialInfo.time = nan(expSettings.maxTrialNumber, overAllocate,'double');
+trialInfo.lick = nan(expSettings.maxTrialNumber, overAllocate,'double');
+trialInfo.roomPosition = nan(expSettings.maxTrialNumber, overAllocate,'double'); % position in corridor
+trialInfo.frameIdx = nan(expSettings.maxTrialNumber, overAllocate,'double'); % which frame is on
+trialInfo.pdLevel = nan(expSettings.maxTrialNumber, overAllocate,'double'); % whether the photodiode is up or down
 
 
 %% -- now, prepare vrcontrol loop --
@@ -170,13 +216,13 @@ catch
     keyboard
 end
 
-runInfo.ititimer = tic; % Initialize this here (usually reset in operateTrial)
-fhandle = @prepareNextTrial;
+runInfo.ititimer = tic; % Initialize this here (usually reset in vrControlOperateTrial)
+fhandle = @vrControlPrepareTrial;
 while ~isempty(fhandle) 
     % main loop, active during experiment
-    [fhandle, runInfo] = feval(fhandle, rigInfo, hwInfo, expInfo, runInfo, vrEnvs);
+    [fhandle, runInfo, trialInfo] = feval(fhandle, rigInfo, hwInfo, expInfo, runInfo, trialInfo);
 end
 
-fprintf(['TotalValveOpen = ' num2str(runInfo.REWARD.TotalValveOpenTime) ' ul\n']);
+fprintf(['TotalValveOpen = ' num2str(runInfo.totalValveOpenTime) ' ul\n']);
 clear all; close all; clear mex;
 end
