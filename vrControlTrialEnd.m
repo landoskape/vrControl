@@ -1,11 +1,10 @@
 function [fhandle, runInfo, trialInfo] = vrControlTrialEnd(rigInfo, ~, expInfo, runInfo, trialInfo)
 
 VRmessage = ['TrialEnd ' expInfo.animalName ' ' expInfo.dateStr ' ' expInfo.sessionName];
-rigInfo.sendUDPmessage(VRmessage);
+rigInfo.sendUDPmessage(rigInfo, VRmessage);
 VRLogMessage(expInfo, VRmessage);
 
 if runInfo.currTrial > 0
-    error('this needs work');
     s = sprintf('%s_trial', expInfo.SESSION_NAME);
     save(s, 'trialInfo', 'expInfo');
 end

@@ -5,10 +5,10 @@ fprintf('<stateSystem> endOfExperiment\n'); % debug
 Priority(0);
 
 VRmessage = ['VR_ExpEnd ' expInfo.animalName ' ' expInfo.dateStr ' ' expInfo.sessionName];
-rigInfo.sendUDPmessage(VRmessage);
+rigInfo = rigInfo.sendUDPmessage(rigInfo, VRmessage);
 VRLogMessage(expInfo, VRmessage);
 VRmessage = ['ExpEnd ' expInfo.animalName ' ' expInfo.dateStr ' ' expInfo.sessionName];
-rigInfo.sendUDPmessage(VRmessage);
+rigInfo = rigInfo.sendUDPmessage(rigInfo, VRmessage);
 VRLogMessage(expInfo, VRmessage);
 
 VRLogMessage(expInfo);

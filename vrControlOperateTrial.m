@@ -13,7 +13,7 @@ myPort = pnet('udpsocket', hwInfo.BALLPort); % open udp port
 % -- send trial start message --
 trStartMessage = sprintf('TrialStart %s %s %s %d',...
     expInfo.animalName, expInfo.dateStr, expInfo.sessionName, runInfo.currTrial);
-rigInfo.sendUDPmessage(trStartMessage); 
+rigInfo = rigInfo.sendUDPmessage(rigInfo, trStartMessage); 
 VRLogMessage(expInfo,trStartMessage);
 
 roomLength = expInfo.roomLength(runInfo.currTrial);
@@ -41,7 +41,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
     
     % Update photodiode sync square
     trialInfo.pdLevel(runInfo.currTrial,runInfo.flipIdx) = runInfo.pdLevel;
-    Screen('FillRect', hwInfo.screenInfo.windowPtr, mod(runInfo.pdLevel,2)*255, rigInfo.photodiodeRect.rect);
+    Screen('FillRect', hwInfo.screenInfo.windowPtr, mod(runInfo.pdLevel,2)*255, hwInfo.photodiodeRect.rect);
     vbl=Screen('Flip', hwInfo.screenInfo.windowPtr,vbl+(waitframes-0.5)*ifi,2);
     runInfo.pdLevel = mod(runInfo.pdLevel+1,2); % update every photodiode flip
     
@@ -49,7 +49,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
     % __FrameIdx (Animal) (Date) (Session) (FrameNum) (RoomPosition)
     frameMessage = sprintf('__FrameIdx %s %s %s %d %.1f',...
         expInfo.animalName, expInfo.dateStr, expInfo.sessionName, currentFrame, runInfo.roomPosition);
-    rigInfo.sendUDPmessage(frameMessage, 2); 
+    rigInfo = rigInfo.sendUDPmessage(rigInfo, frameMessage, 2); 
     
     % Immediately after screen flip to optimize coordination bw VR and TL!
     trialInfo.time(runInfo.currTrial,runInfo.flipIdx) = vbl; % record time of screen flip
@@ -143,7 +143,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         else
             VRmessage = sprintf('Last trial reached for animal %s, on date %s, session %s, trialNum %d.',...
                 expInfo.animalName, expInfo.dateStr, expInfo.sessionName, runInfo.currTrial);
-            rigInfo.sendUDPmessage(VRmessage); 
+            rigInfo = rigInfo.sendUDPmessage(rigInfo,VRmessage); 
             VRLogMessage(expInfo, VRmessage);
             if rigInfo.sendTTL
                 hwInfo.session.outputSingleScan(true);
@@ -162,7 +162,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         end
         VRmessage = sprintf('Manual Abort for animal %s, on date %s, session %s, trialNum %d.',...
                 expInfo.animalName, expInfo.dateStr, expInfo.sessionName, runInfo.currTrial);
-        rigInfo.sendUDPmessage(VRmessage); 
+        rigInfo = rigInfo.sendUDPmessage(rigInfo, VRmessage); 
         VRLogMessage(expInfo, VRmessage);
         if rigInfo.sendTTL
             hwInfo.session.outputSingleScan(false);
@@ -183,7 +183,7 @@ Priority(0);
 % Screen to blank and last pd flip
 imageTexture = Screen('MakeTexture', hwInfo.screenInfo.windowPtr, hwInfo.screenInfo.grayIndex);
 Screen('DrawTexture', hwInfo.screenInfo.windowPtr, imageTexture, [], hwInfo.screenInfo.screenRect, 0);
-Screen('FillRect', hwInfo.screenInfo.windowPtr, runInfo.pdLevel*255, rigInfo.photodiodeRect.rect);
+Screen('FillRect', hwInfo.screenInfo.windowPtr, runInfo.pdLevel*255, hwInfo.photodiodeRect.rect);
 Screen('Flip', hwInfo.screenInfo.windowPtr,vbl+(waitframes-0.5)*ifi,0);
 runInfo.pdLevel = mod(runInfo.pdLevel+1,2);
 

@@ -41,7 +41,7 @@ prefRefreshTime = 1/rigInfo.PrefRefreshRate;
 waitframes = round(prefRefreshTime / ifi);
 
 % Reset PD signal to 0 before startup ramp
-Screen('FillRect', hwInfo.screenInfo.windowPtr,0,rigInfo.photodiodeRect.rect);
+Screen('FillRect', hwInfo.screenInfo.windowPtr,0,hwInfo.photodiodeRect.rect);
 vbl = Screen('Flip', hwInfo.screenInfo.windowPtr,0,2);
 
 % Make sure pdSignal reaches 0
@@ -50,7 +50,7 @@ pause(0.1);
 % Perform startup ramp
 numPDTrialInitSamples = 20;
 for ns = linspace(0, 1, numPDTrialInitSamples)
-    Screen('FillRect', hwInfo.screenInfo.windowPtr, ns*255, rigInfo.photodiodeRect.rect);
+    Screen('FillRect', hwInfo.screenInfo.windowPtr, ns*255, hwInfo.photodiodeRect.rect);
     vbl = Screen('Flip', hwInfo.screenInfo.windowPtr,vbl+(waitframes-0.5)*ifi,2);
 end
 

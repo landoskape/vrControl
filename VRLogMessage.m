@@ -10,9 +10,9 @@ end
 expInfo.animalLog  = fopen(expInfo.animalLogName,'a');
 expInfo.centralLog = fopen(expInfo.centralLogName, 'a');
 if ~isempty(message)
-timeStamp = datestr(now,'dd-mmm-yyyy HH:MM:SS.FFF');
-fprintf(expInfo.animalLog,  '%s     %s \n',timeStamp, message);
-fprintf(expInfo.centralLog, '%s     %s \n',timeStamp, message);
+    timeStamp = datestr(now,'dd-mmm-yyyy HH:MM:SS.FFF');
+    fprintf(expInfo.animalLog,  '%s     %s \n',timeStamp, message);
+    fprintf(expInfo.centralLog, '%s     %s \n',timeStamp, message);
 else
     fprintf(expInfo.animalLog,  '%s     %s \n',' ', ' ');
     fprintf(expInfo.centralLog, '%s     %s \n',' ', ' ');

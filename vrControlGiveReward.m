@@ -11,20 +11,20 @@ if strcmp(runInfo.rewardStartT.Running, 'off') ...
 
     switch tag
         case 'STOP'
-            hwInfo.rewVal.deliverBackground(expInfo.EXP.BASEvalveTime,'ul');
-            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + expInfo.EXP.BASEvalveTime;
+            hwInfo.rewVal.deliverBackground(rigInfo.BASEvalveTime,'ul');
+            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.BASEvalveTime;
         case 'ACTIVE'
-            hwInfo.rewVal.deliverBackground(expInfo.EXP.ACTVvalveTime,'ul');
-            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + expInfo.EXP.ACTVvalveTime;
+            hwInfo.rewVal.deliverBackground(rigInfo.ACTVvalveTime,'ul');
+            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.ACTVvalveTime;
         case 'PASSIVE'
-            hwInfo.rewVal.deliverBackground(expInfo.EXP.PASSvalveTime,'ul');
-            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + expInfo.EXP.PASSvalveTime;
+            hwInfo.rewVal.deliverBackground(rigInfo.PASSvalveTime,'ul');
+            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
         case 'BASE'
-            hwInfo.rewVal.deliverBackground(expInfo.EXP.BASEvalveTime,'ul');
-            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + expInfo.EXP.BASEvalveTime;
+            hwInfo.rewVal.deliverBackground(rigInfo.BASEvalveTime,'ul');
+            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.BASEvalveTime;
         case 'USER'
-            hwInfo.rewVal.deliverBackground(expInfo.EXP.BASEvalveTime,'ul');
-            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + expInfo.EXP.BASEvalveTime;
+            hwInfo.rewVal.deliverBackground(rigInfo.BASEvalveTime,'ul');
+            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.BASEvalveTime;
         otherwise
             fprintf(2, 'giveReward tag not recognized, reward not delivered...\n');
     end

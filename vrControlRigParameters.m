@@ -117,18 +117,17 @@ end
 
 end
 
-function initialiseUDPports(rigInfo)
+function rigInfo = initialiseUDPports(rigInfo)
     if rigInfo.numConnect>0
-        fprintf('#ATL: Suppressing output of pnet...\n');
         for iIP = 1:rigInfo.numConnect
-            evalc('RigInfo.activePorts{iIP} = pnet(''udpsocket'', 1001);');
+            rigInfo.activePorts{iIP} = pnet('udpsocket', 1001);
             pnet(rigInfo.activePorts{iIP}, 'udpconnect', rigInfo.connectIPs{iIP}, rigInfo.connectPortnr{iIP});
             fprintf('Sent message to %s\n',rigInfo.connectPCs{iIP});
         end
     end
 end
 
-function sendUDPmessage(rigInfo, message, sendIdx_iIP)
+function rigInfo = sendUDPmessage(rigInfo, message, sendIdx_iIP)
     if rigInfo.numConnect>0
         if nargin < 3
             for iIP = 1:rigInfo.numConnect
@@ -144,11 +143,11 @@ function sendUDPmessage(rigInfo, message, sendIdx_iIP)
     end
 end
 
-function updateTTL(rigInfo,state)
+function rigInfo = updateTTL(rigInfo,state)
     rigInfo.TTLchannel.outputSingleScan(state);
 end
 
-function closeUDPports(rigInfo)
+function rigInfo = closeUDPports(rigInfo)
     if rigInfo.numConnect>0
         for iIP = 1:rigInfo.numConnect
             pnet(rigInfo.activePorts{iIP},'close');

@@ -24,7 +24,7 @@ rigInfo = vrControlRigParameters();
 rigInfo.wheelCircumference = 2*pi*rigInfo.wheelRadius; % ATTENTION TO MINUTE DETAIL
 
 % define the UDP port
-rigInfo.initialiseUDPports;
+rigInfo = rigInfo.initialiseUDPports(rigInfo);
 
 %% 2. Handle expInfo (trial parameters and experimental settings & info)
 
@@ -47,8 +47,8 @@ end
 % Create Directories (ATL: a lot of these are unnecessary...)
 expInfo.ServerDir = dat.expPath(expInfo.expRef, 'main', 'master');
 expInfo.AnimalDir = fullfile(expInfo.ServerDir, expInfo.animalName);
-% if ~isfolder(expInfo.AnimalDir), mkdir(expInfo.AnimalDir); end
-% if ~isfolder(expInfo.LocalDir), mkdir(expInfo.LocalDir); end
+if ~isfolder(expInfo.AnimalDir), mkdir(expInfo.AnimalDir); end
+if ~isfolder(expInfo.LocalDir), mkdir(expInfo.LocalDir); end
 expInfo.SESSION_NAME=[expInfo.LocalDir filesep  expInfo.expRef '_VRBehavior'];
 expInfo.centralLogName = [rigInfo.dirSave filesep 'centralLog'];
 expInfo.animalLogName  = [expInfo.AnimalDir filesep expInfo.animalName '_log'];
@@ -59,6 +59,7 @@ trialStructure = vrControlTrialStructure(expSettings); % convert expSettings to 
 numOptions = length(expSettings.vrOptions);
 idxInUse = unique(trialStructure.envIndex);
 expInfo.vrEnvs = cell(1,numOptions);
+fprintf(1, '#ATL: Loading environments from: %s\n', expSettings.vrDirectory);
 for vrOpt = 1:numOptions
     if ~ismember(vrOpt, idxInUse), continue, end % only load environments that are in use
     cpath = trialStructure.getEnvPath(vrOpt);
@@ -70,10 +71,10 @@ for vrOpt = 1:numOptions
     end
     numVrFrames = expSettings.vrFramesDS(vrOpt);
     fprintf(1, '#ATL: Loading %s, downsampling from %i frames to %i frames (dsratio:%i)...\n',...
-        cpath, expSettings.vrFrames(vrOpt), expSettings.vrFramesDS(vrOpt), expSettings.vrDSFactor(vrOpt));
+        trialStructure.getEnvName(vrOpt), expSettings.vrFrames(vrOpt), expSettings.vrFramesDS(vrOpt), expSettings.vrDSFactor(vrOpt));
     expInfo.vrEnvs{vrOpt} = zeros(height,width,3,numVrFrames,'uint8');
     for f = 1:numVrFrames
-        expInfo.vrEnvs{vrOpt}(:,:,:,f) = uint8(imread(cpath,(f-1)*frameDS+1));
+        expInfo.vrEnvs{vrOpt}(:,:,:,f) = uint8(imread(cpath,(f-1)*expSettings.vrDSFactor(vrOpt)+1));
     end
 end
 
@@ -116,7 +117,7 @@ hwInfo.rotEnc.DaqChannelId = rigInfo.NIRotEnc;
 hwInfo.rotEnc.createDaqChannel;
 hwInfo.rotEnc.zero();
 
-if any(expInfoactiveLick)
+if expInfo.lickEncoder
     % Then we need to add a lick encoder
     hwInfo.likEnc = DaqLickEncoder;
     hwInfo.likEnc.DaqSession = hwInfo.session;
@@ -205,7 +206,7 @@ VRLogMessage(expInfo, VRmessage);
 VRLogMessage(expInfo);
 try
     VRmessage = ['ExpStart ' expInfo.animalName ' ' expInfo.dateStr ' ' expInfo.sessionName];
-    rigInfo.sendUDPmessage(VRmessage);
+    rigInfo = rigInfo.sendUDPmessage(rigInfo, VRmessage);
     VRLogMessage(expInfo, VRmessage);
     disp('Press key to continue after confirming Timeline has started...')
     % If I don't call figure here, then pause hangs (because of the frame
