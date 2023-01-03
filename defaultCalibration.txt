@@ -1,0 +1,8 @@
+inOffset = [0,0]
+inSize = [3840,1024]
+outOffset = [0,0]
+outSize = [3840,1024]
+R = 32.039200000000001;
+rotationAngle = 0;
+warptype = 'HalfCylinderProjection';
+Wflat = 1i
