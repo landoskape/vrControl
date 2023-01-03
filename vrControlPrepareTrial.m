@@ -18,17 +18,17 @@ ListenChar(2);
 
 % Set TRIAL values (update each trial)
 trialInfo.trialIdx(runInfo.currTrial) = runInfo.currTrial; % call me crazy
-trialInfo.trialStartTime(runInfo.currTrial) = GetSecs; % time stamp!!!
-trialInfo.trialStartPosition(runInfo.currTrial) = runInfo.roomPosition; % maybe we'll drop the mice in randomly sometimes...
-trialInfo.trialActiveLicking(runInfo.currTrial) = expInfo.activeLick(runInfo.currTrial); % possible to make this update, for now it's just always the same
-trialInfo.trialActiveStopping(runInfo.currTrial) = expInfo.activeStop(runInfo.currTrial); % possible to make this update, ...
-trialInfo.trialStopDuration(runInfo.currTrial) = expInfo.stopDuration(runInfo.currTrial); 
-trialInfo.trialRewPos(runInfo.currTrial) = expInfo.rewardPosition(runInfo.currTrial);
-trialInfo.trialRewTol(runInfo.currTrial) = expInfo.rewardTolerance(runInfo.currTrial);
+trialInfo.startTime(runInfo.currTrial) = GetSecs; % time stamp!!!
+trialInfo.startPosition(runInfo.currTrial) = runInfo.roomPosition; % maybe we'll drop the mice in randomly sometimes...
+trialInfo.activeLicking(runInfo.currTrial) = expInfo.activeLick(runInfo.currTrial); % possible to make this update, for now it's just always the same
+trialInfo.activeStopping(runInfo.currTrial) = expInfo.activeStop(runInfo.currTrial); % possible to make this update, ...
+trialInfo.stopDuration(runInfo.currTrial) = expInfo.stopDuration(runInfo.currTrial); 
+trialInfo.rewardPosition(runInfo.currTrial) = expInfo.rewardPosition(runInfo.currTrial);
+trialInfo.rewardTolerance(runInfo.currTrial) = expInfo.rewardTolerance(runInfo.currTrial);
 trialInfo.vrEnvIdx(runInfo.currTrial) = expInfo.envIndex(runInfo.currTrial);
 
 rewAvailable = rand() < expInfo.probReward(runInfo.currTrial);
-trialInfo.trialRewAvailable(runInfo.currTrial) = rewAvailable;
+trialInfo.rewardAvailable(runInfo.currTrial) = rewAvailable;
 if ~rewAvailable, runInfo.rewardAvailable = 0; end % make it impossible to get a reward in this trial
 
 
@@ -60,7 +60,7 @@ while toc(runInfo.ititimer) < expInfo.intertrialInterval(runInfo.currTrial)
     pause(0.0001) 
 end
 
-trialInfo.trialBlankTime(runInfo.currTrial) =  toc(runInfo.ititimer);
+trialInfo.iti(runInfo.currTrial) =  toc(runInfo.ititimer);
 
 
 

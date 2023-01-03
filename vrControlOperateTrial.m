@@ -145,8 +145,8 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
                 end
                 runInfo.rewardAvailable = 0;
                 % trial outcome used to indicate active vs. passive
-                trialInfo.trialRewDelivery(runInfo.currTrial) = runInfo.flipIdx;
-                trialInfo.trialOutcome(runInfo.currTrial) = 1; 
+                trialInfo.rewardDeliveryFrame(runInfo.currTrial) = runInfo.flipIdx;
+                trialInfo.outcome(runInfo.currTrial) = 1; 
             end
         end
     end
