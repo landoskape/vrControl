@@ -11,6 +11,7 @@ if ~isfield(perVar,'animalSettingsPath'), perVar.animalSettingsPath = ''; end
 if ~isfield(perVar,'animalSettingsID'), perVar.animalSettingsID = []; end
 if ~isfield(perVar,'sessionOffset'), perVar.sessionOffset = []; end
 if ~isfield(perVar,'activeStopping'), perVar.activeStopping = []; end
+if ~isfield(perVar,'stopDuration'), perVar.stopDuration = []; end
 if ~isfield(perVar,'maxTrialNumber'), perVar.maxTrialNumber = []; end
 if ~isfield(perVar,'maxTrialDuration'), perVar.maxTrialDuration = []; end
 
@@ -19,10 +20,6 @@ if ~isfield(perVar,'maxTrialDuration'), perVar.maxTrialDuration = []; end
 if ~isfield(perVar, name), error('The requested variable does not exist'); end
 if nargin==2, perVar.(name) = setValue; end % Update if new value provided
 if nargout, output = perVar.(name); end % Output if requested
-
-
-
-
 
 
 

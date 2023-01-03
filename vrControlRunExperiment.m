@@ -38,7 +38,7 @@ while true
     if exist(expInfo.LocalDir,'dir')
         expInfo.sessionName = expInfo.sessionName + 1; % try again
     else
-        fprintf('Session Number: %d\n',expInfo.sessionName);
+        fprintf('Animal: %s --- Session Number: %d\n',expInfo.animalName, expInfo.sessionName);
         expInfo.sessionName = num2str(expInfo.sessionName);
         break
     end
@@ -55,32 +55,9 @@ expInfo.animalLogName  = [expInfo.AnimalDir filesep expInfo.animalName '_log'];
 
 trialStructure = vrControlTrialStructure(expSettings); % convert expSettings to trialStructure
 
-% Load VR Environment File(s)
-numOptions = length(expSettings.vrOptions);
-idxInUse = unique(trialStructure.envIndex);
-expInfo.vrEnvs = cell(1,numOptions);
-fprintf(1, '#ATL: Loading environments from: %s\n', expSettings.vrDirectory);
-for vrOpt = 1:numOptions
-    if ~ismember(vrOpt, idxInUse), continue, end % only load environments that are in use
-    cpath = trialStructure.getEnvPath(vrOpt);
-    vrTifInfo = imfinfo(cpath);
-    height = vrTifInfo(1).Height;
-    width = vrTifInfo(1).Width;
-    if length(vrTifInfo) ~= expSettings.vrFrames(vrOpt)
-        error('Handshake between expSettings and trialStructure did not work out (or some earlier issue with the GUI occurred).');
-    end
-    numVrFrames = expSettings.vrFramesDS(vrOpt);
-    fprintf(1, '#ATL: Loading %s, downsampling from %i frames to %i frames (dsratio:%i)...\n',...
-        trialStructure.getEnvName(vrOpt), expSettings.vrFrames(vrOpt), expSettings.vrFramesDS(vrOpt), expSettings.vrDSFactor(vrOpt));
-    expInfo.vrEnvs{vrOpt} = zeros(height,width,3,numVrFrames,'uint8');
-    for f = 1:numVrFrames
-        expInfo.vrEnvs{vrOpt}(:,:,:,f) = uint8(imread(cpath,(f-1)*expSettings.vrDSFactor(vrOpt)+1));
-    end
-end
-
 % Copy trial data from trial structure to expInfo
 fields2copy = {'maxTrials','maxDuration','envIndex','roomLength','rewardPosition','rewardTolerance',...
-    'intertrialInterval','probReward','activeLick','mvmtGain','activeStop'};
+    'intertrialInterval','probReward','activeLick','mvmtGain','activeStop','stopDuration'};
 for f = 1:length(fields2copy), expInfo.(fields2copy{f}) = trialStructure.(fields2copy{f}); end
 
 expInfo.lickEncoder = any(expInfo.activeLick); % use for dynamically engaging with the lick encoder hardware
@@ -106,39 +83,52 @@ elseif strcmp(rigInfo.photodiodePos,'left')
         'colorOn', [1 1 1], 'colorOff', [0 0 0]);
 end
 
-hwInfo.BALLPort = 9999;
-% Setup wheel hardware info
-hwInfo.session = daq.createSession('ni');
-hwInfo.session.Rate = rigInfo.NIsessRate;
-hwInfo.rotEnc = DaqRotaryEncoder;
-hwInfo.rotEnc.DaqSession = hwInfo.session;
-hwInfo.rotEnc.DaqId = rigInfo.NIdevID;
-hwInfo.rotEnc.DaqChannelId = rigInfo.NIRotEnc;
-hwInfo.rotEnc.createDaqChannel;
-hwInfo.rotEnc.zero();
-
-if expInfo.lickEncoder
-    % Then we need to add a lick encoder
-    hwInfo.likEnc = DaqLickEncoder;
-    hwInfo.likEnc.DaqSession = hwInfo.session;
-    hwInfo.likEnc.DaqId = rigInfo.NIdevID;
-    hwInfo.likEnc.DaqChannelId = rigInfo.NILicEnc;
-    hwInfo.likEnc = hwInfo.likEnc.createDaqChannel;
+if ~rigInfo.useKeyboard
+    hwInfo.BALLPort = 9999;
+    % Setup wheel hardware info
+    hwInfo.session = daq.createSession('ni');
+    hwInfo.session.Rate = rigInfo.NIsessRate;
+    hwInfo.rotEnc = DaqRotaryEncoder;
+    hwInfo.rotEnc.DaqSession = hwInfo.session;
+    hwInfo.rotEnc.DaqId = rigInfo.NIdevID;
+    hwInfo.rotEnc.DaqChannelId = rigInfo.NIRotEnc;
+    hwInfo.rotEnc.createDaqChannel;
+    hwInfo.rotEnc.zero();
+    
+    if expInfo.lickEncoder
+        % Then we need to add a lick encoder
+        hwInfo.likEnc = DaqLickEncoder;
+        hwInfo.likEnc.DaqSession = hwInfo.session;
+        hwInfo.likEnc.DaqId = rigInfo.NIdevID;
+        hwInfo.likEnc.DaqChannelId = rigInfo.NILicEnc;
+        hwInfo.likEnc = hwInfo.likEnc.createDaqChannel;
+    end
+    
+    hwInfo.sessionVal = daq.createSession('ni');
+    hwInfo.sessionVal.Rate = rigInfo.NIsessRate;
+    
+    hwInfo.rewVal = DaqRewardValve;
+    load(rigInfo.WaterCalibrationFile);
+    hwInfo.rewVal.DaqSession = hwInfo.sessionVal;
+    hwInfo.rewVal.DaqId = rigInfo.NIdevID;
+    hwInfo.rewVal.DaqChannelId = rigInfo.NIRewVal;
+    hwInfo.rewVal.createDaqChannel;
+    hwInfo.rewVal.MeasuredDeliveries = Water_calibs(end).measuredDeliveries;
+    hwInfo.rewVal.OpenValue = 10;
+    hwInfo.rewVal.ClosedValue = 0;
+    hwInfo.rewVal.close;
+else
+    % setup keyboard situation
+    KbName('UnifyKeyNames');
+    hwInfo.moveForward = KbName('UpArrow');
+    hwInfo.moveBackward = KbName('DownArrow');
+    hwInfo.increaseSpeed = KbName('RightArrow');
+    hwInfo.decreaseSpeed = KbName('LeftArrow');
+    hwInfo.minKeyboardSpeed = 0.1; % cm
+    hwInfo.maxKeyboardSpeed = 3; % cm
+    hwInfo.stepKeyboardSpeed = 0.5; % cm
+    hwInfo.keyboardSpeed = 1; % cm
 end
-
-hwInfo.sessionVal = daq.createSession('ni');
-hwInfo.sessionVal.Rate = rigInfo.NIsessRate;
-
-hwInfo.rewVal = DaqRewardValve;
-load(rigInfo.WaterCalibrationFile);
-hwInfo.rewVal.DaqSession = hwInfo.sessionVal;
-hwInfo.rewVal.DaqId = rigInfo.NIdevID;
-hwInfo.rewVal.DaqChannelId = rigInfo.NIRewVal;
-hwInfo.rewVal.createDaqChannel;
-hwInfo.rewVal.MeasuredDeliveries = Water_calibs(end).measuredDeliveries;
-hwInfo.rewVal.OpenValue = 10;
-hwInfo.rewVal.ClosedValue = 0;
-hwInfo.rewVal.close;
 
 
 %% 4. Prepare runInfo structure
@@ -161,6 +151,29 @@ runInfo.pdLevel = 0; % always start at 0 because we have a ramp up from 0 indica
 runInfo.totalValveOpenTime = 0; % for tracking duration of reward delivery
 runInfo.trialStartTime = []; % timer for tracking duration of trial
 
+% Load VR Environment File(s)
+numOptions = length(expSettings.vrOptions);
+idxInUse = unique(trialStructure.envIndex);
+runInfo.vrEnvs = cell(1,numOptions);
+fprintf(1, '#ATL: Loading environments from: %s\n', expSettings.vrDirectory);
+for vrOpt = 1:numOptions
+    if ~ismember(vrOpt, idxInUse), continue, end % only load environments that are in use
+    cpath = trialStructure.getEnvPath(vrOpt);
+    vrTifInfo = imfinfo(cpath);
+    height = vrTifInfo(1).Height;
+    width = vrTifInfo(1).Width;
+    if length(vrTifInfo) ~= expSettings.vrFrames(vrOpt)
+        error('Handshake between expSettings and trialStructure did not work out (or some earlier issue with the GUI occurred).');
+    end
+    numVrFrames = expSettings.vrFramesDS(vrOpt);
+    fprintf(1, '#ATL: Loading %s, downsampling from %i frames to %i frames (dsratio:%i)...\n',...
+        trialStructure.getEnvName(vrOpt), expSettings.vrFrames(vrOpt), expSettings.vrFramesDS(vrOpt), expSettings.vrDSFactor(vrOpt));
+    runInfo.vrEnvs{vrOpt} = zeros(height,width,3,numVrFrames,'uint8');
+    for f = 1:numVrFrames
+        runInfo.vrEnvs{vrOpt}(:,:,:,f) = uint8(imread(cpath,(f-1)*expSettings.vrDSFactor(vrOpt)+1));
+    end
+end
+
 
 %% 5. Prepare trialInfo structure
 
@@ -172,27 +185,28 @@ runInfo.trialStartTime = []; % timer for tracking duration of trial
 overAllocate = 1.1 * (2*rigInfo.PrefRefreshRate) * expSettings.maxTrialDuration; 
 
 % Preallocate arrays for tracking data related to each trial
-trialInfo.trialIdx = nan(expSettings.maxTrialNumber,1); % trial idx (should count up)
-trialInfo.startTime = nan(expSettings.maxTrialNumber,1); % timestamp of trial start
-trialInfo.startPosition = nan(expSettings.maxTrialNumber,1); % initial position within virtual environment
-trialInfo.activeLicking = nan(expSettings.maxTrialNumber,1); % copy here for easy saving
-trialInfo.activeStopping = nan(expSettings.maxTrialNumber,1); % copy here for easy saving
-trialInfo.rewardPosition = nan(expSettings.maxTrialNumber,1); % copy here for easy saving
-trialInfo.rewardTolerance = nan(expSettings.maxTrialNumber,1); % copy here for easy saving
-trialInfo.vrEnvIdx = nan(expSettings.maxTrialNumber,1); % copy here for easy saving
-trialInfo.iti = nan(expSettings.maxTrialNumber,1); % duration of true ITI (always greater than minimum requested)
-trialInfo.outcome = nan(expSettings.maxTrialNumber,1); % was a reward delivered
-trialInfo.rewardDeliveryFrame = nan(expSettings.maxTrialNumber,1); % the "count"(flip idx) in which reward delivered
-trialInfo.rewardAvailable = nan(expSettings.maxTrialNumber,1); % boolean if reward was available on trial 
-trialInfo.userRewardNumber = nan(expSettings.maxTrialNumber,1); % the number of user rewards given (using spacebar)
+trialInfo.trialIdx = sparse(zeros(expSettings.maxTrialNumber,1)); % trial idx (should count up)
+trialInfo.startTime = sparse(zeros(expSettings.maxTrialNumber,1)); % timestamp of trial start
+trialInfo.startPosition = sparse(zeros(expSettings.maxTrialNumber,1)); % initial position within virtual environment
+trialInfo.activeLicking = sparse(zeros(expSettings.maxTrialNumber,1)); % copy here for easy saving
+trialInfo.activeStopping = sparse(zeros(expSettings.maxTrialNumber,1)); % copy here for easy saving
+trialInfo.stopDuration = sparse(zeros(expSettings.maxTrialNumber,1)); % copy here for easy saving
+trialInfo.rewardPosition = sparse(zeros(expSettings.maxTrialNumber,1)); % copy here for easy saving
+trialInfo.rewardTolerance = sparse(zeros(expSettings.maxTrialNumber,1)); % copy here for easy saving
+trialInfo.vrEnvIdx = sparse(zeros(expSettings.maxTrialNumber,1)); % copy here for easy saving
+trialInfo.iti = sparse(zeros(expSettings.maxTrialNumber,1)); % duration of true ITI (always greater than minimum requested)
+trialInfo.outcome = sparse(zeros(expSettings.maxTrialNumber,1)); % was a reward delivered
+trialInfo.rewardDeliveryFrame = sparse(zeros(expSettings.maxTrialNumber,1)); % the "count"(flip idx) in which reward delivered
+trialInfo.rewardAvailable = sparse(zeros(expSettings.maxTrialNumber,1)); % boolean if reward was available on trial 
+trialInfo.userRewardNumber = sparse(zeros(expSettings.maxTrialNumber,1)); % the number of user rewards given (using spacebar)
 trialInfo.userRewardFrames = cell(expSettings.maxTrialNumber,1); % the frame idx during user reward delivery
 
 % Preallocate arrays for tracking data related to each frame
-trialInfo.time = nan(expSettings.maxTrialNumber, overAllocate,'double');
-trialInfo.lick = nan(expSettings.maxTrialNumber, overAllocate,'double');
-trialInfo.roomPosition = nan(expSettings.maxTrialNumber, overAllocate,'double'); % position in corridor
-trialInfo.frameIdx = nan(expSettings.maxTrialNumber, overAllocate,'double'); % which frame is on
-trialInfo.pdLevel = nan(expSettings.maxTrialNumber, overAllocate,'double'); % whether the photodiode is up or down
+trialInfo.time = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'double'));
+trialInfo.lick = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'double'));
+trialInfo.roomPosition = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'double')); % position in corridor
+trialInfo.frameIdx = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'double')); % which frame is on
+trialInfo.pdLevel = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'double')); % whether the photodiode is up or down
 
 
 %% -- now, prepare vrcontrol loop --

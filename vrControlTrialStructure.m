@@ -83,6 +83,7 @@ trialStructure.probReward = settings.condTrialReward(condTrialIdx)';
 trialStructure.activeLick = settings.condTrialActive(condTrialIdx)';
 trialStructure.mvmtGain = settings.condTrialGain(condTrialIdx)';
 trialStructure.activeStop = settings.activeStopping * ones(trialStructure.maxTrials,1);
+trialStructure.stopDuration = settings.stopDuration * ones(trialStructure.maxTrials,1);
 if ~settings.condReward
     % Overwrite probReward with independent generation
     if settings.randomReward

@@ -1,0 +1,110 @@
+        
+03-Jan-2023 13:47:27.518     Starting new experiment with animal testing: 
+        
+03-Jan-2023 13:47:27.659     ExpStart testing 20230103 707 
+        
+03-Jan-2023 13:48:57.131     Starting new experiment with animal testing: 
+        
+03-Jan-2023 13:48:57.265     ExpStart testing 20230103 708 
+03-Jan-2023 13:48:59.875     TrialStart testing 20230103 708 1 
+        
+03-Jan-2023 13:49:49.761     Starting new experiment with animal testing: 
+        
+03-Jan-2023 13:49:49.888     ExpStart testing 20230103 709 
+03-Jan-2023 13:49:51.762     TrialStart testing 20230103 709 1 
+        
+03-Jan-2023 13:51:23.607     Starting new experiment with animal testing: 
+        
+03-Jan-2023 13:51:23.749     ExpStart testing 20230103 710 
+03-Jan-2023 13:51:25.625     TrialStart testing 20230103 710 1 
+        
+03-Jan-2023 13:53:28.741     Starting new experiment with animal testing: 
+        
+03-Jan-2023 13:53:28.861     ExpStart testing 20230103 711 
+03-Jan-2023 13:53:32.896     TrialStart testing 20230103 711 1 
+        
+03-Jan-2023 13:54:28.080     Starting new experiment with animal testing: 
+        
+03-Jan-2023 13:54:28.194     ExpStart testing 20230103 712 
+03-Jan-2023 13:54:31.366     TrialStart testing 20230103 712 1 
+        
+03-Jan-2023 13:57:00.993     Starting new experiment with animal testing: 
+        
+03-Jan-2023 13:57:01.147     ExpStart testing 20230103 713 
+03-Jan-2023 13:57:13.209     TrialStart testing 20230103 713 1 
+        
+03-Jan-2023 13:57:56.685     Starting new experiment with animal testing: 
+        
+03-Jan-2023 13:57:56.805     ExpStart testing 20230103 714 
+03-Jan-2023 13:58:02.964     TrialStart testing 20230103 714 1 
+03-Jan-2023 13:58:40.919     Manual Abort for animal testing, on date 20230103, session 714, trialNum 1. 
+        
+03-Jan-2023 14:03:29.258     Starting new experiment with animal testing: 
+        
+03-Jan-2023 14:03:29.375     ExpStart testing 20230103 715 
+03-Jan-2023 14:03:34.950     TrialStart testing 20230103 715 1 
+        
+03-Jan-2023 14:07:34.795     Starting new experiment with animal testing: 
+        
+03-Jan-2023 14:07:34.917     ExpStart testing 20230103 716 
+03-Jan-2023 14:07:39.093     TrialStart testing 20230103 716 1 
+        
+03-Jan-2023 14:16:45.869     Starting new experiment with animal testing: 
+        
+03-Jan-2023 14:16:46.004     ExpStart testing 20230103 719 
+03-Jan-2023 14:16:49.825     TrialStart testing 20230103 719 1 
+        
+03-Jan-2023 14:21:04.888     Starting new experiment with animal testing: 
+        
+03-Jan-2023 14:21:05.030     ExpStart testing 20230103 720 
+03-Jan-2023 14:21:08.198     TrialStart testing 20230103 720 1 
+        
+03-Jan-2023 14:22:22.782     Starting new experiment with animal testing: 
+        
+03-Jan-2023 14:22:22.911     ExpStart testing 20230103 721 
+03-Jan-2023 14:22:24.892     TrialStart testing 20230103 721 1 
+        
+03-Jan-2023 14:25:20.587     Starting new experiment with animal testing: 
+        
+03-Jan-2023 14:25:20.720     ExpStart testing 20230103 722 
+03-Jan-2023 14:25:22.874     TrialStart testing 20230103 722 1 
+03-Jan-2023 14:25:30.966     TrialEnd testing 20230103 722 
+        
+03-Jan-2023 14:29:25.973     Starting new experiment with animal testing: 
+        
+03-Jan-2023 14:29:26.116     ExpStart testing 20230103 723 
+03-Jan-2023 14:29:29.065     TrialStart testing 20230103 723 1 
+03-Jan-2023 14:29:46.917     TrialEnd testing 20230103 723 
+        
+03-Jan-2023 14:31:43.801     Starting new experiment with animal testing: 
+        
+03-Jan-2023 14:31:43.965     ExpStart testing 20230103 724 
+03-Jan-2023 14:31:46.484     TrialStart testing 20230103 724 1 
+03-Jan-2023 14:32:03.852     TrialEnd testing 20230103 724 
+        
+03-Jan-2023 14:42:07.643     Starting new experiment with animal testing: 
+        
+03-Jan-2023 14:42:07.772     ExpStart testing 20230103 725 
+03-Jan-2023 14:42:10.225     TrialStart testing 20230103 725 1 
+03-Jan-2023 14:42:17.584     TrialEnd testing 20230103 725 
+03-Jan-2023 14:42:18.615     TrialStart testing 20230103 725 2 
+03-Jan-2023 14:42:24.075     TrialEnd testing 20230103 725 
+03-Jan-2023 14:42:26.201     TrialStart testing 20230103 725 3 
+03-Jan-2023 14:42:34.830     Reward given at trial 3, frame 319, with tag PASSIVE 
+        
+03-Jan-2023 14:45:51.643     Starting new experiment with animal testing: 
+        
+03-Jan-2023 14:45:51.761     ExpStart testing 20230103 726 
+03-Jan-2023 14:45:55.389     TrialStart testing 20230103 726 1 
+03-Jan-2023 14:46:07.509     TrialEnd testing 20230103 726 
+03-Jan-2023 14:46:09.542     TrialStart testing 20230103 726 2 
+03-Jan-2023 14:46:20.152     TrialEnd testing 20230103 726 
+03-Jan-2023 14:46:21.450     TrialStart testing 20230103 726 3 
+03-Jan-2023 14:46:31.232     TrialEnd testing 20230103 726 
+03-Jan-2023 14:46:32.125     TrialStart testing 20230103 726 4 
+03-Jan-2023 14:46:33.029     Manual Abort for animal testing, on date 20230103, session 726, trialNum 4. 
+03-Jan-2023 14:46:33.435     TrialEnd testing 20230103 726 
+03-Jan-2023 14:46:33.583     VR_ExpEnd testing 20230103 726 
+03-Jan-2023 14:46:33.661     ExpEnd testing 20230103 726 
+        
+        

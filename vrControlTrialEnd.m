@@ -9,8 +9,6 @@ if runInfo.currTrial > 0
     save(s, 'trialInfo', 'expInfo');
 end
 
-fprintf('TrialEnd...\n\n'); % debug
-
 if runInfo.currTrial >= expInfo.maxTrials || runInfo.abort
     fhandle = @vrControlExperimentEnd;
     return;

@@ -29,8 +29,8 @@ rigInfo.PASSvalveTime = 3.0;
 rigInfo.ACTVvalveTime = 3.0;
 rigInfo.PrefRefreshRate = 30; % hz
 rigInfo.dirSave = 'C:\Behaviour';
-rigInfo.dirScreenCalib = '';
-rigInfo.filenameScreenCalib = '';
+rigInfo.dirScreenCalib = fileparts(mfilename('fullpath'));
+rigInfo.filenameScreenCalib = 'defaultCalibration.mat';
 rigInfo.numConnect = 0;
 rigInfo.connectIPs = [];
 rigInfo.connectPCs = [];
@@ -41,10 +41,20 @@ rigInfo.ChannelMapping = [];
 rigInfo.connectPortnr = [];
 rigInfo.UseRange = [];
 rigInfo.WaterCalibrationFile = [];
+rigInfo.useKeyboard = 0;
 rigInfo.initialiseUDPports = @initialiseUDPports;
 rigInfo.sendUDPmessage = @sendUDPmessage;
 rigInfo.updateTTL = @updateTTL;
 rigInfo.closeUDPports = @closeUDPports;
+
+calibFilePath = fullfile(rigInfo.dirScreenCalib, rigInfo.filenameScreenCalib);
+if ~exist(calibFilePath, 'file')
+    defaultCalibration = fullfile(rigInfo.dirScreenCalib,'defaultCalibration.txt');
+    if ~exist(defaultCalibration, 'file')
+        error('No default calibration found. Check existing installation or github.'); 
+    end
+    vrControlCreateCalibrationFromDefault(defaultCalibration,calibFilePath);
+end
 
 if contains(upper(hostname), 'ANDREWS-MBP')
     hostname = upper('Andrews-MacBook-Pro.local');
@@ -107,10 +117,15 @@ switch upper(hostname)
         
     case 'DESKTOP-C0GU3US'
         rigInfo.dirSave = 'C:\Users\andrew\Documents\GitHub\vrControl\settingsFolder';
-    
+        rigInfo.useKeyboard = 1; % to control the linear track with the keyboard arrow keys
+        rigInfo.screenNumber = 2;
+        rigInfo.filenameScreenCalib = '';
+
     case upper('Andrews-MacBook-Pro.local')
         rigInfo.dirSave = '/Users/landauland/Documents/GitHub/vrControl/settingsFolder';
-        
+        rigInfo.useKeyboard = 1; % to control the linear track with the keyboard arrow keys
+        rigInfo.filenameScreenCalib = '';
+    
     otherwise
         error('hostname not recognized!!');
 end 

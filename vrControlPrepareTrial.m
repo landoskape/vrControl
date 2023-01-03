@@ -22,6 +22,7 @@ trialInfo.trialStartTime(runInfo.currTrial) = GetSecs; % time stamp!!!
 trialInfo.trialStartPosition(runInfo.currTrial) = runInfo.roomPosition; % maybe we'll drop the mice in randomly sometimes...
 trialInfo.trialActiveLicking(runInfo.currTrial) = expInfo.activeLick(runInfo.currTrial); % possible to make this update, for now it's just always the same
 trialInfo.trialActiveStopping(runInfo.currTrial) = expInfo.activeStop(runInfo.currTrial); % possible to make this update, ...
+trialInfo.trialStopDuration(runInfo.currTrial) = expInfo.stopDuration(runInfo.currTrial); 
 trialInfo.trialRewPos(runInfo.currTrial) = expInfo.rewardPosition(runInfo.currTrial);
 trialInfo.trialRewTol(runInfo.currTrial) = expInfo.rewardTolerance(runInfo.currTrial);
 trialInfo.vrEnvIdx(runInfo.currTrial) = expInfo.envIndex(runInfo.currTrial);
@@ -60,8 +61,6 @@ while toc(runInfo.ititimer) < expInfo.intertrialInterval(runInfo.currTrial)
 end
 
 trialInfo.trialBlankTime(runInfo.currTrial) =  toc(runInfo.ititimer);
-
-
 
 
 

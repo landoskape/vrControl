@@ -20,13 +20,19 @@ WaitSecs(0.5);
 fprintf(1, '#ATL: Suppressing output of numerous PsychToolbox functions...\n');
 evalc('screenInfo.FrameRate = FrameRate(whichScreen);');
 
-transformFile = [rigInfo.dirScreenCalib rigInfo.filenameScreenCalib];
+transformFile = fullfile(rigInfo.dirScreenCalib, rigInfo.filenameScreenCalib);
+[~,~,extension] = fileparts(transformFile);
 PsychImagingNonverbose('PrepareConfiguration');
-PsychImagingNonverbose('AddTask', 'AllViews', 'GeometryCorrection', transformFile);
-%disp('If transformFile doesn''t exist, try DisplayUndistortionHalfCylinder(fullfile(RigInfo.dirScreenCalib,RigInfo.filenameScreenCalib),WhichScreen)')
+if exist(transformFile,'file') && strcmp(extension, '.mat')
+    PsychImagingNonverbose('AddTask', 'AllViews', 'GeometryCorrection', transformFile);
+else
+    fprintf(2,'No transform file for psychtoolbox exists! Continuing without one...\n');
+end
 
 PsychImagingNonverbose('AddTask', 'AllViews', 'FlipHorizontal');
 evalc('[screenInfo.windowPtr, screenInfo.screenRect] = PsychImaging(''OpenWindow'', whichScreen, screenInfo.grayIndex);');
+
+display(screenInfo.screenRect);
 
 screenInfo.Xmax = RectWidth(screenInfo.screenRect);
 screenInfo.Ymax = RectHeight(screenInfo.screenRect);

@@ -8,8 +8,6 @@ vbl = Screen('Flip',hwInfo.screenInfo.windowPtr,0,2);
 prefRefreshTime = 1/rigInfo.PrefRefreshRate;
 waitframes = round(prefRefreshTime / ifi);
 
-myPort = pnet('udpsocket', hwInfo.BALLPort); % open udp port
-
 % -- send trial start message --
 trStartMessage = sprintf('TrialStart %s %s %s %d',...
     expInfo.animalName, expInfo.dateStr, expInfo.sessionName, runInfo.currTrial);
@@ -17,15 +15,20 @@ rigInfo = rigInfo.sendUDPmessage(rigInfo, trStartMessage);
 VRLogMessage(expInfo,trStartMessage);
 
 roomLength = expInfo.roomLength(runInfo.currTrial);
-numVRFrames = size(expInfo.vrEnvs{runInfo.vrEnvIdx},4);
+numVRFrames = size(runInfo.vrEnvs{runInfo.vrEnvIdx},4);
 
 runInfo.trialStartTimer = tic; % Start trial timer right before actual beginning of trial
 
-% -- main program that operates the trial --
-hwInfo.rotEnc.readPositionAndZero();
-if expInfo.lickEncoder
-    hwInfo.likEnc = hwInfo.likEnc.zero(); % set lick encoder to zero
+% If we aren't using a keyboard, then initialize the linear track hardware
+if ~rigInfo.useKeyboard
+    myPort = pnet('udpsocket', hwInfo.BALLPort); % open udp port
+    hwInfo.rotEnc.readPositionAndZero();
+    if expInfo.lickEncoder
+        hwInfo.likEnc = hwInfo.likEnc.zero(); % set lick encoder to zero
+    end
 end
+
+% -- main program that operates the trial --
 while ~runInfo.move2NextTrial && ~runInfo.abort
     % Update every frame to index data storage in TRIAL structure
     runInfo.flipIdx = runInfo.flipIdx + 1;
@@ -34,7 +37,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
     currentFrame = round(runInfo.roomPosition / roomLength * numVRFrames);
     currentFrame = max(1, currentFrame);
     currentFrame = min(numVRFrames, currentFrame);
-    frame2show = expInfo.vrEnvs{runInfo.vrEnvIdx}(:,:,:,currentFrame);
+    frame2show = runInfo.vrEnvs{runInfo.vrEnvIdx}(:,:,:,currentFrame);
     
     imageTexture = Screen('MakeTexture', hwInfo.screenInfo.windowPtr, frame2show); % Prepare frame for PTBs
     Screen('DrawTexture', hwInfo.screenInfo.windowPtr(1), imageTexture, [], hwInfo.screenInfo.screenRect, 0); % draw
@@ -57,11 +60,27 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
     trialInfo.roomPosition(runInfo.currTrial,runInfo.flipIdx) = runInfo.roomPosition;
     
     % --- mouse behavior --- MOVEMENT ---
-    wheelPosition = hwInfo.rotEnc.readPositionAndZero;
-    dbx = rigInfo.rotEncSign * wheelPosition; % apply correct sign for forward movement
-    roomMovement = dbx / rigInfo.wheelToVR * rigInfo.wheelCircumference;
-    if isnan(roomMovement), roomMovement=0; end % Inherited from previous code, don't know why this would ever be a nan
+    if rigInfo.useKeyboard
+        roomMovement = 0;
+        [~, ~, keyCode] = KbCheck;
+        if keyCode(hwInfo.moveForward)
+            roomMovement = hwInfo.keyboardSpeed; 
+        elseif keyCode(hwInfo.moveBackward)
+            roomMovement = -hwInfo.keyboardSpeed;
+        elseif keyCode(hwInfo.increaseSpeed)
+            hwInfo.keyboardSpeed = min([hwInfo.keyboardSpeed + hwInfo.stepKeyboardSpeed, hwInfo.maxKeyboardSpeed]);
+        elseif keyCode(hwInfo.decreaseSpeed)
+            hwInfo.keyboardSpeed = max([hwInfo.keyboardSpeed - hwInfo.stepKeyboardSpeed, hwInfo.minKeyboardSpeed]);
+        end
+        keyboardSpeedLine = sprintf('\nKeyboard Speed: %.1fcm',hwInfo.keyboardSpeed);
+        DrawFormattedText(hwInfo.screenInfo.windowPtr, keyboardSpeedLine, 'center', 'center', [1 1 1]);
+    else
+        wheelPosition = hwInfo.rotEnc.readPositionAndZero;
+        dbx = rigInfo.rotEncSign * wheelPosition; % apply correct sign for forward movement
+        roomMovement = dbx / rigInfo.wheelToVR * rigInfo.wheelCircumference;
+    end
     % fprintf('Wheel Position: %.1f, Room Movement: %.1f\n', wheelPosition, roomMovement);
+    if isnan(roomMovement), roomMovement=0; end % Inherited from previous code, don't know why this would ever be a nan
     runInfo.roomPosition = runInfo.roomPosition + roomMovement * expInfo.mvmtGain(runInfo.currTrial);
     
     % tell user if mouse speed was unusually fast...
@@ -72,7 +91,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
     runInfo.roomPosition = max(runInfo.roomPosition, rigInfo.minimumPosition);
     
     % --- mouse behavior --- LICKS ---
-    if expInfo.lickEncoder
+    if expInfo.lickEncoder && ~rigInfo.useKeyboard
         [currLikStatus,hwInfo.likEnc] = hwInfo.likEnc.readPositionAndZero;
         if currLikStatus
             trialInfo.lick(runInfo.currTrial,runInfo.flipIdx) = 1;
@@ -81,7 +100,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         end
     else
         trialInfo.lick(runInfo.currTrial,runInfo.flipIdx) = 0;
-    end
+        endmess
     
     % --- mouse behavior --- STOPPING ---
     runInfo.inRewardZone = abs(runInfo.roomPosition - expInfo.rewardPosition(runInfo.currTrial)) < expInfo.rewardTolerance(runInfo.currTrial);
@@ -102,7 +121,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         if runInfo.inRewardZone
             % Determine if lick conditionality permits reward delivery
             if ~expInfo.activeLick(runInfo.currTrial) || ...
-                    (expInfo.activeLicking(runInfo.currTrial) && trialInfo.lick(runInfo.currTrial, runInfo.flipIdx))
+                    (expInfo.activeLick(runInfo.currTrial) && trialInfo.lick(runInfo.currTrial, runInfo.flipIdx))
                 lickValid = true; % If active licking + valid lick, or not active licking
             else
                 lickValid = false; % Otherwise don't give reward yet
@@ -111,7 +130,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
             % Determine if lick conditionality permits reward delivery
             if ~expInfo.activeStop(runInfo.currTrial) || ...
                     (expInfo.activeStop(runInfo.currTrial) && ...
-                    runInfo.rewZoneTimerActive && (toc(runInfo.timeInRewardZone) > expInfo.stopDuration))
+                    runInfo.rewZoneTimerActive && (toc(runInfo.timeInRewardZone) > expInfo.stopDuration(runInfo.currTrial)))
                 stopValid = true; % If active stopping + valid stop, or not active stopping
             else
                 stopValid = false; % Otherwise don't give reward yet
@@ -119,7 +138,11 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
             
             % Give reward if in reward zone and lickValid and stopValid
             if lickValid && stopValid
-                runInfo = vrControlGiveReward('PASSIVE', expInfo, runInfo, hwInfo);
+                if ~rigInfo.useKeyboard
+                    runInfo = vrControlGiveReward('PASSIVE', expInfo, runInfo, hwInfo);
+                else
+                    fprintf(1, 'Reward would be delivered now!\n');
+                end
                 runInfo.rewardAvailable = 0;
                 % trial outcome used to indicate active vs. passive
                 trialInfo.trialRewDelivery(runInfo.currTrial) = runInfo.flipIdx;
@@ -175,7 +198,9 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
 end
 
 % close udp port and reset priority level
-pnet(myPort,'close');
+if ~rigInfo.useKeyboard
+    pnet(myPort,'close');
+end
 
 ListenChar(0);
 Priority(0);
