@@ -96,10 +96,9 @@ condTrialIdx = randsample(toSelect, trialStructure.maxTrials, true);
 
 % Write trial structure and overwrite if not conditional
 trialStructure.probReward = settings.condTrialReward(condTrialIdx)';
-trialStructure.activeLick = settings.condTrialActive(condTrialIdx)';
+trialStructure.activeLick = settings.condTrialActiveLicking(condTrialIdx)';
+trialStructure.activeStop = settings.condTrialActiveStopping(condTrialIdx)';
 trialStructure.mvmtGain = settings.condTrialGain(condTrialIdx)';
-trialStructure.activeStop = settings.activeStopping * ones(trialStructure.maxTrials,1);
-trialStructure.stopDuration = settings.stopDuration * ones(trialStructure.maxTrials,1);
 if ~settings.condReward
     % Overwrite probReward with independent generation
     if settings.randomReward
@@ -118,8 +117,11 @@ if ~settings.condReward
         trialStructure.probReward = ones(trialStructure.maxTrials,1);
     end
 end
-if ~settings.condActive
+if ~settings.condActiveLicking
     trialStructure.activeLick = settings.activeLicking * ones(trialStructure.maxTrials,1);
+end
+if ~settings.condActiveStopping
+    trialStructure.activeStop = settings.activeStopping * settings.stopDuration * ones(trialStructure.maxTrials,1);
 end
 if ~settings.condGain
     if settings.randomGain
