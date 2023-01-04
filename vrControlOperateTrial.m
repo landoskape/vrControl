@@ -100,7 +100,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         end
     else
         trialInfo.lick(runInfo.currTrial,runInfo.flipIdx) = 0;
-        endmess
+    end
     
     % --- mouse behavior --- STOPPING ---
     runInfo.inRewardZone = abs(runInfo.roomPosition - expInfo.rewardPosition(runInfo.currTrial)) < expInfo.rewardTolerance(runInfo.currTrial);
