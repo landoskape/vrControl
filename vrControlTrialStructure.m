@@ -15,19 +15,18 @@ trialStructure.envIndex = nan(trialStructure.maxTrials,1);
 trialStructure.envIndex(1:initBlockLength) = settings.initEnvIdx;
 
 % Prepare environment selection across block structure
-if sum(settings.blockType)~=1, error('Settings file has multiple block types selected...'); end
+assert(sum(settings.blockType)==1, 'Settings file has multiple block types selected...');
 blockType = settings.blockTypeNames{settings.blockType};
 switch lower(blockType)
-    case 'even'
-        getBlockLength = @() settings.blockTrialsPer;
+    case 'preset'
+        getBlockLength = @(envidx) settings.blockTrialsPer(envidx);
     case 'random'
         if strcmpi(settings.blockRandomDistributionName,'poisson')
-            getBlockLength = @() poissrnd(settings.blockRandomMean);
+            % Don't allow blocks of length 0
+            getBlockLength = @(envidx) max([1, poissrnd(settings.blockRandomMean(envidx))]);
         else
             error('didn''t recognize random block length distribution');
         end
-    case 'custom'
-        error('custom block structure note coded yet');
     otherwise
         error('earlier error message is logically broken...');
 end
@@ -44,7 +43,6 @@ else
     nextEnvIdx = 1; % There's only one to select from...
 end
 
-fprintf(1,'#ATL: in vrControlTrialStructure(line41), dynamically get block length based on environment index!\n');
 while cTrial < trialStructure.maxTrials
     if numActive > 1
         % Select Next Environment Randomly (Within Each Miniblock)
@@ -55,7 +53,7 @@ while cTrial < trialStructure.maxTrials
         prevEnvFlag(nextEnvIdx) = true;
     end
     
-    cBlockLength = 1; getBlockLength(); % dynamically choose block length
+    cBlockLength = getBlockLength(idxActive(nextEnvIdx)); % dynamically choose block length
     excessTrials = max(cTrial + cBlockLength - trialStructure.maxTrials, 0); % prevent block from extending past max trial number
     cBlockLength = cBlockLength - excessTrials;
 
