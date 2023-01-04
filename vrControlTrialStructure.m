@@ -33,16 +33,34 @@ switch lower(blockType)
 end
 
 % Perform environment selection
-idxActive = vrControlReturnOrder(settings.vrOrder, settings.vrActive);
-cEnvIdx = 1;
 cTrial = initBlockLength;
+idxActive = vrControlReturnOrder(settings.vrOrder, settings.vrActive);
+numActive = length(idxActive);
+if numActive > 1
+    prevEnvFlag = ismember(idxActive, settings.initEnvIdx) * logical(initBlockLength); % Flags init environment unless there isn't one
+    needEnvFlag = true(numActive,1); % Flags environment that need to be selected in miniblock
+    assert(sum(prevEnvFlag)>=0 && sum(prevEnvFlag)<=1, 'Logical error in code.') % make sure this works correctly
+else
+    nextEnvIdx = 1; % There's only one to select from...
+end
+
+fprintf(1,'#ATL: in vrControlTrialStructure(line41), dynamically get block length based on environment index!\n');
 while cTrial < trialStructure.maxTrials
-    cBlockLength = getBlockLength();
-    excessTrials = max(cTrial + cBlockLength - trialStructure.maxTrials, 0);
+    if numActive > 1
+        % Select Next Environment Randomly (Within Each Miniblock)
+        nextEnvIdx = datasample(find(needEnvFlag & ~prevEnvFlag),1); % sample from those still not selected in miniblock
+        needEnvFlag(nextEnvIdx) = false;
+        if sum(needEnvFlag)==0, needEnvFlag = true(numActive,1); end
+        prevEnvFlag = false(numActive,1);
+        prevEnvFlag(nextEnvIdx) = true;
+    end
+    
+    cBlockLength = 1; getBlockLength(); % dynamically choose block length
+    excessTrials = max(cTrial + cBlockLength - trialStructure.maxTrials, 0); % prevent block from extending past max trial number
     cBlockLength = cBlockLength - excessTrials;
-    trialStructure.envIndex(cTrial + (1:cBlockLength)) = idxActive(cEnvIdx);
-    cEnvIdx = mod((cEnvIdx+1)-1, length(idxActive))+1; 
-    cTrial = cTrial + cBlockLength;
+
+    trialStructure.envIndex(cTrial + (1:cBlockLength)) = idxActive(nextEnvIdx); % set next group of trials
+    cTrial = cTrial + cBlockLength; % update current trial index
 end
 
 % Associate with length, reward position & tolerance
