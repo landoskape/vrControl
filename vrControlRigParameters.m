@@ -23,6 +23,7 @@ rigInfo.wheelToVR = 4000;
 rigInfo.wheelRadius = 9.75;
 rigInfo.minimumPosition = 0.01; % this helped with something, I forgot what, better to keep it positive but very small
 rigInfo.maxSpeed = 200; % 200 cm / s is the max speed allowed without reporting to user
+rigInfo.lickEncoderAvailable = true; 
 rigInfo.STOPvalveTime = 0.0;
 rigInfo.BASEvalveTime = 3.0;
 rigInfo.PASSvalveTime = 3.0;
@@ -31,6 +32,7 @@ rigInfo.PrefRefreshRate = 30; % hz
 rigInfo.dirSave = 'C:\Behaviour';
 rigInfo.dirScreenCalib = fileparts(mfilename('fullpath'));
 rigInfo.filenameScreenCalib = 'defaultCalibration.mat';
+rigInfo.expSettingsDir = fullfile(fileparts(mfilename('fullpath')),'settingsFolder'); % Part of the github repository...
 rigInfo.numConnect = 0;
 rigInfo.connectIPs = [];
 rigInfo.connectPCs = [];
@@ -81,6 +83,7 @@ switch upper(hostname)
         rigInfo.rotEncSign = -1;
         rigInfo.wheelToVR = 4000;
         rigInfo.wheelRadius = 9.75; 
+        rigInfo.lickEncoderAvailable = true; 
 
         rigInfo.STOPvalveTime = 0.0;
         rigInfo.BASEvalveTime = 3.0;
@@ -120,11 +123,13 @@ switch upper(hostname)
         rigInfo.useKeyboard = 1; % to control the linear track with the keyboard arrow keys
         rigInfo.screenNumber = 2;
         rigInfo.filenameScreenCalib = '';
+        rigInfo.lickEncoderAvailable = false; 
 
     case upper('Andrews-MacBook-Pro.local')
         rigInfo.dirSave = '/Users/landauland/Documents/GitHub/vrControl/settingsFolder';
         rigInfo.useKeyboard = 1; % to control the linear track with the keyboard arrow keys
         rigInfo.filenameScreenCalib = '';
+        rigInfo.lickEncoderAvailable = false; 
     
     otherwise
         error('hostname not recognized!!');

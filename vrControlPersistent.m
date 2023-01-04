@@ -7,11 +7,7 @@ persistent perVar
 if ~isfield(perVar,'vrDirectory'), perVar.vrDirectory = ''; end
 if ~isfield(perVar,'vrExtension'), perVar.vrExtension = ''; end
 if ~isfield(perVar,'animalName'), perVar.animalName = ''; end
-if ~isfield(perVar,'animalSettingsPath'), perVar.animalSettingsPath = ''; end
-if ~isfield(perVar,'animalSettingsID'), perVar.animalSettingsID = []; end
 if ~isfield(perVar,'sessionOffset'), perVar.sessionOffset = []; end
-if ~isfield(perVar,'activeStopping'), perVar.activeStopping = []; end
-if ~isfield(perVar,'stopDuration'), perVar.stopDuration = []; end
 if ~isfield(perVar,'maxTrialNumber'), perVar.maxTrialNumber = []; end
 if ~isfield(perVar,'maxTrialDuration'), perVar.maxTrialDuration = []; end
 
