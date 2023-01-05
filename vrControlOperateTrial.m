@@ -28,7 +28,7 @@ if ~rigInfo.useKeyboard
     end
 end
 
-updateWindowFlag = isvalid(updateWindow);
+runInfo.useUpdateWindow = isvalid(updateWindow);
 
 % -- main program that operates the trial --
 while ~runInfo.move2NextTrial && ~runInfo.abort
@@ -41,6 +41,9 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
     currentFrame = min(numVRFrames, currentFrame);
     frame2show = runInfo.vrEnvs{runInfo.vrEnvIdx}(:,:,:,currentFrame);
     
+    if isvalid(updateWindow)
+        updateWindow.printPreview(frame2show);
+    end
     imageTexture = Screen('MakeTexture', hwInfo.screenInfo.windowPtr, frame2show); % Prepare frame for PTBs
     Screen('DrawTexture', hwInfo.screenInfo.windowPtr(1), imageTexture, [], hwInfo.screenInfo.screenRect, 0); % draw
     
@@ -92,7 +95,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         fprintf(2, 'Mouse speed was recorded as %.2f cm/s!!!\n', roomMovement/prefRefreshTime);
     end
     
-    if updateWindowFlag
+    if isvalid(updateWindow)
         updateWindow.mousePosition.Value = runInfo.roomPosition;
         updateWindow.mouseSpeed.Value = roomMovement/prefRefreshTime;
         drawnow()
@@ -107,15 +110,23 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         [currLikStatus,hwInfo.likEnc] = hwInfo.likEnc.readPositionAndZero;
         if currLikStatus
             trialInfo.lick(runInfo.currTrial,runInfo.flipIdx) = 1;
+            if isvalid(updateWindow)
+                updateWindow.updateLickIndicator(1)
+                drawnow()
+            end
             if runInfo.inRewardZone
                 runInfo.lickInRewardZone = true; % indicate that the mouse licked in the reward zone
-                if updateWindowFlag
+                if isvalid(updateWindow)
                     updateWindow.updateLamp('lick','on');
                     drawnow()
                 end
             end
         else
             trialInfo.lick(runInfo.currTrial,runInfo.flipIdx) = 0;
+            if isvalid(updateWindow)
+                updateWindow.updateLickIndicator(0)
+                drawnow()
+            end
         end
     else
         trialInfo.lick(runInfo.currTrial,runInfo.flipIdx) = 0;
@@ -133,7 +144,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         runInfo.timeInRewardZone = []; % clear timer
         runInfo.lickInRewardZone = false; % reset this counter to require the mice to lick within active stopping block
         runInfo.stopInRewardZone = false; % indicate that the mouse has left the reward zone
-        if updateWindowFlag
+        if isvalid(updateWindow)
             updateWindow.updateLamp('lick','off');
             updateWindow.updateLamp('stop','off');
             drawnow()
@@ -144,7 +155,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         % notate that a successful stop is currently active
         trialInfo.stop(runInfo.currTrial,runInfo.flipIdx) = 1;
         runInfo.stopInRewardZone = true; % indicate that the mouse stopped in the reward zone
-        if updateWindowFlag
+        if isvalid(updateWindow)
             updateWindow.updateLamp('stop','on');
             drawnow()
         end
@@ -183,7 +194,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
                 % trial outcome used to indicate active vs. passive
                 trialInfo.rewardDeliveryFrame(runInfo.currTrial) = runInfo.flipIdx;
                 trialInfo.outcome(runInfo.currTrial) = 1; 
-                if updateWindowFlag
+                if isvalid(updateWindow)
                     updateWindow.rewardState(1);
                     drawnow()
                 end

@@ -151,6 +151,7 @@ runInfo.vrEnvIdx = [];
 runInfo.pdLevel = 0; % always start at 0 because we have a ramp up from 0 indicating the ITI!
 runInfo.totalValveOpenTime = 0; % for tracking duration of reward delivery
 runInfo.trialStartTime = []; % timer for tracking duration of trial
+runInfo.useUpdateWindow = expSettings.useUpdateWindow; % Determines if updateWindow GUI is used (can be turned off if window closed)
 
 % Load VR Environment File(s)
 numOptions = length(expSettings.vrOptions);
@@ -213,8 +214,12 @@ trialInfo.pdLevel = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'doubl
 
 %% 6. Open vrUpdateWindow
 
-updateWindow = vrControlUpdateWindow();
-
+if runInfo.useUpdateWindow
+    updateWindow = vrControlUpdateWindow();
+else
+    figure(1001); clf;
+    updateWindow = [];
+end
 
 %% -- now, prepare vrcontrol loop --
 
@@ -232,7 +237,6 @@ try
     disp('Press key to continue after confirming Timeline has started...')
     % If I don't call figure here, then pause hangs (because of the frame
     % rate / and pause lines in initializeScreen_Blender... dunno why)
-    figure(1001); clf; 
     pause()
 catch
     keyboard

@@ -11,6 +11,7 @@ if ~isfield(perVar,'sessionOffset'), perVar.sessionOffset = []; end
 if ~isfield(perVar,'maxTrialNumber'), perVar.maxTrialNumber = []; end
 if ~isfield(perVar,'maxTrialDuration'), perVar.maxTrialDuration = []; end
 if ~isfield(perVar,'settingsName'), perVar.settingsName = ''; end
+if ~isfield(perVar,'useUpdateWindow'), perVar.useUpdateWindow = true; end
 
 
 % Now update and/or return requested variable
