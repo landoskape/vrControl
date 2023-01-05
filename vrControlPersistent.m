@@ -10,6 +10,7 @@ if ~isfield(perVar,'animalName'), perVar.animalName = ''; end
 if ~isfield(perVar,'sessionOffset'), perVar.sessionOffset = []; end
 if ~isfield(perVar,'maxTrialNumber'), perVar.maxTrialNumber = []; end
 if ~isfield(perVar,'maxTrialDuration'), perVar.maxTrialDuration = []; end
+if ~isfield(perVar,'settingsName'), perVar.settingsName = ''; end
 
 
 % Now update and/or return requested variable

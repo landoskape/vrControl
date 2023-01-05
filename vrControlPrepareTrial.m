@@ -1,4 +1,4 @@
-function [fhandle, runInfo, trialInfo] = vrControlPrepareTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo)
+function [fhandle, runInfo, trialInfo] = vrControlPrepareTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow)
 
 fhandle =  @vrControlOperateTrial;
 
@@ -13,6 +13,8 @@ runInfo.rewZoneTimerActive = false;
 runInfo.timeInRewardZone = [];
 runInfo.vrEnvIdx = expInfo.envIndex(runInfo.currTrial);
 runInfo.pdLevel = 0; % always start at 0 because we have a ramp up from 0 indicating the ITI!
+runInfo.lickInRewardZone = false; % keep track of behavioral criterion for reward delivery
+runInfo.stopInRewardZone = false; % keep track of behavioral criterion for reward delivery
 
 ListenChar(2);
 
@@ -22,7 +24,6 @@ trialInfo.startTime(runInfo.currTrial) = GetSecs; % time stamp!!!
 trialInfo.startPosition(runInfo.currTrial) = runInfo.roomPosition; % maybe we'll drop the mice in randomly sometimes...
 trialInfo.activeLicking(runInfo.currTrial) = expInfo.activeLick(runInfo.currTrial); % possible to make this update, for now it's just always the same
 trialInfo.activeStopping(runInfo.currTrial) = expInfo.activeStop(runInfo.currTrial); % possible to make this update, ...
-trialInfo.stopDuration(runInfo.currTrial) = expInfo.stopDuration(runInfo.currTrial); 
 trialInfo.rewardPosition(runInfo.currTrial) = expInfo.rewardPosition(runInfo.currTrial);
 trialInfo.rewardTolerance(runInfo.currTrial) = expInfo.rewardTolerance(runInfo.currTrial);
 trialInfo.vrEnvIdx(runInfo.currTrial) = expInfo.envIndex(runInfo.currTrial);
@@ -31,11 +32,15 @@ rewAvailable = rand() < expInfo.probReward(runInfo.currTrial);
 trialInfo.rewardAvailable(runInfo.currTrial) = rewAvailable;
 if ~rewAvailable, runInfo.rewardAvailable = 0; end % make it impossible to get a reward in this trial
 
+ct = runInfo.currTrial;
+updateWindow.updateTrial(ct, expInfo.envIndex(ct), expInfo.intertrialInterval(ct), expInfo.getEnvName(trialInfo.vrEnvIdx(ct)), ...
+    expInfo.roomLength(ct), expInfo.mvmtGain(ct), expInfo.rewardPosition(ct), expInfo.rewardTolerance(ct), ...
+    expInfo.probReward(ct), rewAvailable, expInfo.activeLick(ct), expInfo.activeStop(ct), runInfo.vrEnvs{runInfo.vrEnvIdx}(:,:,:,1))
 
 fprintf('TRIAL#:%d/%d, vrEnv:%d, RP:%.1fcm, AL:%d, AS:%d, MG:%.1f, RewAvailable:%d\n',...
     runInfo.currTrial, length(expInfo.envIndex), runInfo.vrEnvIdx, expInfo.rewardPosition(runInfo.currTrial),...
     expInfo.activeLick(runInfo.currTrial),expInfo.activeStop(runInfo.currTrial),...
-    expInfo.mvmtGain(runInfo.currTrial),trialInfo.trialRewAvailable(runInfo.currTrial));
+    expInfo.mvmtGain(runInfo.currTrial),rewAvailable);
 
 % Perform Trial Initiation sequence
 ifi = Screen('GetFlipInterval',hwInfo.screenInfo.windowPtr);

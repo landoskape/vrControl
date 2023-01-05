@@ -1,4 +1,4 @@
-function [fhandle, runInfo, trialInfo] = vrControlExperimentEnd(rigInfo, ~, expInfo, runInfo, trialInfo)
+function [fhandle, runInfo, trialInfo] = vrControlExperimentEnd(rigInfo, ~, expInfo, runInfo, trialInfo, ~)
 
 % cleans up and exits state system
 fprintf('<stateSystem> endOfExperiment\n'); % debug

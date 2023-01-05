@@ -57,7 +57,7 @@ trialStructure = vrControlTrialStructure(expSettings); % convert expSettings to 
 
 % Copy trial data from trial structure to expInfo
 fields2copy = {'maxTrials','maxDuration','envIndex','roomLength','rewardPosition','rewardTolerance',...
-    'intertrialInterval','probReward','activeLick','activeStop','mvmtGain'};
+    'intertrialInterval','probReward','activeLick','activeStop','mvmtGain','getEnvName'};
 for f = 1:length(fields2copy), expInfo.(fields2copy{f}) = trialStructure.(fields2copy{f}); end
 
 expInfo.lickEncoder = rigInfo.lickEncoderAvailable && ...
@@ -191,7 +191,6 @@ trialInfo.startTime = sparse(zeros(expSettings.maxTrialNumber,1)); % timestamp o
 trialInfo.startPosition = sparse(zeros(expSettings.maxTrialNumber,1)); % initial position within virtual environment
 trialInfo.activeLicking = sparse(zeros(expSettings.maxTrialNumber,1)); % copy here for easy saving
 trialInfo.activeStopping = sparse(zeros(expSettings.maxTrialNumber,1)); % copy here for easy saving
-trialInfo.stopDuration = sparse(zeros(expSettings.maxTrialNumber,1)); % copy here for easy saving
 trialInfo.rewardPosition = sparse(zeros(expSettings.maxTrialNumber,1)); % copy here for easy saving
 trialInfo.rewardTolerance = sparse(zeros(expSettings.maxTrialNumber,1)); % copy here for easy saving
 trialInfo.vrEnvIdx = sparse(zeros(expSettings.maxTrialNumber,1)); % copy here for easy saving
@@ -210,6 +209,11 @@ trialInfo.inRewardZone = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'
 trialInfo.roomPosition = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'double')); % position in corridor
 trialInfo.frameIdx = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'double')); % which frame is on
 trialInfo.pdLevel = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'double')); % whether the photodiode is up or down
+
+
+%% 6. Open vrUpdateWindow
+
+updateWindow = vrControlUpdateWindow();
 
 
 %% -- now, prepare vrcontrol loop --
@@ -238,7 +242,7 @@ runInfo.ititimer = tic; % Initialize this here (usually reset in vrControlOperat
 fhandle = @vrControlPrepareTrial;
 while ~isempty(fhandle) 
     % main loop, active during experiment
-    [fhandle, runInfo, trialInfo] = feval(fhandle, rigInfo, hwInfo, expInfo, runInfo, trialInfo);
+    [fhandle, runInfo, trialInfo] = feval(fhandle, rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow);
 end
 
 fprintf(['TotalValveOpen = ' num2str(runInfo.totalValveOpenTime) ' ul\n']);

@@ -1,4 +1,4 @@
-function [fhandle, runInfo, trialInfo] = vrControlOperateTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo)
+function [fhandle, runInfo, trialInfo] = vrControlOperateTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow)
 
 fhandle = @vrControlTrialEnd;
 
@@ -28,10 +28,7 @@ if ~rigInfo.useKeyboard
     end
 end
 
-% These are used to keep track of whether the mouse has met behavioral
-% criterion for reward delivery
-lickInRewardZone = false;
-stopInRewardZone = false;
+updateWindowFlag = isvalid(updateWindow);
 
 % -- main program that operates the trial --
 while ~runInfo.move2NextTrial && ~runInfo.abort
@@ -47,6 +44,9 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
     imageTexture = Screen('MakeTexture', hwInfo.screenInfo.windowPtr, frame2show); % Prepare frame for PTBs
     Screen('DrawTexture', hwInfo.screenInfo.windowPtr(1), imageTexture, [], hwInfo.screenInfo.screenRect, 0); % draw
     
+    keyboardSpeedLine = sprintf('\nKeyboard Speed: %.1fcm',hwInfo.keyboardSpeed);
+    DrawFormattedText(hwInfo.screenInfo.windowPtr, keyboardSpeedLine, 'center', 'center', [1 1 1]);
+
     % Update photodiode sync square
     trialInfo.pdLevel(runInfo.currTrial,runInfo.flipIdx) = runInfo.pdLevel;
     Screen('FillRect', hwInfo.screenInfo.windowPtr, mod(runInfo.pdLevel,2)*255, hwInfo.photodiodeRect.rect);
@@ -77,8 +77,6 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         elseif keyCode(hwInfo.decreaseSpeed)
             hwInfo.keyboardSpeed = max([hwInfo.keyboardSpeed - hwInfo.stepKeyboardSpeed, hwInfo.minKeyboardSpeed]);
         end
-        keyboardSpeedLine = sprintf('\nKeyboard Speed: %.1fcm',hwInfo.keyboardSpeed);
-        DrawFormattedText(hwInfo.screenInfo.windowPtr, keyboardSpeedLine, 'center', 'center', [1 1 1]);
     else
         wheelPosition = hwInfo.rotEnc.readPositionAndZero;
         dbx = rigInfo.rotEncSign * wheelPosition; % apply correct sign for forward movement
@@ -87,14 +85,19 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
     % fprintf('Wheel Position: %.1f, Room Movement: %.1f\n', wheelPosition, roomMovement);
     if isnan(roomMovement), roomMovement=0; end % Inherited from previous code, don't know why this would ever be a nan
     runInfo.roomPosition = runInfo.roomPosition + roomMovement * expInfo.mvmtGain(runInfo.currTrial);
-    
+    runInfo.roomPosition = max(runInfo.roomPosition, rigInfo.minimumPosition); % prevent mouse from moving before start of corridor
+
     % tell user if mouse speed was unusually fast...
     if roomMovement/prefRefreshTime >= rigInfo.maxSpeed
         fprintf(2, 'Mouse speed was recorded as %.2f cm/s!!!\n', roomMovement/prefRefreshTime);
     end
-    % prevent mouse from moving before start of corridor
-    runInfo.roomPosition = max(runInfo.roomPosition, rigInfo.minimumPosition);
     
+    if updateWindowFlag
+        updateWindow.mousePosition.Value = runInfo.roomPosition;
+        updateWindow.mouseSpeed.Value = roomMovement/prefRefreshTime;
+        drawnow()
+    end
+
     % --- mouse behavior --- reward zone entry ---
     runInfo.inRewardZone = abs(runInfo.roomPosition - expInfo.rewardPosition(runInfo.currTrial)) < expInfo.rewardTolerance(runInfo.currTrial);
     trialInfo.inRewardZone(runInfo.currTrial, runInfo.flipIdx) = 1;
@@ -105,7 +108,11 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         if currLikStatus
             trialInfo.lick(runInfo.currTrial,runInfo.flipIdx) = 1;
             if runInfo.inRewardZone
-                lickInRewardZone = true; % indicate that the mouse licked in the reward zone
+                runInfo.lickInRewardZone = true; % indicate that the mouse licked in the reward zone
+                if updateWindowFlag
+                    updateWindow.updateLamp('lick','on');
+                    drawnow()
+                end
             end
         else
             trialInfo.lick(runInfo.currTrial,runInfo.flipIdx) = 0;
@@ -124,14 +131,23 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         % This means they left the reward zone
         runInfo.rewZoneTimerActive = false; % indicate that they've left reward zone
         runInfo.timeInRewardZone = []; % clear timer
-        lickInRewardZone = false; % reset this counter to require the mice to lick within active stopping block
-        stopInRewardZone = false; % indicate that the mouse has left the reward zone
+        runInfo.lickInRewardZone = false; % reset this counter to require the mice to lick within active stopping block
+        runInfo.stopInRewardZone = false; % indicate that the mouse has left the reward zone
+        if updateWindowFlag
+            updateWindow.updateLamp('lick','off');
+            updateWindow.updateLamp('stop','off');
+            drawnow()
+        end
     end
     if runInfo.inRewardZone && runInfo.rewZoneTimerActive && ...
             toc(runInfo.timeInRewardZone) > expInfo.activeStop(runInfo.currTrial)
         % notate that a successful stop is currently active
         trialInfo.stop(runInfo.currTrial,runInfo.flipIdx) = 1;
-        stopInRewardZone = true; % indicate that the mouse stopped in the reward zone
+        runInfo.stopInRewardZone = true; % indicate that the mouse stopped in the reward zone
+        if updateWindowFlag
+            updateWindow.updateLamp('stop','on');
+            drawnow()
+        end
     end
     
     % --- deliver rewards ---
@@ -141,7 +157,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
             % Determine if lick conditionality permits reward delivery
             if ~expInfo.activeLick(runInfo.currTrial)
                 lickValid = true; % If not active licking, pass through valid lick
-            elseif expInfo.activeLick(runInfo.currTrial) && lickInRewardZone
+            elseif expInfo.activeLick(runInfo.currTrial) && runInfo.lickInRewardZone
                 lickValid = true; % If active licking + valid lick on this frame
             else
                 lickValid = false; % Otherwise don't give reward yet
@@ -150,7 +166,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
             % Determine if lick conditionality permits reward delivery
             if ~expInfo.activeStop(runInfo.currTrial)
                 stopValid = true; % If not active stopping, pass through valid stop
-            elseif expInfo.activeStop(runInfo.currTrial) && stopInRewardZone
+            elseif expInfo.activeStop(runInfo.currTrial) && runInfo.stopInRewardZone
                 stopValid = true; % If active stopping and stopInRewardZone is true, then set stopValid=true
             else
                 stopValid = false; % don't give reward yet
@@ -167,6 +183,10 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
                 % trial outcome used to indicate active vs. passive
                 trialInfo.rewardDeliveryFrame(runInfo.currTrial) = runInfo.flipIdx;
                 trialInfo.outcome(runInfo.currTrial) = 1; 
+                if updateWindowFlag
+                    updateWindow.rewardState(1);
+                    drawnow()
+                end
             end
         end
     end
