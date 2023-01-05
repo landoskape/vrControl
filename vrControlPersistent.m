@@ -24,7 +24,6 @@ if nargout, output = perVar.(name); end % Output if requested
 Once included but not really necessary now that saving and loading are
 efficient...
 
-
 % if ~isfield(perVar,'lickEncoderAvailable'), perVar.lickEncoderAvailable = []; end
 % if ~isfield(perVar,'activeLicking'), perVar.activeLicking = []; end
 % if ~isfield(perVar,'vrOptions'), perVar.vrOptions={}; end

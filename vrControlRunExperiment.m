@@ -57,10 +57,11 @@ trialStructure = vrControlTrialStructure(expSettings); % convert expSettings to 
 
 % Copy trial data from trial structure to expInfo
 fields2copy = {'maxTrials','maxDuration','envIndex','roomLength','rewardPosition','rewardTolerance',...
-    'intertrialInterval','probReward','activeLick','mvmtGain','activeStop','stopDuration'};
+    'intertrialInterval','probReward','activeLick','activeStop','mvmtGain'};
 for f = 1:length(fields2copy), expInfo.(fields2copy{f}) = trialStructure.(fields2copy{f}); end
 
-expInfo.lickEncoder = any(expInfo.activeLick); % use for dynamically engaging with the lick encoder hardware
+expInfo.lickEncoder = rigInfo.lickEncoderAvailable && ...
+    any(expInfo.activeLick); % use for dynamically engaging with the lick encoder hardware
 
 %% 3. Prepare hwInfo structure
 
@@ -204,6 +205,8 @@ trialInfo.userRewardFrames = cell(expSettings.maxTrialNumber,1); % the frame idx
 % Preallocate arrays for tracking data related to each frame
 trialInfo.time = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'double'));
 trialInfo.lick = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'double'));
+trialInfo.stop = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'double')); 
+trialInfo.inRewardZone = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'double')); 
 trialInfo.roomPosition = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'double')); % position in corridor
 trialInfo.frameIdx = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'double')); % which frame is on
 trialInfo.pdLevel = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'double')); % whether the photodiode is up or down

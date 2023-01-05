@@ -109,7 +109,7 @@ if ~settings.condReward
             randRewFreq = settings.randomRewardArray(:,2);
             if any(mod(randRewFreq,1)), error('Random Reward Frequencies should be integers'); end
             toSelect = cell2mat(cellfun(@(freq,idx) ...
-                idx*ones(1,freq), num2cell(randRewFreq), num2cell(1:numReward), 'uni', 0));
+                idx*ones(1,freq), num2cell(randRewFreq(:)'), num2cell(1:numReward), 'uni', 0));
             randRewIdx = randsample(toSelect, trialStructure.maxTrials, true);
             trialStructure.probReward = settings.randomRewardArray(randRewIdx,1);
         end

@@ -28,6 +28,11 @@ if ~rigInfo.useKeyboard
     end
 end
 
+% These are used to keep track of whether the mouse has met behavioral
+% criterion for reward delivery
+lickInRewardZone = false;
+stopInRewardZone = false;
+
 % -- main program that operates the trial --
 while ~runInfo.move2NextTrial && ~runInfo.abort
     % Update every frame to index data storage in TRIAL structure
@@ -90,11 +95,18 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
     % prevent mouse from moving before start of corridor
     runInfo.roomPosition = max(runInfo.roomPosition, rigInfo.minimumPosition);
     
+    % --- mouse behavior --- reward zone entry ---
+    runInfo.inRewardZone = abs(runInfo.roomPosition - expInfo.rewardPosition(runInfo.currTrial)) < expInfo.rewardTolerance(runInfo.currTrial);
+    trialInfo.inRewardZone(runInfo.currTrial, runInfo.flipIdx) = 1;
+    
     % --- mouse behavior --- LICKS ---
     if expInfo.lickEncoder && ~rigInfo.useKeyboard
         [currLikStatus,hwInfo.likEnc] = hwInfo.likEnc.readPositionAndZero;
         if currLikStatus
             trialInfo.lick(runInfo.currTrial,runInfo.flipIdx) = 1;
+            if runInfo.inRewardZone
+                lickInRewardZone = true; % indicate that the mouse licked in the reward zone
+            end
         else
             trialInfo.lick(runInfo.currTrial,runInfo.flipIdx) = 0;
         end
@@ -103,7 +115,6 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
     end
     
     % --- mouse behavior --- STOPPING ---
-    runInfo.inRewardZone = abs(runInfo.roomPosition - expInfo.rewardPosition(runInfo.currTrial)) < expInfo.rewardTolerance(runInfo.currTrial);
     if runInfo.inRewardZone && ~runInfo.rewZoneTimerActive
         % This means mouse entered reward zone
         runInfo.rewZoneTimerActive = true; % indicate that they entered reward zone
@@ -113,6 +124,14 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         % This means they left the reward zone
         runInfo.rewZoneTimerActive = false; % indicate that they've left reward zone
         runInfo.timeInRewardZone = []; % clear timer
+        lickInRewardZone = false; % reset this counter to require the mice to lick within active stopping block
+        stopInRewardZone = false; % indicate that the mouse has left the reward zone
+    end
+    if runInfo.inRewardZone && runInfo.rewZoneTimerActive && ...
+            toc(runInfo.timeInRewardZone) > expInfo.activeStop(runInfo.currTrial)
+        % notate that a successful stop is currently active
+        trialInfo.stop(runInfo.currTrial,runInfo.flipIdx) = 1;
+        stopInRewardZone = true; % indicate that the mouse stopped in the reward zone
     end
     
     % --- deliver rewards ---
@@ -120,20 +139,21 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         % Only consider reward delivery if in reward zone
         if runInfo.inRewardZone
             % Determine if lick conditionality permits reward delivery
-            if ~expInfo.activeLick(runInfo.currTrial) || ...
-                    (expInfo.activeLick(runInfo.currTrial) && trialInfo.lick(runInfo.currTrial, runInfo.flipIdx))
-                lickValid = true; % If active licking + valid lick, or not active licking
+            if ~expInfo.activeLick(runInfo.currTrial)
+                lickValid = true; % If not active licking, pass through valid lick
+            elseif expInfo.activeLick(runInfo.currTrial) && lickInRewardZone
+                lickValid = true; % If active licking + valid lick on this frame
             else
                 lickValid = false; % Otherwise don't give reward yet
             end
             
             % Determine if lick conditionality permits reward delivery
-            if ~expInfo.activeStop(runInfo.currTrial) || ...
-                    (expInfo.activeStop(runInfo.currTrial) && ...
-                    runInfo.rewZoneTimerActive && (toc(runInfo.timeInRewardZone) > expInfo.stopDuration(runInfo.currTrial)))
-                stopValid = true; % If active stopping + valid stop, or not active stopping
+            if ~expInfo.activeStop(runInfo.currTrial)
+                stopValid = true; % If not active stopping, pass through valid stop
+            elseif expInfo.activeStop(runInfo.currTrial) && stopInRewardZone
+                stopValid = true; % If active stopping and stopInRewardZone is true, then set stopValid=true
             else
-                stopValid = false; % Otherwise don't give reward yet
+                stopValid = false; % don't give reward yet
             end
             
             % Give reward if in reward zone and lickValid and stopValid
