@@ -34,10 +34,9 @@ if ~rewAvailable, runInfo.rewardAvailable = 0; end % make it impossible to get a
 
 % Check if updateWindow is active and still open, then do update
 if expInfo.useUpdateWindow && isvalid(updateWindow)
-    ct = runInfo.currTrial;
-    updateWindow.updateTrial(ct, expInfo.envIndex(ct), expInfo.intertrialInterval(ct), expInfo.getEnvName(trialInfo.vrEnvIdx(ct)), ...
-        expInfo.roomLength(ct), expInfo.mvmtGain(ct), expInfo.rewardPosition(ct), expInfo.rewardTolerance(ct), ...
-        expInfo.probReward(ct), rewAvailable, expInfo.activeLick(ct), expInfo.activeStop(ct), runInfo.vrEnvs{runInfo.vrEnvIdx}(:,:,:,1))
+    updateWindow.updateTrial(runInfo.currTrial, expInfo, rewAvailable, runInfo.vrEnvs{runInfo.vrEnvIdx}(:,:,:,1));
+    % ct = runInfo.currTrial;
+    % updateWindow.updateTrial(ct, expInfo.envIndex(ct), expInfo.intertrialInterval(ct), expInfo.getEnvName(trialInfo.vrEnvIdx(ct)),expInfo.roomLength(ct), expInfo.mvmtGain(ct), expInfo.rewardPosition(ct), expInfo.rewardTolerance(ct),expInfo.probReward(ct), rewAvailable, expInfo.activeLick(ct), expInfo.activeStop(ct), runInfo.vrEnvs{runInfo.vrEnvIdx}(:,:,:,1))
 end
 
 fprintf('TRIAL#:%d/%d, vrEnv:%d, RP:%.1fcm, AL:%d, AS:%d, MG:%.1f, RewAvailable:%d\n',...

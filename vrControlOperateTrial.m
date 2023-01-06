@@ -1,7 +1,5 @@
 function [fhandle, runInfo, trialInfo] = vrControlOperateTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow)
 
-
-
 fhandle = @vrControlTrialEnd;
 
 % make a flip here to establish vbl
@@ -30,15 +28,8 @@ if ~rigInfo.useKeyboard
     end
 end
 
-runInfo.useUpdateWindow = expInfo.useUpdateWindow && isvalid(updateWindow);
-
-evalin('base','masterTic = tic;');
-
 % -- main program that operates the trial --
 while ~runInfo.move2NextTrial && ~runInfo.abort
-    evalin('base','masterCounter = masterCounter + 1;');
-    evalin('base','masterTimer(masterCounter) = toc(masterTic);');
-    evalin('base',sprintf('masterTrialNumber(masterCounter) = %i;',runInfo.currTrial));
 
     % Update every frame to index data storage in TRIAL structure
     runInfo.flipIdx = runInfo.flipIdx + 1;
@@ -104,8 +95,8 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
     end
     
     if expInfo.useUpdateWindow && isvalid(updateWindow)
-        updateWindow.mousePosition.Value = runInfo.roomPosition;
-        updateWindow.mouseSpeed.Value = roomMovement/prefRefreshTime;
+        updateWindow.updatePosition(runInfo.roomPosition);
+        updateWindow.updateSpeed(roomMovement/prefRefreshTime);
         drawnow()
     end
 
@@ -125,7 +116,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
             if runInfo.inRewardZone
                 runInfo.lickInRewardZone = true; % indicate that the mouse licked in the reward zone
                 if expInfo.useUpdateWindow && isvalid(updateWindow)
-                    updateWindow.updateLamp('lick','on');
+                    updateWindow.updateLickLamp(1);
                     drawnow()
                 end
             end
@@ -153,8 +144,8 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         runInfo.lickInRewardZone = false; % reset this counter to require the mice to lick within active stopping block
         runInfo.stopInRewardZone = false; % indicate that the mouse has left the reward zone
         if expInfo.useUpdateWindow && isvalid(updateWindow)
-            updateWindow.updateLamp('lick','off');
-            updateWindow.updateLamp('stop','off');
+            updateWindow.updateLickLamp(0);
+            updateWindow.updateStopLamp(0);
             drawnow()
         end
     end
@@ -164,7 +155,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         trialInfo.stop(runInfo.currTrial,runInfo.flipIdx) = 1;
         runInfo.stopInRewardZone = true; % indicate that the mouse stopped in the reward zone
         if expInfo.useUpdateWindow && isvalid(updateWindow)
-            updateWindow.updateLamp('stop','on');
+            updateWindow.updateStopLamp(0);
             drawnow()
         end
     end
