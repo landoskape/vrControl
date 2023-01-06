@@ -1,5 +1,7 @@
 function [fhandle, runInfo, trialInfo] = vrControlOperateTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow)
 
+
+
 fhandle = @vrControlTrialEnd;
 
 % make a flip here to establish vbl
@@ -28,10 +30,16 @@ if ~rigInfo.useKeyboard
     end
 end
 
-runInfo.useUpdateWindow = isvalid(updateWindow);
+runInfo.useUpdateWindow = expInfo.useUpdateWindow && isvalid(updateWindow);
+
+evalin('base','masterTic = tic;');
 
 % -- main program that operates the trial --
 while ~runInfo.move2NextTrial && ~runInfo.abort
+    evalin('base','masterCounter = masterCounter + 1;');
+    evalin('base','masterTimer(masterCounter) = toc(masterTic);');
+    evalin('base',sprintf('masterTrialNumber(masterCounter) = %i;',runInfo.currTrial));
+
     % Update every frame to index data storage in TRIAL structure
     runInfo.flipIdx = runInfo.flipIdx + 1;
    
@@ -41,7 +49,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
     currentFrame = min(numVRFrames, currentFrame);
     frame2show = runInfo.vrEnvs{runInfo.vrEnvIdx}(:,:,:,currentFrame);
     
-    if isvalid(updateWindow)
+    if expInfo.useUpdateWindow && isvalid(updateWindow)
         updateWindow.printPreview(frame2show);
     end
     imageTexture = Screen('MakeTexture', hwInfo.screenInfo.windowPtr, frame2show); % Prepare frame for PTBs
@@ -95,7 +103,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         fprintf(2, 'Mouse speed was recorded as %.2f cm/s!!!\n', roomMovement/prefRefreshTime);
     end
     
-    if isvalid(updateWindow)
+    if expInfo.useUpdateWindow && isvalid(updateWindow)
         updateWindow.mousePosition.Value = runInfo.roomPosition;
         updateWindow.mouseSpeed.Value = roomMovement/prefRefreshTime;
         drawnow()
@@ -110,20 +118,20 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         [currLikStatus,hwInfo.likEnc] = hwInfo.likEnc.readPositionAndZero;
         if currLikStatus
             trialInfo.lick(runInfo.currTrial,runInfo.flipIdx) = 1;
-            if isvalid(updateWindow)
+            if expInfo.useUpdateWindow && isvalid(updateWindow)
                 updateWindow.updateLickIndicator(1)
                 drawnow()
             end
             if runInfo.inRewardZone
                 runInfo.lickInRewardZone = true; % indicate that the mouse licked in the reward zone
-                if isvalid(updateWindow)
+                if expInfo.useUpdateWindow && isvalid(updateWindow)
                     updateWindow.updateLamp('lick','on');
                     drawnow()
                 end
             end
         else
             trialInfo.lick(runInfo.currTrial,runInfo.flipIdx) = 0;
-            if isvalid(updateWindow)
+            if expInfo.useUpdateWindow && isvalid(updateWindow)
                 updateWindow.updateLickIndicator(0)
                 drawnow()
             end
@@ -144,7 +152,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         runInfo.timeInRewardZone = []; % clear timer
         runInfo.lickInRewardZone = false; % reset this counter to require the mice to lick within active stopping block
         runInfo.stopInRewardZone = false; % indicate that the mouse has left the reward zone
-        if isvalid(updateWindow)
+        if expInfo.useUpdateWindow && isvalid(updateWindow)
             updateWindow.updateLamp('lick','off');
             updateWindow.updateLamp('stop','off');
             drawnow()
@@ -155,7 +163,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         % notate that a successful stop is currently active
         trialInfo.stop(runInfo.currTrial,runInfo.flipIdx) = 1;
         runInfo.stopInRewardZone = true; % indicate that the mouse stopped in the reward zone
-        if isvalid(updateWindow)
+        if expInfo.useUpdateWindow && isvalid(updateWindow)
             updateWindow.updateLamp('stop','on');
             drawnow()
         end
@@ -194,7 +202,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
                 % trial outcome used to indicate active vs. passive
                 trialInfo.rewardDeliveryFrame(runInfo.currTrial) = runInfo.flipIdx;
                 trialInfo.outcome(runInfo.currTrial) = 1; 
-                if isvalid(updateWindow)
+                if expInfo.useUpdateWindow && isvalid(updateWindow)
                     updateWindow.rewardState(1);
                     drawnow()
                 end
@@ -208,7 +216,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
     if (endCorridorReached || trialDurationExceeded)
         if runInfo.rewardAvailable
             % Mouse didn't receive a reward
-            trialInfo.trialOutcome(runInfo.currTrial) = 0;
+            trialInfo.outcome(runInfo.currTrial) = 0;
         end
         
         % If this isn't the last trial, set up trialEnd script and break
@@ -232,7 +240,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         runInfo.abort = 1;
         if runInfo.rewardAvailable
             % Mouse didn't receive a reward
-            trialInfo.trialOutcome(runInfo.currTrial) = 0;
+            trialInfo.outcome(runInfo.currTrial) = 0;
         end
         VRmessage = sprintf('Manual Abort for animal %s, on date %s, session %s, trialNum %d.',...
                 expInfo.animalName, expInfo.dateStr, expInfo.sessionName, runInfo.currTrial);

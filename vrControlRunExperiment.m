@@ -52,6 +52,7 @@ if ~isfolder(expInfo.LocalDir), mkdir(expInfo.LocalDir); end
 expInfo.SESSION_NAME=[expInfo.LocalDir filesep  expInfo.expRef '_VRBehavior'];
 expInfo.centralLogName = [rigInfo.dirSave filesep 'centralLog'];
 expInfo.animalLogName  = [expInfo.AnimalDir filesep expInfo.animalName '_log'];
+expInfo.useUpdateWindow = expSettings.useUpdateWindow;
 
 trialStructure = vrControlTrialStructure(expSettings); % convert expSettings to trialStructure
 
@@ -125,10 +126,10 @@ else
     hwInfo.moveBackward = KbName('DownArrow');
     hwInfo.increaseSpeed = KbName('RightArrow');
     hwInfo.decreaseSpeed = KbName('LeftArrow');
-    hwInfo.minKeyboardSpeed = 0.1; % cm
-    hwInfo.maxKeyboardSpeed = 3; % cm
-    hwInfo.stepKeyboardSpeed = 0.5; % cm
-    hwInfo.keyboardSpeed = 1; % cm
+    hwInfo.minKeyboardSpeed = 1; % cm
+    hwInfo.maxKeyboardSpeed = 9; % cm
+    hwInfo.stepKeyboardSpeed = 1; % cm
+    hwInfo.keyboardSpeed = 3; % cm
 end
 
 
@@ -151,7 +152,6 @@ runInfo.vrEnvIdx = [];
 runInfo.pdLevel = 0; % always start at 0 because we have a ramp up from 0 indicating the ITI!
 runInfo.totalValveOpenTime = 0; % for tracking duration of reward delivery
 runInfo.trialStartTime = []; % timer for tracking duration of trial
-runInfo.useUpdateWindow = expSettings.useUpdateWindow; % Determines if updateWindow GUI is used (can be turned off if window closed)
 
 % Load VR Environment File(s)
 numOptions = length(expSettings.vrOptions);
@@ -214,12 +214,8 @@ trialInfo.pdLevel = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'doubl
 
 %% 6. Open vrUpdateWindow
 
-if runInfo.useUpdateWindow
-    updateWindow = vrControlUpdateWindow();
-else
-    figure(1001); clf;
-    updateWindow = [];
-end
+if expInfo.useUpdateWindow, updateWindow = vrControlUpdateWindow(); end
+
 
 %% -- now, prepare vrcontrol loop --
 
@@ -234,10 +230,14 @@ try
     VRmessage = ['ExpStart ' expInfo.animalName ' ' expInfo.dateStr ' ' expInfo.sessionName];
     rigInfo = rigInfo.sendUDPmessage(rigInfo, VRmessage);
     VRLogMessage(expInfo, VRmessage);
-    disp('Press key to continue after confirming Timeline has started...')
-    % If I don't call figure here, then pause hangs (because of the frame
-    % rate / and pause lines in initializeScreen_Blender... dunno why)
-    pause()
+    if expInfo.useUpdateWindow
+        disp('Press yellow start button to continue after confirming Timeline has started...')
+        updateWindow.enableStart();
+        waitfor(updateWindow, 'timelineActive', true);
+    else
+        disp('Press key to continue after confirming Timeline has started...')
+        pause()
+    end
 catch
     keyboard
 end
@@ -250,5 +250,5 @@ while ~isempty(fhandle)
 end
 
 fprintf(['TotalValveOpen = ' num2str(runInfo.totalValveOpenTime) ' ul\n']);
-clear all; close all; clear mex;
+close all;
 end

@@ -33,8 +33,7 @@ trialInfo.rewardAvailable(runInfo.currTrial) = rewAvailable;
 if ~rewAvailable, runInfo.rewardAvailable = 0; end % make it impossible to get a reward in this trial
 
 % Check if updateWindow is active and still open, then do update
-runInfo.useUpdateWindow = isvalid(updateWindow);
-if runInfo.useUpdateWindow
+if expInfo.useUpdateWindow && isvalid(updateWindow)
     ct = runInfo.currTrial;
     updateWindow.updateTrial(ct, expInfo.envIndex(ct), expInfo.intertrialInterval(ct), expInfo.getEnvName(trialInfo.vrEnvIdx(ct)), ...
         expInfo.roomLength(ct), expInfo.mvmtGain(ct), expInfo.rewardPosition(ct), expInfo.rewardTolerance(ct), ...
