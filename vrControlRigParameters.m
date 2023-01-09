@@ -68,10 +68,10 @@ switch upper(hostname)
     case 'ZINKO'
         % Local computer info (basic)
         rigInfo.computerName = 'ZINKO';
-        rigInfo.localFigurePosition = [4072 200];
+        rigInfo.localFigurePosition = [4000 200];
         rigInfo.screenNumber = 1; %Checked
         rigInfo.screenDist = 10; 
-        rigInfo.dialogueXYPosition = [3900 487]; %to check (parameters for GUI)
+        rigInfo.dialogueXYPosition = [4000 487]; %to check (parameters for GUI)
         %RigInfo.parameterscript = 'SetExperimentParametersB2_Blender';
 
         rigInfo.NIdevID = 'Dev1';

@@ -46,9 +46,11 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
     imageTexture = Screen('MakeTexture', hwInfo.screenInfo.windowPtr, frame2show); % Prepare frame for PTBs
     Screen('DrawTexture', hwInfo.screenInfo.windowPtr(1), imageTexture, [], hwInfo.screenInfo.screenRect, 0); % draw
     
-    keyboardSpeedLine = sprintf('\nKeyboard Speed: %.1fcm',hwInfo.keyboardSpeed);
-    DrawFormattedText(hwInfo.screenInfo.windowPtr, keyboardSpeedLine, 'center', 'center', [1 1 1]);
-
+    if rigInfo.useKeyboard
+        keyboardSpeedLine = sprintf('\nKeyboard Speed: %.1fcm',hwInfo.keyboardSpeed);
+        DrawFormattedText(hwInfo.screenInfo.windowPtr, keyboardSpeedLine, 'center', 'center', [1 1 1]);
+    end
+    
     % Update photodiode sync square
     trialInfo.pdLevel(runInfo.currTrial,runInfo.flipIdx) = runInfo.pdLevel;
     Screen('FillRect', hwInfo.screenInfo.windowPtr, mod(runInfo.pdLevel,2)*255, hwInfo.photodiodeRect.rect);
