@@ -7,6 +7,7 @@ end
 
 % Default Settings:
 rigInfo.computerName = hostname;
+rigInfo.localFigurePosition = [4072 200];
 rigInfo.screenNumber = 1;
 rigInfo.screenDist = 10;
 rigInfo.dialogueXYPosition = [3900 487];
@@ -67,6 +68,7 @@ switch upper(hostname)
     case 'ZINKO'
         % Local computer info (basic)
         rigInfo.computerName = 'ZINKO';
+        rigInfo.localFigurePosition = [4072 200];
         rigInfo.screenNumber = 1; %Checked
         rigInfo.screenDist = 10; 
         rigInfo.dialogueXYPosition = [3900 487]; %to check (parameters for GUI)
@@ -119,6 +121,7 @@ switch upper(hostname)
         rigInfo.TTLchannel = 'Port0/Line0'; %might be flipped.
         
     case 'DESKTOP-C0GU3US'
+        rigInfo.localFigurePosition = [680 500];
         rigInfo.dirSave = 'C:\Users\andrew\Documents\GitHub\vrControl\settingsFolder';
         rigInfo.useKeyboard = 1; % to control the linear track with the keyboard arrow keys
         rigInfo.screenNumber = 2;
@@ -126,6 +129,7 @@ switch upper(hostname)
         rigInfo.lickEncoderAvailable = false; 
 
     case upper('Andrews-MacBook-Pro.local')
+        rigInfo.localFigurePosition = [680 500];
         rigInfo.dirSave = '/Users/landauland/Documents/GitHub/vrControl/settingsFolder';
         rigInfo.useKeyboard = 1; % to control the linear track with the keyboard arrow keys
         rigInfo.filenameScreenCalib = '';
