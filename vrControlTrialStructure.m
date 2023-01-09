@@ -36,7 +36,11 @@ cTrial = initBlockLength;
 idxActive = vrControlReturnOrder(settings.vrOrder, settings.vrActive);
 numActive = length(idxActive);
 if numActive > 1
-    prevEnvFlag = ismember(idxActive, settings.initEnvIdx) * logical(initBlockLength); % Flags init environment unless there isn't one
+    if ~isempty(settings.initEnvIdx)
+        prevEnvFlag = ismember(idxActive, settings.initEnvIdx) * logical(initBlockLength); % Flags init environment unless there isn't one
+    else
+        prevEnvFlag = false(numActive,1);
+    end
     needEnvFlag = true(numActive,1); % Flags environment that need to be selected in miniblock
     assert(sum(prevEnvFlag)>=0 && sum(prevEnvFlag)<=1, 'Logical error in code.') % make sure this works correctly
 else
