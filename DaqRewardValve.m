@@ -9,6 +9,7 @@ classdef DaqRewardValve < hw.RewardController
   
   properties
     DaqSession; % should be a DAQ session containing just one output channel
+    TriggerSession; 
     DaqId = 'Dev1'; % the DAQ's device ID, e.g. 'Dev1'
     DaqChannelId = 'ao1'; % the DAQ's ID for the counter channel. e.g. 'ao0'
     % for controlling the reward valve
@@ -34,11 +35,11 @@ classdef DaqRewardValve < hw.RewardController
           
           % Create digital listener
           % Dev1/PFI2 is where we manually added a cable
-          obj.DaqSession.addTriggerConnection('External', 'Dev1/PFI2', 'StartTrigger')
+          obj.DaqSession.addTriggerConnection('External', 'Dev1/PFI2', 'StartTrigger');
           obj.DaqSession.ExternalTriggerTimeout = Inf;
           obj.DaqSession.TriggersPerRun = Inf;
           
-          prepareDigitalTrigger(obj)
+          prepareDigitalTrigger(obj);
       end
       
       function prepareDigitalTrigger(obj)
