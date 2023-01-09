@@ -1,7 +1,5 @@
 function habMod = vrControlRawHabituationModule()
 
-% position =  4072         270         560         420
-
 % Get RigInfo
 rigInfo = vrControlRigParameters(); 
 rigInfo.wheelCircumference = 2*pi*rigInfo.wheelRadius; % ATTENTION TO MINUTE DETAIL
