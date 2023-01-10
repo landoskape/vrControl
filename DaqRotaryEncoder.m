@@ -48,6 +48,8 @@ classdef DaqRotaryEncoder < PositionSensor
           z = obj.DaqSession.inputSingleScan;
           z = z(obj.DaqChannelIdx);
           x = z - obj.ZeroOffset;
+          if x > 2^31, x = x-2^32; end % account for wraps
+          if x < -2^31, x = x+2^32; end
       end
       function obj = zero(obj)
           [~,obj.ZeroOffset] = obj.readPosition();
