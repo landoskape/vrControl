@@ -1,4 +1,4 @@
-function [fhandle, runInfo, trialInfo] = vrControlPrepareTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow)
+function [fhandle, runInfo, trialInfo, expInfo] = vrControlPrepareTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, trainingWindow)
 
 fhandle =  @vrControlOperateTrial;
 
@@ -22,22 +22,33 @@ ListenChar(2);
 trialInfo.trialIdx(runInfo.currTrial) = runInfo.currTrial; % call me crazy
 trialInfo.startTime(runInfo.currTrial) = GetSecs; % time stamp!!!
 trialInfo.startPosition(runInfo.currTrial) = runInfo.roomPosition; % maybe we'll drop the mice in randomly sometimes...
-trialInfo.activeLicking(runInfo.currTrial) = expInfo.activeLick(runInfo.currTrial); % possible to make this update, for now it's just always the same
-trialInfo.activeStopping(runInfo.currTrial) = expInfo.activeStop(runInfo.currTrial); % possible to make this update, ...
-trialInfo.rewardPosition(runInfo.currTrial) = expInfo.rewardPosition(runInfo.currTrial);
-trialInfo.rewardTolerance(runInfo.currTrial) = expInfo.rewardTolerance(runInfo.currTrial);
-trialInfo.vrEnvIdx(runInfo.currTrial) = expInfo.envIndex(runInfo.currTrial);
+trialInfo.activeLicking(runInfo.currTrial) = trainingWindow.lickRequired.Value; 
+trialInfo.activeStopping(runInfo.currTrial) = trainingWindow.stopDuration.Value * trainingWindow.stopRequired.Value; 
+trialInfo.rewardPosition(runInfo.currTrial) = trainingWindow.rewardPosition.Value;
+trialInfo.rewardTolerance(runInfo.currTrial) = trainingWindow.rewardTolerance.Value;
+trialInfo.vrEnvIdx(runInfo.currTrial) = trainingWindow.envIdx.Value;
+runInfo.vrEnvIdx = trainingWindow.envIdx.Value; 
 
-rewAvailable = rand() < expInfo.probReward(runInfo.currTrial);
+fprintf('Before update in prepareTrial: %i cm\n', expInfo.roomLength(runInfo.currTrial));
+
+expInfo.roomLength(runInfo.currTrial) = trainingWindow.envLength.Value; 
+expInfo.mvmtGain(runInfo.currTrial) = trainingWindow.mvmtGain.Value; 
+expInfo.rewardPosition(runInfo.currTrial) = trainingWindow.rewardPosition.Value; 
+expInfo.rewardTolerance(runInfo.currTrial) = trainingWindow.rewardTolerance.Value; 
+expInfo.activeLick(runInfo.currTrial) = trainingWindow.lickRequired.Value; 
+expInfo.activeStop(runInfo.currTrial) = trainingWindow.stopDuration.Value * trainingWindow.stopRequired.Value; 
+
+fprintf('After update in prepareTrial: %i cm\n', expInfo.roomLength(runInfo.currTrial));
+
+rewAvailable = rand() < trainingWindow.probReward.Value;
 trialInfo.rewardAvailable(runInfo.currTrial) = rewAvailable;
 if ~rewAvailable, runInfo.rewardAvailable = 0; end % make it impossible to get a reward in this trial
 
 % Check if updateWindow is active and still open, then do update
-if expInfo.useUpdateWindow && isvalid(updateWindow)
-    updateWindow.updateTrial(runInfo.currTrial, expInfo, rewAvailable, runInfo.vrEnvs{runInfo.vrEnvIdx}(:,:,:,1));
-    % ct = runInfo.currTrial;
-    % updateWindow.updateTrial(ct, expInfo.envIndex(ct), expInfo.intertrialInterval(ct), expInfo.getEnvName(trialInfo.vrEnvIdx(ct)),expInfo.roomLength(ct), expInfo.mvmtGain(ct), expInfo.rewardPosition(ct), expInfo.rewardTolerance(ct),expInfo.probReward(ct), rewAvailable, expInfo.activeLick(ct), expInfo.activeStop(ct), runInfo.vrEnvs{runInfo.vrEnvIdx}(:,:,:,1))
-end
+trainingWindow.setCurrentTrial(runInfo.currTrial);
+trainingWindow.setRewardAvailable(1*rewAvailable); 
+trainingWindow.valueUpdated(false); % reset to indicate that we've updated everything
+trainingWindow.updateTrial(); % Update all features of GUI
 
 fprintf('TRIAL#:%d/%d, vrEnv:%d, RP:%.1fcm, AL:%d, AS:%d, MG:%.1f, RewAvailable:%d\n',...
     runInfo.currTrial, length(expInfo.envIndex), runInfo.vrEnvIdx, expInfo.rewardPosition(runInfo.currTrial),...
@@ -70,6 +81,7 @@ end
 
 trialInfo.iti(runInfo.currTrial) =  toc(runInfo.ititimer);
 
+fprintf('At end of prepareTrial: %i cm\n', expInfo.roomLength(runInfo.currTrial));
 
 
 

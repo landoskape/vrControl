@@ -488,3 +488,84 @@
 06-Jan-2023 16:07:44.773     ExpEnd testing 20230106 714 
         
         
+        
+11-Jan-2023 12:22:26.643     Starting new experiment with animal testing: 
+        
+11-Jan-2023 12:22:26.758     ExpStart testing 20230111 704 
+        
+11-Jan-2023 12:23:25.535     Starting new experiment with animal testing: 
+        
+11-Jan-2023 12:23:25.650     ExpStart testing 20230111 705 
+11-Jan-2023 12:23:28.051     TrialStart testing 20230111 705 1 
+11-Jan-2023 12:24:10.863     TrialEnd testing 20230111 705 
+11-Jan-2023 12:24:11.769     TrialStart testing 20230111 705 2 
+11-Jan-2023 12:24:53.362     TrialEnd testing 20230111 705 
+        
+11-Jan-2023 12:35:48.820     Starting new experiment with animal testing: 
+        
+11-Jan-2023 12:35:48.926     ExpStart testing 20230111 707 
+        
+11-Jan-2023 12:36:24.563     Starting new experiment with animal testing: 
+        
+11-Jan-2023 12:36:24.664     ExpStart testing 20230111 708 
+        
+11-Jan-2023 12:37:29.982     Starting new experiment with animal testing: 
+        
+11-Jan-2023 12:37:30.087     ExpStart testing 20230111 709 
+        
+11-Jan-2023 12:38:03.621     Starting new experiment with animal testing: 
+        
+11-Jan-2023 12:38:03.720     ExpStart testing 20230111 710 
+11-Jan-2023 12:38:06.075     TrialStart testing 20230111 710 1 
+11-Jan-2023 12:38:12.667     TrialEnd testing 20230111 710 
+11-Jan-2023 12:38:13.510     TrialStart testing 20230111 710 2 
+11-Jan-2023 12:38:31.427     TrialEnd testing 20230111 710 
+11-Jan-2023 12:38:32.563     TrialStart testing 20230111 710 3 
+11-Jan-2023 12:38:58.098     Manual Abort for animal testing, on date 20230111, session 710, trialNum 3. 
+11-Jan-2023 12:38:58.469     TrialEnd testing 20230111 710 
+11-Jan-2023 12:38:58.551     VR_ExpEnd testing 20230111 710 
+11-Jan-2023 12:38:58.610     ExpEnd testing 20230111 710 
+        
+        
+        
+11-Jan-2023 12:43:59.214     Starting new experiment with animal testing: 
+        
+11-Jan-2023 12:43:59.337     ExpStart testing 20230111 711 
+11-Jan-2023 12:44:01.995     TrialStart testing 20230111 711 1 
+11-Jan-2023 12:44:10.613     TrialEnd testing 20230111 711 
+11-Jan-2023 12:44:11.640     TrialStart testing 20230111 711 2 
+11-Jan-2023 12:44:34.396     TrialEnd testing 20230111 711 
+11-Jan-2023 12:44:35.323     TrialStart testing 20230111 711 3 
+        
+11-Jan-2023 12:47:33.753     Starting new experiment with animal testing: 
+        
+11-Jan-2023 12:47:33.866     ExpStart testing 20230111 712 
+11-Jan-2023 12:47:37.287     TrialStart testing 20230111 712 1 
+11-Jan-2023 12:47:58.017     TrialEnd testing 20230111 712 
+        
+11-Jan-2023 12:50:03.318     Starting new experiment with animal testing: 
+        
+11-Jan-2023 12:50:03.459     ExpStart testing 20230111 713 
+11-Jan-2023 12:50:05.915     TrialStart testing 20230111 713 1 
+11-Jan-2023 12:50:21.192     TrialEnd testing 20230111 713 
+11-Jan-2023 12:50:22.189     TrialStart testing 20230111 713 2 
+        
+11-Jan-2023 12:53:05.401     Starting new experiment with animal testing: 
+        
+11-Jan-2023 12:53:05.489     ExpStart testing 20230111 714 
+11-Jan-2023 12:53:09.673     TrialStart testing 20230111 714 1 
+11-Jan-2023 12:53:26.988     TrialEnd testing 20230111 714 
+11-Jan-2023 12:53:27.945     TrialStart testing 20230111 714 2 
+        
+11-Jan-2023 12:55:51.611     Starting new experiment with animal testing: 
+        
+11-Jan-2023 12:55:51.704     ExpStart testing 20230111 715 
+11-Jan-2023 12:55:55.057     TrialStart testing 20230111 715 1 
+11-Jan-2023 12:56:10.320     TrialEnd testing 20230111 715 
+11-Jan-2023 12:56:11.802     TrialStart testing 20230111 715 2 
+11-Jan-2023 12:56:22.778     Manual Abort for animal testing, on date 20230111, session 715, trialNum 2. 
+11-Jan-2023 12:56:23.115     TrialEnd testing 20230111 715 
+11-Jan-2023 12:56:23.184     VR_ExpEnd testing 20230111 715 
+11-Jan-2023 12:56:23.245     ExpEnd testing 20230111 715 
+        
+        

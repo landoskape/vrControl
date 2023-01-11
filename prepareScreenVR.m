@@ -32,8 +32,6 @@ end
 PsychImagingNonverbose('AddTask', 'AllViews', 'FlipHorizontal');
 evalc('[screenInfo.windowPtr, screenInfo.screenRect] = PsychImaging(''OpenWindow'', whichScreen, screenInfo.grayIndex);');
 
-display(screenInfo.screenRect);
-
 screenInfo.Xmax = RectWidth(screenInfo.screenRect);
 screenInfo.Ymax = RectHeight(screenInfo.screenRect);
 screenInfo.MonitorType = 'Apple Ipad';

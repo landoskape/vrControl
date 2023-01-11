@@ -1,4 +1,4 @@
-function [fhandle, runInfo, trialInfo] = vrControlTrialEnd(rigInfo, ~, expInfo, runInfo, trialInfo, ~)
+function [fhandle, runInfo, trialInfo, expInfo] = vrControlTrialEnd(rigInfo, ~, expInfo, runInfo, trialInfo, ~)
 
 VRmessage = ['TrialEnd ' expInfo.animalName ' ' expInfo.dateStr ' ' expInfo.sessionName];
 rigInfo.sendUDPmessage(rigInfo, VRmessage);
