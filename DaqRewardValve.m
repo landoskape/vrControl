@@ -50,6 +50,9 @@ classdef DaqRewardValve < hw.RewardController
       end
       
       function prepareRewardDelivery(obj, size, unitytype)
+          if obj.DaqSession.IsRunning
+              obj.DaqSession.stop();
+          end
           if nargin<3
               unitytype = 'ul';
           end
@@ -65,9 +68,9 @@ classdef DaqRewardValve < hw.RewardController
           nOpenSamples = round(duration*sampleRate);
           samples = [obj.OpenValue*ones(nOpenSamples, 1) ; ...
               obj.ClosedValue*ones(3,1)];
-          if obj.DaqSession.IsRunning
-              obj.DaqSession.wait();
-          end
+          %if obj.DaqSession.IsRunning
+          %    obj.DaqSession.wait();
+          %end
           obj.DaqSession.queueOutputData(samples);
           %obj.DaqSession.prepare() % probably unnecessary
           obj.DaqSession.startBackground();
