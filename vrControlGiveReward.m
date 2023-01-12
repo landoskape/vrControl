@@ -1,4 +1,4 @@
-function runInfo = vrControlGiveReward(tag, expInfo, runInfo, hwInfo)
+function runInfo = vrControlGiveReward(tag, expInfo, runInfo, hwInfo, rigInfo)
 
 if strcmp(runInfo.rewardStartT.Running, 'off') ...
         && strcmp(runInfo.STOPrewardStopT.Running,'off')...
@@ -11,20 +11,20 @@ if strcmp(runInfo.rewardStartT.Running, 'off') ...
 
     switch tag
         case 'STOP'
-            hwInfo.rewVal.deliverBackground(rigInfo.BASEvalveTime,'ul');
-            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.BASEvalveTime;
+            hwInfo.rewVal.activateDigitalDelivery(); %hwInfo.rewVal.deliverBackground(rigInfo.BASEvalveTime,'ul');
+            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
         case 'ACTIVE'
-            hwInfo.rewVal.deliverBackground(rigInfo.ACTVvalveTime,'ul');
-            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.ACTVvalveTime;
+            hwInfo.rewVal.activateDigitalDelivery(); %hwInfo.rewVal.deliverBackground(rigInfo.BASEvalveTime,'ul');
+            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
         case 'PASSIVE'
-            hwInfo.rewVal.deliverBackground(rigInfo.PASSvalveTime,'ul');
+            hwInfo.rewVal.activateDigitalDelivery(); %hwInfo.rewVal.deliverBackground(rigInfo.BASEvalveTime,'ul');
             runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
         case 'BASE'
-            hwInfo.rewVal.deliverBackground(rigInfo.BASEvalveTime,'ul');
-            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.BASEvalveTime;
+            hwInfo.rewVal.activateDigitalDelivery(); %hwInfo.rewVal.deliverBackground(rigInfo.BASEvalveTime,'ul');
+            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
         case 'USER'
-            hwInfo.rewVal.deliverBackground(rigInfo.BASEvalveTime,'ul');
-            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.BASEvalveTime;
+            hwInfo.rewVal.activateDigitalDelivery(); %hwInfo.rewVal.deliverBackground(rigInfo.BASEvalveTime,'ul');
+            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
         otherwise
             fprintf(2, 'giveReward tag not recognized, reward not delivered...\n');
     end

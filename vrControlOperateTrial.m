@@ -1,7 +1,5 @@
 function [fhandle, runInfo, trialInfo, expInfo] = vrControlOperateTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, trainingWindow)
 
-fprintf('Beginning of operateTrial: %i cm\n', expInfo.roomLength(runInfo.currTrial));
-
 fhandle = @vrControlTrialEnd;
 
 % make a flip here to establish vbl
@@ -29,8 +27,6 @@ if ~rigInfo.useKeyboard
         hwInfo.likEnc = hwInfo.likEnc.zero(); % set lick encoder to zero
     end
 end
-
-fprintf('Later in operateTrial: %i cm\n', expInfo.roomLength(runInfo.currTrial));
 
 % -- main program that operates the trial --
 while ~runInfo.move2NextTrial && ~runInfo.abort
@@ -106,8 +102,6 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         drawnow()
     end
     
-    fprintf('During while loop of operateTrial: %i cm\n', expInfo.roomLength(runInfo.currTrial));
-
     % --- mouse behavior --- reward zone entry ---
     runInfo.inRewardZone = abs(runInfo.roomPosition - expInfo.rewardPosition(runInfo.currTrial)) < expInfo.rewardTolerance(runInfo.currTrial);
     trialInfo.inRewardZone(runInfo.currTrial, runInfo.flipIdx) = 1;
@@ -193,7 +187,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
             % Give reward if in reward zone and lickValid and stopValid
             if lickValid && stopValid
                 if ~rigInfo.useKeyboard
-                    runInfo = vrControlGiveReward('PASSIVE', expInfo, runInfo, hwInfo);
+                    runInfo = vrControlGiveReward('PASSIVE', expInfo, runInfo, hwInfo, rigInfo);
                 else
                     fprintf(1, 'Reward would be delivered now!\n');
                 end
@@ -249,7 +243,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
             hwInfo.session.outputSingleScan(false);
         end
     elseif keyPressed == 2
-        runInfo = vrControlGiveReward('USER', expInfo, runInfo, hwInfo);
+        runInfo = vrControlGiveReward('USER', expInfo, runInfo, hwInfo, rigInfo);
         trialInfo.userRewardNumber(runInfo.currTrial) = trialInfo.userRewardNumber(runInfo.currTrial) + 1;
         trialInfo.userRewardFrames{runInfo.currTrial}(end+1) = runInfo.flipIdx;
     end

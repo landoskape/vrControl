@@ -121,6 +121,9 @@ if ~rigInfo.useKeyboard
     hwInfo.rewVal.close;
     
     
+    hwInfo.rewVal.prepareRewardDelivery(rigInfo.PASSvalveTime,'ul');
+    hwInfo.rewVal.prepareDigitalTrigger()
+    
     %#ATL: Needs updating:
     % -- 
     % Need to add hwInfo.rewVal.prepareRewardDelivery(obj, size, unitytype)
@@ -166,6 +169,7 @@ runInfo.vrEnvIdx = [];
 runInfo.pdLevel = 0; % always start at 0 because we have a ramp up from 0 indicating the ITI!
 runInfo.totalValveOpenTime = 0; % for tracking duration of reward delivery
 runInfo.trialStartTime = []; % timer for tracking duration of trial
+runInfo.trainingTimer = tic;
 
 % Load VR Environment File(s)
 numOptions = length(expSettings.vrOptions);
@@ -276,5 +280,6 @@ while ~isempty(fhandle)
 end
 
 fprintf(['TotalValveOpen = ' num2str(runInfo.totalValveOpenTime) ' ul\n']);
+delete(trainingWindow);
 close all;
 end

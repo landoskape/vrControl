@@ -29,16 +29,12 @@ trialInfo.rewardTolerance(runInfo.currTrial) = trainingWindow.rewardTolerance.Va
 trialInfo.vrEnvIdx(runInfo.currTrial) = trainingWindow.envIdx.Value;
 runInfo.vrEnvIdx = trainingWindow.envIdx.Value; 
 
-fprintf('Before update in prepareTrial: %i cm\n', expInfo.roomLength(runInfo.currTrial));
-
 expInfo.roomLength(runInfo.currTrial) = trainingWindow.envLength.Value; 
 expInfo.mvmtGain(runInfo.currTrial) = trainingWindow.mvmtGain.Value; 
 expInfo.rewardPosition(runInfo.currTrial) = trainingWindow.rewardPosition.Value; 
 expInfo.rewardTolerance(runInfo.currTrial) = trainingWindow.rewardTolerance.Value; 
 expInfo.activeLick(runInfo.currTrial) = trainingWindow.lickRequired.Value; 
 expInfo.activeStop(runInfo.currTrial) = trainingWindow.stopDuration.Value * trainingWindow.stopRequired.Value; 
-
-fprintf('After update in prepareTrial: %i cm\n', expInfo.roomLength(runInfo.currTrial));
 
 rewAvailable = rand() < trainingWindow.probReward.Value;
 trialInfo.rewardAvailable(runInfo.currTrial) = rewAvailable;
@@ -54,6 +50,10 @@ fprintf('TRIAL#:%d/%d, vrEnv:%d, RP:%.1fcm, AL:%d, AS:%d, MG:%.1f, RewAvailable:
     runInfo.currTrial, length(expInfo.envIndex), runInfo.vrEnvIdx, expInfo.rewardPosition(runInfo.currTrial),...
     expInfo.activeLick(runInfo.currTrial),expInfo.activeStop(runInfo.currTrial),...
     expInfo.mvmtGain(runInfo.currTrial),rewAvailable);
+
+elapsedTrainingTime = seconds(toc(runInfo.trainingTimer));
+elapsedTrainingTime.Format = 'mm:ss'; 
+fprintf('Elapsed Time During Training: %s\n', elapsedTrainingTime);
 
 % Perform Trial Initiation sequence
 ifi = Screen('GetFlipInterval',hwInfo.screenInfo.windowPtr);
@@ -80,10 +80,6 @@ while toc(runInfo.ititimer) < expInfo.intertrialInterval(runInfo.currTrial)
 end
 
 trialInfo.iti(runInfo.currTrial) =  toc(runInfo.ititimer);
-
-fprintf('At end of prepareTrial: %i cm\n', expInfo.roomLength(runInfo.currTrial));
-
-
 
 
 
