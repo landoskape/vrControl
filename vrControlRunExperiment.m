@@ -28,6 +28,7 @@ rigInfo = rigInfo.initialiseUDPports(rigInfo);
 
 %% 2. Handle expInfo (trial parameters and experimental settings & info)
 
+expInfo.trainingMode = false;
 expInfo.animalName = expSettings.animalName;
 expInfo.sessionName = expSettings.sessionOffset + 1; 
 expInfo.dateStr = datestr(now, 'yyyymmdd');

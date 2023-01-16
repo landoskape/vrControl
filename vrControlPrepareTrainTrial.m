@@ -1,4 +1,4 @@
-function [fhandle, runInfo, trialInfo, expInfo] = vrControlPrepareTrainTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, trainingWindow)
+function [fhandle, runInfo, trialInfo, expInfo] = vrControlPrepareTrainTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow)
 
 fhandle =  @vrControlOperateTrial;
 
@@ -18,42 +18,65 @@ runInfo.stopInRewardZone = false; % keep track of behavioral criterion for rewar
 
 ListenChar(2);
 
-% Set TRIAL values (update each trial)
-trialInfo.trialIdx(runInfo.currTrial) = runInfo.currTrial; % call me crazy
-trialInfo.startTime(runInfo.currTrial) = GetSecs; % time stamp!!!
-trialInfo.startPosition(runInfo.currTrial) = runInfo.roomPosition; % maybe we'll drop the mice in randomly sometimes...
-trialInfo.activeLicking(runInfo.currTrial) = trainingWindow.lickRequired.Value; 
-trialInfo.activeStopping(runInfo.currTrial) = trainingWindow.stopDuration.Value * trainingWindow.stopRequired.Value; 
-trialInfo.rewardPosition(runInfo.currTrial) = trainingWindow.rewardPosition.Value;
-trialInfo.rewardTolerance(runInfo.currTrial) = trainingWindow.rewardTolerance.Value;
-trialInfo.vrEnvIdx(runInfo.currTrial) = trainingWindow.envIdx.Value;
-runInfo.vrEnvIdx = trainingWindow.envIdx.Value; 
+if expInfo.trainingMode
+    % Set TRIAL values (update each trial)
+    trialInfo.trialIdx(runInfo.currTrial) = runInfo.currTrial; % call me crazy
+    trialInfo.startTime(runInfo.currTrial) = GetSecs; % time stamp!!!
+    trialInfo.startPosition(runInfo.currTrial) = runInfo.roomPosition; % maybe we'll drop the mice in randomly sometimes...
+    trialInfo.activeLicking(runInfo.currTrial) = updateWindow.lickRequired.Value; 
+    trialInfo.activeStopping(runInfo.currTrial) = updateWindow.stopDuration.Value * updateWindow.stopRequired.Value; 
+    trialInfo.rewardPosition(runInfo.currTrial) = updateWindow.rewardPosition.Value;
+    trialInfo.rewardTolerance(runInfo.currTrial) = updateWindow.rewardTolerance.Value;
+    trialInfo.vrEnvIdx(runInfo.currTrial) = updateWindow.envIdx.Value;
+    runInfo.vrEnvIdx = updateWindow.envIdx.Value; 
 
-expInfo.roomLength(runInfo.currTrial) = trainingWindow.envLength.Value; 
-expInfo.mvmtGain(runInfo.currTrial) = trainingWindow.mvmtGain.Value; 
-expInfo.rewardPosition(runInfo.currTrial) = trainingWindow.rewardPosition.Value; 
-expInfo.rewardTolerance(runInfo.currTrial) = trainingWindow.rewardTolerance.Value; 
-expInfo.activeLick(runInfo.currTrial) = trainingWindow.lickRequired.Value; 
-expInfo.activeStop(runInfo.currTrial) = trainingWindow.stopDuration.Value * trainingWindow.stopRequired.Value; 
+    expInfo.roomLength(runInfo.currTrial) = updateWindow.envLength.Value; 
+    expInfo.mvmtGain(runInfo.currTrial) = updateWindow.mvmtGain.Value; 
+    expInfo.rewardPosition(runInfo.currTrial) = updateWindow.rewardPosition.Value; 
+    expInfo.rewardTolerance(runInfo.currTrial) = updateWindow.rewardTolerance.Value; 
+    expInfo.activeLick(runInfo.currTrial) = updateWindow.lickRequired.Value; 
+    expInfo.activeStop(runInfo.currTrial) = updateWindow.stopDuration.Value * updateWindow.stopRequired.Value; 
 
-rewAvailable = rand() < trainingWindow.probReward.Value;
-trialInfo.rewardAvailable(runInfo.currTrial) = rewAvailable;
-if ~rewAvailable, runInfo.rewardAvailable = 0; end % make it impossible to get a reward in this trial
+    rewAvailable = rand() < updateWindow.probReward.Value;
+    trialInfo.rewardAvailable(runInfo.currTrial) = rewAvailable;
+    if ~rewAvailable, runInfo.rewardAvailable = 0; end % make it impossible to get a reward in this trial
 
-% Check if updateWindow is active and still open, then do update
-trainingWindow.setCurrentTrial(runInfo.currTrial);
-trainingWindow.setRewardAvailable(1*rewAvailable); 
-trainingWindow.valueUpdated(false); % reset to indicate that we've updated everything
-trainingWindow.updateTrial(); % Update all features of GUI
+    % Check if updateWindow is active and still open, then do update
+    updateWindow.setCurrentTrial(runInfo.currTrial);
+    updateWindow.setRewardAvailable(1*rewAvailable); 
+    updateWindow.valueUpdated(false); % reset to indicate that we've updated everything
+    updateWindow.updateTrial(); % Update all features of GUI
+else
+    % Set TRIAL values (update each trial)
+    trialInfo.trialIdx(runInfo.currTrial) = runInfo.currTrial; % call me crazy
+    trialInfo.startTime(runInfo.currTrial) = GetSecs; % time stamp!!!
+    trialInfo.startPosition(runInfo.currTrial) = runInfo.roomPosition; % maybe we'll drop the mice in randomly sometimes...
+    trialInfo.activeLicking(runInfo.currTrial) = expInfo.activeLick(runInfo.currTrial); % possible to make this update, for now it's just always the same
+    trialInfo.activeStopping(runInfo.currTrial) = expInfo.activeStop(runInfo.currTrial); % possible to make this update, ...
+    trialInfo.rewardPosition(runInfo.currTrial) = expInfo.rewardPosition(runInfo.currTrial);
+    trialInfo.rewardTolerance(runInfo.currTrial) = expInfo.rewardTolerance(runInfo.currTrial);
+    trialInfo.vrEnvIdx(runInfo.currTrial) = expInfo.envIndex(runInfo.currTrial);
+
+    rewAvailable = rand() < expInfo.probReward(runInfo.currTrial);
+    trialInfo.rewardAvailable(runInfo.currTrial) = rewAvailable;
+    if ~rewAvailable, runInfo.rewardAvailable = 0; end % make it impossible to get a reward in this trial
+
+    % Check if updateWindow is active and still open, then do update
+    if expInfo.useUpdateWindow && isvalid(updateWindow)
+        updateWindow.updateTrial(runInfo.currTrial, expInfo, rewAvailable, runInfo.vrEnvs{runInfo.vrEnvIdx}(:,:,:,1));
+    end
+end
 
 fprintf('TRIAL#:%d/%d, vrEnv:%d, RP:%.1fcm, AL:%d, AS:%d, MG:%.1f, RewAvailable:%d\n',...
     runInfo.currTrial, length(expInfo.envIndex), runInfo.vrEnvIdx, expInfo.rewardPosition(runInfo.currTrial),...
     expInfo.activeLick(runInfo.currTrial),expInfo.activeStop(runInfo.currTrial),...
     expInfo.mvmtGain(runInfo.currTrial),rewAvailable);
 
-elapsedTrainingTime = seconds(toc(runInfo.trainingTimer));
-elapsedTrainingTime.Format = 'mm:ss'; 
-fprintf('Elapsed Time During Training: %s\n', elapsedTrainingTime);
+if expInfo.trainingMode
+    elapsedTrainingTime = seconds(toc(runInfo.trainingTimer));
+    elapsedTrainingTime.Format = 'mm:ss'; 
+    fprintf('Elapsed Time During Training: %s\n', elapsedTrainingTime);
+end
 
 % Perform Trial Initiation sequence
 ifi = Screen('GetFlipInterval',hwInfo.screenInfo.windowPtr);

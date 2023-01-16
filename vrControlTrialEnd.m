@@ -18,5 +18,3 @@ end
 fhandle = @vrControlPrepareTrial;
 
 
-
-
