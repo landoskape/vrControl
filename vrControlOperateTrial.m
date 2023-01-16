@@ -1,4 +1,4 @@
-function [fhandle, runInfo, trialInfo, expInfo] = vrControlOperateTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, trainingWindow)
+function [fhandle, runInfo, trialInfo, expInfo] = vrControlOperateTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow)
 
 fhandle = @vrControlTrialEnd;
 
@@ -40,8 +40,8 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
     currentFrame = min(numVRFrames, currentFrame);
     frame2show = runInfo.vrEnvs{runInfo.vrEnvIdx}(:,:,:,currentFrame);
     
-    if expInfo.useUpdateWindow && isvalid(trainingWindow)
-        trainingWindow.printPreview(frame2show);
+    if expInfo.useUpdateWindow && isvalid(updateWindow)
+        updateWindow.printPreview(frame2show);
     end
     imageTexture = Screen('MakeTexture', hwInfo.screenInfo.windowPtr, frame2show); % Prepare frame for PTBs
     Screen('DrawTexture', hwInfo.screenInfo.windowPtr(1), imageTexture, [], hwInfo.screenInfo.screenRect, 0); % draw
@@ -96,9 +96,9 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         fprintf(2, 'Mouse speed was recorded as %.2f cm/s!!!\n', roomMovement/prefRefreshTime);
     end
     
-    if expInfo.useUpdateWindow && isvalid(trainingWindow)
-        trainingWindow.updatePosition(runInfo.roomPosition);
-        trainingWindow.updateSpeed(roomMovement/prefRefreshTime);
+    if expInfo.useUpdateWindow && isvalid(updateWindow)
+        updateWindow.updatePosition(runInfo.roomPosition, roomMovement);
+        updateWindow.updateSpeed(roomMovement/prefRefreshTime);
         drawnow()
     end
     
@@ -111,21 +111,21 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         [currLikStatus,hwInfo.likEnc] = hwInfo.likEnc.readPositionAndZero;
         if currLikStatus
             trialInfo.lick(runInfo.currTrial,runInfo.flipIdx) = 1;
-            if expInfo.useUpdateWindow && isvalid(trainingWindow)
-                trainingWindow.updateLickIndicator(1)
+            if expInfo.useUpdateWindow && isvalid(updateWindow)
+                updateWindow.updateLickIndicator(1)
                 drawnow()
             end
             if runInfo.inRewardZone
                 runInfo.lickInRewardZone = true; % indicate that the mouse licked in the reward zone
-                if expInfo.useUpdateWindow && isvalid(trainingWindow)
-                    trainingWindow.updateLickLamp(1);
+                if expInfo.useUpdateWindow && isvalid(updateWindow)
+                    updateWindow.updateLickLamp(1);
                     drawnow()
                 end
             end
         else
             trialInfo.lick(runInfo.currTrial,runInfo.flipIdx) = 0;
-            if expInfo.useUpdateWindow && isvalid(trainingWindow)
-                trainingWindow.updateLickIndicator(0)
+            if expInfo.useUpdateWindow && isvalid(updateWindow)
+                updateWindow.updateLickIndicator(0)
                 drawnow()
             end
         end
@@ -145,9 +145,9 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         runInfo.timeInRewardZone = []; % clear timer
         runInfo.lickInRewardZone = false; % reset this counter to require the mice to lick within active stopping block
         runInfo.stopInRewardZone = false; % indicate that the mouse has left the reward zone
-        if expInfo.useUpdateWindow && isvalid(trainingWindow)
-            trainingWindow.updateLickLamp(0);
-            trainingWindow.updateStopLamp(0);
+        if expInfo.useUpdateWindow && isvalid(updateWindow)
+            updateWindow.updateLickLamp(0);
+            updateWindow.updateStopLamp(0);
             drawnow()
         end
     end
@@ -156,8 +156,8 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         % notate that a successful stop is currently active
         trialInfo.stop(runInfo.currTrial,runInfo.flipIdx) = 1;
         runInfo.stopInRewardZone = true; % indicate that the mouse stopped in the reward zone
-        if expInfo.useUpdateWindow && isvalid(trainingWindow)
-            trainingWindow.updateStopLamp(0);
+        if expInfo.useUpdateWindow && isvalid(updateWindow)
+            updateWindow.updateStopLamp(0);
             drawnow()
         end
     end
@@ -195,8 +195,8 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
                 % trial outcome used to indicate active vs. passive
                 trialInfo.rewardDeliveryFrame(runInfo.currTrial) = runInfo.flipIdx;
                 trialInfo.outcome(runInfo.currTrial) = 1; 
-                if expInfo.useUpdateWindow && isvalid(trainingWindow)
-                    trainingWindow.rewardState(1);
+                if expInfo.useUpdateWindow && isvalid(updateWindow)
+                    updateWindow.rewardState(1);
                     drawnow()
                 end
             end
