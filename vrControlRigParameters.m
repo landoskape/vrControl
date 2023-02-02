@@ -17,7 +17,7 @@ rigInfo.NIRotEnc = 'ctr0';
 rigInfo.NILicEnc = 'ctr1';
 rigInfo.NIRewVal = 'ao0';
 rigInfo.photodiodePos = 'right';
-rigInfo.photodiodeSize = [650 190];
+rigInfo.photodiodeSize = [650 190]; % 650 190
 rigInfo.rotEncPos = 'left';
 rigInfo.rotEncSign = -1;
 rigInfo.wheelToVR = 4000;
@@ -80,7 +80,7 @@ switch upper(hostname)
         rigInfo.NILicEnc = 'ctr1'; 
         rigInfo.NIRewVal = 'ao0';
         rigInfo.photodiodePos  = 'right';
-        rigInfo.photodiodeSize = [650 190];  %% Enny: CHECK   %[250 75];
+        rigInfo.photodiodeSize = [500 150]; % [650 190] %% Enny: CHECK   %[250 75];
         rigInfo.rotEncPos = 'left'; 
         rigInfo.rotEncSign = -1;
         rigInfo.wheelToVR = 4000;
@@ -88,9 +88,9 @@ switch upper(hostname)
         rigInfo.lickEncoderAvailable = true; 
 
         rigInfo.STOPvalveTime = 0.0;
-        rigInfo.BASEvalveTime = 3.0;
-        rigInfo.PASSvalveTime = 3.0;
-        rigInfo.ACTVvalveTime = 3.0;
+        rigInfo.BASEvalveTime = 4.0;
+        rigInfo.PASSvalveTime = 4.0;
+        rigInfo.ACTVvalveTime = 4.0;
         rigInfo.PrefRefreshRate = 30;
 
         % Saving directories: remote

@@ -121,6 +121,8 @@ if ~rigInfo.useKeyboard
     hwInfo.rewVal.ClosedValue = 0;
     hwInfo.rewVal.close;
     
+    hwInfo.rewVal.prepareRewardDelivery(rigInfo.PASSvalveTime,'ul');
+    hwInfo.rewVal.prepareDigitalTrigger()
     
     %#ATL: Needs updating:
     % -- 

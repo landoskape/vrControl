@@ -1,4 +1,4 @@
-function [fhandle, runInfo, trialInfo, expInfo] = vrControlPrepareTrainTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow)
+function [fhandle, runInfo, trialInfo, expInfo] = vrControlPrepareTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow)
 
 fhandle =  @vrControlOperateTrial;
 
@@ -29,14 +29,15 @@ if expInfo.trainingMode
     trialInfo.rewardTolerance(runInfo.currTrial) = updateWindow.rewardTolerance.Value;
     trialInfo.vrEnvIdx(runInfo.currTrial) = updateWindow.envIdx.Value;
     runInfo.vrEnvIdx = updateWindow.envIdx.Value; 
-
+    
     expInfo.roomLength(runInfo.currTrial) = updateWindow.envLength.Value; 
     expInfo.mvmtGain(runInfo.currTrial) = updateWindow.mvmtGain.Value; 
     expInfo.rewardPosition(runInfo.currTrial) = updateWindow.rewardPosition.Value; 
     expInfo.rewardTolerance(runInfo.currTrial) = updateWindow.rewardTolerance.Value; 
     expInfo.activeLick(runInfo.currTrial) = updateWindow.lickRequired.Value; 
     expInfo.activeStop(runInfo.currTrial) = updateWindow.stopDuration.Value * updateWindow.stopRequired.Value; 
-
+    
+    
     rewAvailable = rand() < updateWindow.probReward.Value;
     trialInfo.rewardAvailable(runInfo.currTrial) = rewAvailable;
     if ~rewAvailable, runInfo.rewardAvailable = 0; end % make it impossible to get a reward in this trial
