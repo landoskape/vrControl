@@ -281,6 +281,5 @@ while ~isempty(fhandle)
 end
 
 fprintf(['TotalValveOpen = ' num2str(runInfo.totalValveOpenTime) ' ul\n']);
-delete(trainingWindow);
-close all;
+
 end

@@ -85,6 +85,9 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
         wheelPosition = hwInfo.rotEnc.readPositionAndZero;
         dbx = rigInfo.rotEncSign * wheelPosition; % apply correct sign for forward movement
         roomMovement = dbx / rigInfo.wheelToVR * rigInfo.wheelCircumference;
+        if expInfo.preventBackwardMovement
+            roomMovement = max(roomMovement,0);
+        end
     end
     % fprintf('Wheel Position: %.1f, Room Movement: %.1f\n', wheelPosition, roomMovement);
     if isnan(roomMovement), roomMovement=0; end % Inherited from previous code, don't know why this would ever be a nan
