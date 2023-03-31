@@ -3,7 +3,7 @@ function trialStructure = vrControlTrialStructure(settings)
 % How many trials
 trialStructure.maxTrials = settings.maxTrialNumber;
 trialStructure.maxDuration = settings.maxTrialDuration;
-trialStructure.preventBackwardsMovement = settings.preventBackwardsMovement;
+trialStructure.preventBackwardMovement = settings.preventBackwardMovement;
 
 % Inline for getting path to vrEnv files
 trialStructure.getEnvName = @(idx) settings.vrOptions{idx};

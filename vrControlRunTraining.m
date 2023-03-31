@@ -58,8 +58,8 @@ expInfo.useUpdateWindow = expSettings.useUpdateWindow;
 trialStructure = vrControlTrialStructure(expSettings); % convert expSettings to trialStructure
 
 % Copy trial data from trial structure to expInfo
-fields2copy = {'maxTrials','maxDuration','envIndex','roomLength','rewardPosition','rewardTolerance',...
-    'intertrialInterval','probReward','activeLick','activeStop','mvmtGain','getEnvName'};
+fields2copy = {'maxTrials','maxDuration','preventBackwardMovement','envIndex','roomLength','rewardPosition',...
+    'rewardTolerance','intertrialInterval','probReward','activeLick','activeStop','mvmtGain','getEnvName'};
 for f = 1:length(fields2copy), expInfo.(fields2copy{f}) = trialStructure.(fields2copy{f}); end
 
 expInfo.lickEncoder = rigInfo.lickEncoderAvailable && ...
