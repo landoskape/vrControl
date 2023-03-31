@@ -569,3 +569,14 @@
 11-Jan-2023 12:56:23.245     ExpEnd testing 20230111 715 
         
         
+        
+31-Mar-2023 11:43:42.672     Starting new experiment with animal test: 
+        
+31-Mar-2023 11:43:42.687     ExpStart test 20230331 703 
+31-Mar-2023 11:43:45.294     TrialStart test 20230331 703 1 
+31-Mar-2023 11:43:53.680     Manual Abort for animal test, on date 20230331, session 703, trialNum 1. 
+31-Mar-2023 11:43:53.985     TrialEnd test 20230331 703 
+31-Mar-2023 11:43:54.011     VR_ExpEnd test 20230331 703 
+31-Mar-2023 11:43:54.035     ExpEnd test 20230331 703 
+        
+        

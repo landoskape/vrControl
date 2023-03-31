@@ -95,9 +95,7 @@ end
 numCond = length(settings.condTrialReward);
 condFreq = settings.condTrialFreq;
 if any(mod(condFreq,1)), error('condTrialFreqs should be integers'); end
-toSelect = cell2mat(cellfun(@(freq,idx) ...
-    idx*ones(1,freq), num2cell(condFreq), num2cell(1:numCond), 'uni', 0));
-condTrialIdx = randsample(toSelect, trialStructure.maxTrials, true);
+condTrialIdx = randsample(1:numCond, trialStructure.maxTrials, true, condFreq);
 
 % Write trial structure and overwrite if not conditional
 trialStructure.probReward = settings.condTrialReward(condTrialIdx)';
