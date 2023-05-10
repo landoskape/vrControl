@@ -26,9 +26,9 @@ rigInfo.minimumPosition = 0.01; % this helped with something, I forgot what, bet
 rigInfo.maxSpeed = 200; % 200 cm / s is the max speed allowed without reporting to user
 rigInfo.lickEncoderAvailable = true; 
 rigInfo.STOPvalveTime = 0.0;
-rigInfo.BASEvalveTime = 3.0;
-rigInfo.PASSvalveTime = 3.0;
-rigInfo.ACTVvalveTime = 3.0;
+rigInfo.BASEvalveTime = 0.02;
+rigInfo.PASSvalveTime = 0.02;
+rigInfo.ACTVvalveTime = 0.02;
 rigInfo.PrefRefreshRate = 30; % hz
 rigInfo.dirSave = 'C:\Behaviour';
 rigInfo.dirScreenCalib = fileparts(mfilename('fullpath'));
@@ -88,9 +88,9 @@ switch upper(hostname)
         rigInfo.lickEncoderAvailable = true; 
 
         rigInfo.STOPvalveTime = 0.0;
-        rigInfo.BASEvalveTime = 4.0;
-        rigInfo.PASSvalveTime = 4.0;
-        rigInfo.ACTVvalveTime = 4.0;
+        rigInfo.BASEvalveTime = 0.02;
+        rigInfo.PASSvalveTime = 0.02;
+        rigInfo.ACTVvalveTime = 0.02;
         rigInfo.PrefRefreshRate = 30;
 
         % Saving directories: remote

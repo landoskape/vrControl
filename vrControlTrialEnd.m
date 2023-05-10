@@ -6,7 +6,7 @@ VRLogMessage(expInfo, VRmessage);
 
 if runInfo.currTrial > 0
     s = sprintf('%s_trial', expInfo.SESSION_NAME);
-    save(s, 'trialInfo', 'expInfo');
+    save(s, 'trialInfo', 'expInfo', 'rigInfo');
 end
 
 if runInfo.currTrial >= expInfo.maxTrials || runInfo.abort

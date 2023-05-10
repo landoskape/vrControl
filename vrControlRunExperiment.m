@@ -121,21 +121,9 @@ if ~rigInfo.useKeyboard
     hwInfo.rewVal.ClosedValue = 0;
     hwInfo.rewVal.close;
     
-    hwInfo.rewVal.prepareRewardDelivery(rigInfo.PASSvalveTime,'ul');
+    hwInfo.rewVal.prepareRewardDelivery(rigInfo.PASSvalveTime,'s');
     hwInfo.rewVal.prepareDigitalTrigger()
     
-    %#ATL: Needs updating:
-    % -- 
-    % Need to add hwInfo.rewVal.prepareRewardDelivery(obj, size, unitytype)
-    % to the beginning of each trial (probably in prepareTrial)
-    % - 
-    % Need to change giveReward function to:
-    % hwInfo.rewVal.activateDigitalDelivery(obj)
-    % -
-    % Need to add the info about the device and channels to rigInfo
-    % - 
-    % Need to figure out if the createSession line can be consolidated!
-    % -
 else
     % setup keyboard situation
     KbName('UnifyKeyNames');
