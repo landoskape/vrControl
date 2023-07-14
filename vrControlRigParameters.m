@@ -71,7 +71,7 @@ switch upper(hostname)
         rigInfo.localFigurePosition = [4000 200];
         rigInfo.screenNumber = 1; %Checked
         rigInfo.screenDist = 10; 
-        rigInfo.dialogueXYPosition = [4000 487]; %to check (parameters for GUI)
+        rigInfo.dialogueXYPosition = [4000 200]; %to check (parameters for GUI)
         %RigInfo.parameterscript = 'SetExperimentParametersB2_Blender';
 
         rigInfo.NIdevID = 'Dev1';
@@ -88,9 +88,9 @@ switch upper(hostname)
         rigInfo.lickEncoderAvailable = true; 
 
         rigInfo.STOPvalveTime = 0.0;
-        rigInfo.BASEvalveTime = 0.02;
-        rigInfo.PASSvalveTime = 0.02;
-        rigInfo.ACTVvalveTime = 0.02;
+        rigInfo.BASEvalveTime = 0.025;
+        rigInfo.PASSvalveTime = 0.025;
+        rigInfo.ACTVvalveTime = 0.025;
         rigInfo.PrefRefreshRate = 30;
 
         % Saving directories: remote
