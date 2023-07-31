@@ -11,11 +11,11 @@ rigInfo.localFigurePosition = [4072 200];
 rigInfo.screenNumber = 1;
 rigInfo.screenDist = 10;
 rigInfo.dialogueXYPosition = [3900 487];
-rigInfo.NIdevID = 'Dev1';
-rigInfo.NIsessRate = 5000;
-rigInfo.NIRotEnc = 'ctr0';
-rigInfo.NILicEnc = 'ctr1';
-rigInfo.NIRewVal = 'ao0';
+rigInfo.NIdevID = '';
+rigInfo.NIsessRate = [];
+rigInfo.NIRotEnc = '';
+rigInfo.NILicEnc = '';
+rigInfo.NIRewVal = '';
 rigInfo.photodiodePos = 'right';
 rigInfo.photodiodeSize = [650 190]; % 650 190
 rigInfo.rotEncPos = 'left';
@@ -115,6 +115,54 @@ switch upper(hostname)
         rigInfo.connectIPs{3} = '128.40.198.102';
         rigInfo.connectPCs{3} = 'ZEITGEIST';
         rigInfo.connectPortnr{3} = 1001;
+
+        rigInfo.numConnect = length(rigInfo.connectIPs);
+        rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync
+        rigInfo.TTLchannel = 'Port0/Line0'; %might be flipped.
+
+    case 'ZEELAND'
+        % Local computer info (basic)
+        rigInfo.computerName = 'ZEELAND';
+        rigInfo.localFigurePosition = [300 200];
+        rigInfo.screenNumber = 2; % Checked
+        rigInfo.screenDist = 10; 
+        rigInfo.dialogueXYPosition = [300 200]; %to check (parameters for GUI)
+        
+        rigInfo.NIdevID = 'Dev1';
+        rigInfo.NIsessRate = 5000;
+        rigInfo.NIRotEnc = 'ctr1';
+        rigInfo.NILicEnc = ''; 
+        rigInfo.NIRewVal = 'ao0';
+        rigInfo.photodiodePos  = 'right';
+        rigInfo.photodiodeSize = [100 75]; % [650 190] %% Enny: CHECK   %[250 75];
+        rigInfo.rotEncPos = 'left'; 
+        rigInfo.rotEncSign = -1; 
+        rigInfo.wheelToVR = 4000;
+        rigInfo.wheelRadius = 9.75; 
+        rigInfo.lickEncoderAvailable = false; 
+
+        rigInfo.waterVolumeSTOP = 0.0;
+        rigInfo.waterVolumeBASE = 5;
+        rigInfo.waterVolumePASS = 5;
+        rigInfo.waterVolumeACTV = 5;
+        rigInfo.PrefRefreshRate = 30;
+
+        % Saving directories: remote
+        rigInfo.dirSave = 'C:\Users\Experiment\Documents\animalData';
+        rigInfo.dirScreenCalib = 'C:\Users\Experiment\Documents\GitHub\vrControlGratings';
+        rigInfo.filenameScreenCalib = 'halfcyclindercalib_22102021.mat';
+        
+        rigInfo.WaterCalibrationFile = 'Zeeland_water_calibs'; %Change!!
+
+        % Timeline
+        rigInfo.connectIPs{1} = '128.40.198.104';
+        rigInfo.connectPCs{1} = 'ZEELAND';
+        rigInfo.connectPortnr{1} = 1001;
+
+        % EYE CAMERA
+        rigInfo.connectIPs{2} = '128.40.198.227';
+        rigInfo.connectPCs{2} = 'ZOOLAND';
+        rigInfo.connectPortnr{2} = 1001;
 
         rigInfo.numConnect = length(rigInfo.connectIPs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync

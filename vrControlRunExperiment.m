@@ -50,8 +50,8 @@ expInfo.ServerDir = dat.expPath(expInfo.expRef, 'main', 'master');
 expInfo.AnimalDir = fullfile(expInfo.ServerDir, expInfo.animalName);
 if ~isfolder(expInfo.AnimalDir), mkdir(expInfo.AnimalDir); end
 if ~isfolder(expInfo.LocalDir), mkdir(expInfo.LocalDir); end
-expInfo.SESSION_NAME=[expInfo.LocalDir filesep  expInfo.expRef '_VRBehavior'];
-expInfo.centralLogName = [rigInfo.dirSave filesep 'centralLog'];
+expInfo.SESSION_NAME= [expInfo.LocalDir filesep  expInfo.expRef '_VRBehavior'];
+expInfo.centralLogName = fullfile(rigInfo.dirSave, 'centralLog'); 
 expInfo.animalLogName  = [expInfo.AnimalDir filesep expInfo.animalName '_log'];
 expInfo.useUpdateWindow = expSettings.useUpdateWindow;
 
@@ -98,7 +98,7 @@ if ~rigInfo.useKeyboard
     hwInfo.rotEnc.createDaqChannel;
     hwInfo.rotEnc.zero();
     
-    if expInfo.lickEncoder
+    if expInfo.lickEncoder && ~isempty(rigInfo.NILicEnc)
         % Then we need to add a lick encoder
         hwInfo.likEnc = DaqLickEncoder;
         hwInfo.likEnc.DaqSession = hwInfo.session;
@@ -109,20 +109,17 @@ if ~rigInfo.useKeyboard
     
     hwInfo.sessionVal = daq.createSession('ni');
     hwInfo.sessionVal.Rate = rigInfo.NIsessRate;
-    
-    hwInfo.rewVal = DaqRewardValve;
-    load(rigInfo.WaterCalibrationFile);
+
+    hwInfo.rewVal = DaqRewardValve_Analog;
+    load(rigInfo.WaterCalibrationFile); %Change to correct computer name!!
     hwInfo.rewVal.DaqSession = hwInfo.sessionVal;
     hwInfo.rewVal.DaqId = rigInfo.NIdevID;
     hwInfo.rewVal.DaqChannelId = rigInfo.NIRewVal;
     hwInfo.rewVal.createDaqChannel;
     hwInfo.rewVal.MeasuredDeliveries = Water_calibs(end).measuredDeliveries;
-    hwInfo.rewVal.OpenValue = 10;
+    hwInfo.rewVal.OpenValue = 6;
     hwInfo.rewVal.ClosedValue = 0;
     hwInfo.rewVal.close;
-    
-    hwInfo.rewVal.prepareRewardDelivery(rigInfo.PASSvalveTime,'s');
-    hwInfo.rewVal.prepareDigitalTrigger()
     
 else
     % setup keyboard situation

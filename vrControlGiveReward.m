@@ -11,25 +11,24 @@ if strcmp(runInfo.rewardStartT.Running, 'off') ...
 
     switch tag
         case 'STOP'
-            hwInfo.rewVal.activateDigitalDelivery(); %hwInfo.rewVal.deliverBackground(rigInfo.BASEvalveTime,'ul');
-            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
+            hwInfo.rewVal.deliverBackground(rigInfo.waterVolumeSTOP,'ul');
+            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.waterVolumeSTOP;
         case 'ACTIVE'
-            hwInfo.rewVal.activateDigitalDelivery(); %hwInfo.rewVal.deliverBackground(rigInfo.BASEvalveTime,'ul');
-            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
+            hwInfo.rewVal.deliverBackground(rigInfo.waterVolumeACTV,'ul');
+            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.waterVolumeACTV;
         case 'PASSIVE'
-            hwInfo.rewVal.activateDigitalDelivery(); %hwInfo.rewVal.deliverBackground(rigInfo.BASEvalveTime,'ul');
-            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
+            hwInfo.rewVal.deliverBackground(rigInfo.waterVolumePASS,'ul');
+            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.waterVolumePASS;
         case 'BASE'
-            hwInfo.rewVal.activateDigitalDelivery(); %hwInfo.rewVal.deliverBackground(rigInfo.BASEvalveTime,'ul');
-            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
+            hwInfo.rewVal.deliverBackground(rigInfo.waterVolumeBASE,'ul');
+            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.waterVolumeBASE;
         case 'USER'
-            hwInfo.rewVal.activateDigitalDelivery(); %hwInfo.rewVal.deliverBackground(rigInfo.BASEvalveTime,'ul');
-            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
+            hwInfo.rewVal.deliverBackground(rigInfo.waterVolumePASS,'ul');
+            runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.waterVolumePASS;
         otherwise
             fprintf(2, 'giveReward tag not recognized, reward not delivered...\n');
     end
 end
-
 
 
 

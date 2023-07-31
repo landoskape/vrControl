@@ -24,12 +24,12 @@ transformFile = fullfile(rigInfo.dirScreenCalib, rigInfo.filenameScreenCalib);
 [~,~,extension] = fileparts(transformFile);
 PsychImagingNonverbose('PrepareConfiguration');
 if exist(transformFile,'file') && strcmp(extension, '.mat')
-    PsychImagingNonverbose('AddTask', 'AllViews', 'GeometryCorrection', transformFile);
+    %PsychImagingNonverbose('AddTask', 'AllViews', 'GeometryCorrection', transformFile);
 else
     fprintf(2,'No transform file for psychtoolbox exists! Continuing without one...\n');
 end
 
-PsychImagingNonverbose('AddTask', 'AllViews', 'FlipHorizontal');
+% PsychImagingNonverbose('AddTask', 'AllViews', 'FlipHorizontal');
 evalc('[screenInfo.windowPtr, screenInfo.screenRect] = PsychImaging(''OpenWindow'', whichScreen, screenInfo.grayIndex);');
 
 screenInfo.Xmax = RectWidth(screenInfo.screenRect);

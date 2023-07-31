@@ -4,7 +4,6 @@ classdef DaqRewardValve < hw.RewardController
   %   TODO
   %
   % Part of Rigbox
-  
   % 2013-01 CB created    
   
   properties
@@ -76,7 +75,45 @@ classdef DaqRewardValve < hw.RewardController
           obj.DaqSession.startBackground();
       end
       
+      function deliverReward(obj, method)
+          if strcmp(method,'digital')
+              obj.TriggerSession.outputSingleScan(1);
+              obj.TriggerSession.outputSingleScan(0);
+          else
+
+              function deliverBackground(obj, size, unitytype)
+                  % size is the volume to deliver in microlitres (ul). This is turned
+                  % into an open duration for the valve using interpolation of the
+                  % calibration measurements.
+                  if nargin<3
+                      unitytype = 'ul';
+                  end
+                  if strcmp(unitytype,'s')
+                      duration = size;
+                  elseif strcmp(unitytype,'ul')
+                      duration = openDurationFor(obj, size);
+                  else
+                      disp('assumed input is required size in ul, if not specify unity type')
+                      duration = openDurationFor(obj, size);
+                  end
+                  daqSession = obj.DaqSession;
+                  sampleRate = daqSession.Rate;
+                  nOpenSamples = round(duration*sampleRate)
+                  samples = [obj.OpenValue*ones(nOpenSamples, 1) ; ...
+                    obj.ClosedValue*ones(3,1)];
+                  if daqSession.IsRunning
+                    daqSession.wait();
+                  end
+            %       fprintf('Delivering %gul by opening valve for %gms\n', size, 1000*duration);
+                  daqSession.queueOutputData(samples);
+                  daqSession.startBackground();
+                  time = obj.Clock.now;
+                  obj.CurrValue = obj.ClosedValue;
+                  logSample(obj, size, time);
+                end
+
       function activateDigitalDelivery(obj)
+          
           obj.TriggerSession.outputSingleScan(1);
           obj.TriggerSession.outputSingleScan(0);
       end
