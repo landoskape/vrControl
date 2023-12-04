@@ -123,10 +123,10 @@ switch upper(hostname)
     case 'ZEELAND'
         % Local computer info (basic)
         rigInfo.computerName = 'ZEELAND';
-        rigInfo.localFigurePosition = [300 200];
+        rigInfo.localFigurePosition = [670 500];
         rigInfo.screenNumber = 2; % Checked
         rigInfo.screenDist = 10; 
-        rigInfo.dialogueXYPosition = [300 200]; %to check (parameters for GUI)
+        rigInfo.dialogueXYPosition = [670 500]; %to check (parameters for GUI)
         
         rigInfo.NIdevID = 'Dev1';
         rigInfo.NIsessRate = 5000;
@@ -142,9 +142,9 @@ switch upper(hostname)
         rigInfo.lickEncoderAvailable = false; 
 
         rigInfo.waterVolumeSTOP = 0.0;
-        rigInfo.waterVolumeBASE = 5;
-        rigInfo.waterVolumePASS = 5;
-        rigInfo.waterVolumeACTV = 5;
+        rigInfo.waterVolumeBASE = 8;
+        rigInfo.waterVolumePASS = 8;
+        rigInfo.waterVolumeACTV = 8;
         rigInfo.PrefRefreshRate = 30;
 
         % Saving directories: remote
@@ -163,6 +163,11 @@ switch upper(hostname)
         rigInfo.connectIPs{2} = '128.40.198.227';
         rigInfo.connectPCs{2} = 'ZOOLAND';
         rigInfo.connectPortnr{2} = 1001;
+
+        % EYE CAMERA
+        rigInfo.connectIPs{3} = '128.40.198.227';
+        rigInfo.connectPCs{3} = 'ZOOLAND';
+        rigInfo.connectPortnr{3} = 1002;
 
         rigInfo.numConnect = length(rigInfo.connectIPs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync

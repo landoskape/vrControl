@@ -59,9 +59,9 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
     
     % And send update to timeline (post flip is more accurate)
     % __FrameIdx (Animal) (Date) (Session) (FrameNum) (RoomPosition)
-    frameMessage = sprintf('__FrameIdx %s %s %s %d %.1f',...
-        expInfo.animalName, expInfo.dateStr, expInfo.sessionName, currentFrame, runInfo.roomPosition);
-    rigInfo = rigInfo.sendUDPmessage(rigInfo, frameMessage, 2); 
+    %frameMessage = sprintf('__FrameIdx %s %s %s %d %.1f',...
+    %    expInfo.animalName, expInfo.dateStr, expInfo.sessionName, currentFrame, runInfo.roomPosition);
+    %rigInfo = rigInfo.sendUDPmessage(rigInfo, frameMessage, 2); 
     
     % Immediately after screen flip to optimize coordination bw VR and TL!
     trialInfo.time(runInfo.currTrial,runInfo.flipIdx) = vbl; % record time of screen flip
