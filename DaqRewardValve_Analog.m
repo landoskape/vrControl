@@ -97,7 +97,7 @@ classdef DaqRewardValve_Analog < hw.RewardController
       end
       daqSession = obj.DaqSession;
       sampleRate = daqSession.Rate;
-      nOpenSamples = round(duration*sampleRate)
+      nOpenSamples = round(duration*sampleRate);
       samples = [obj.OpenValue*ones(nOpenSamples, 1) ; ...
         obj.ClosedValue*ones(3,1)];
       if daqSession.IsRunning
