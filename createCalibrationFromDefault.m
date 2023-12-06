@@ -1,4 +1,4 @@
-function vrControlCreateCalibrationFromDefault(default,target)
+function createCalibrationFromDefault(default,target)
 txt = importdata(default);
 NL = size(txt,1);
 names = cell(NL,1);

@@ -1,4 +1,4 @@
-function output = vrControlPersistent(name, setValue)
+function output = persistentVariables(name, setValue)
 
 % Define perVar="persistent variables structure"
 % Add all required variables here, then use dynamic field notation for

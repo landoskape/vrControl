@@ -1,8 +1,8 @@
-function vrControlRunTraining(expSettings)
-% vrControlRunExperiment takes in a settings structure (which is the output
+function runExperiment(expSettings)
+% runExperiment takes in a settings structure (which is the output
 % of the vrControlGUI)
 % 
-% -- ATL -- vrControlRunExperiment performs a blenderVR mouse experience  
+% -- ATL -- runExperiment performs a blenderVR mouse experience  
 % -- ATL -- Note that many evalc commands are used to minimize the output
 % to the workspace from PsychToolbox, which I find annoying and distracting
 % from what's relevant.
@@ -18,9 +18,9 @@ function vrControlRunTraining(expSettings)
 % 4. runInfo: this is continuously updated throughout each trial 
 % 5. trialInfo: this is a struct that stores data collected each trial
 
-%% 1. Retrieve rigInfo (hard coded parameters in vrControlRigParameters() function)
+%% 1. Retrieve rigInfo (hard coded parameters in rigParameters() function)
 
-rigInfo = vrControlRigParameters(); 
+rigInfo = rigParameters(); 
 rigInfo.wheelCircumference = 2*pi*rigInfo.wheelRadius; % ATTENTION TO MINUTE DETAIL
 
 % define the UDP port
@@ -28,7 +28,7 @@ rigInfo = rigInfo.initialiseUDPports(rigInfo);
 
 %% 2. Handle expInfo (trial parameters and experimental settings & info)
 
-expInfo.trainingMode = true;
+expInfo.trainingMode = false;
 expInfo.animalName = expSettings.animalName;
 expInfo.sessionName = expSettings.sessionOffset + 1; 
 expInfo.dateStr = datestr(now, 'yyyymmdd');
@@ -55,7 +55,7 @@ expInfo.centralLogName = [rigInfo.dirSave filesep 'centralLog'];
 expInfo.animalLogName  = [expInfo.AnimalDir filesep expInfo.animalName '_log'];
 expInfo.useUpdateWindow = expSettings.useUpdateWindow;
 
-trialStructure = vrControlTrialStructure(expSettings); % convert expSettings to trialStructure
+trialStructure = trialStructure(expSettings); % convert expSettings to trialStructure
 
 % Copy trial data from trial structure to expInfo
 fields2copy = {'maxTrials','maxDuration','preventBackwardMovement','envIndex','roomLength','rewardPosition',...
@@ -91,7 +91,7 @@ if ~rigInfo.useKeyboard
     % Setup wheel hardware info
     hwInfo.session = daq.createSession('ni');
     hwInfo.session.Rate = rigInfo.NIsessRate;
-    hwInfo.rotEnc = DaqRotaryEncoder;
+    hwInfo.rotEnc = hw.DaqRotaryEncoder;
     hwInfo.rotEnc.DaqSession = hwInfo.session;
     hwInfo.rotEnc.DaqId = rigInfo.NIdevID;
     hwInfo.rotEnc.DaqChannelId = rigInfo.NIRotEnc;
@@ -100,7 +100,7 @@ if ~rigInfo.useKeyboard
     
     if expInfo.lickEncoder
         % Then we need to add a lick encoder
-        hwInfo.likEnc = DaqLickEncoder;
+        hwInfo.likEnc = hw.DaqLickEncoder;
         hwInfo.likEnc.DaqSession = hwInfo.session;
         hwInfo.likEnc.DaqId = rigInfo.NIdevID;
         hwInfo.likEnc.DaqChannelId = rigInfo.NILicEnc;
@@ -110,7 +110,7 @@ if ~rigInfo.useKeyboard
     hwInfo.sessionVal = daq.createSession('ni');
     hwInfo.sessionVal.Rate = rigInfo.NIsessRate;
     
-    hwInfo.rewVal = DaqRewardValve;
+    hwInfo.rewVal = hw.DaqRewardValve;
     load(rigInfo.WaterCalibrationFile);
     hwInfo.rewVal.DaqSession = hwInfo.sessionVal;
     hwInfo.rewVal.DaqId = rigInfo.NIdevID;
@@ -120,7 +120,6 @@ if ~rigInfo.useKeyboard
     hwInfo.rewVal.OpenValue = 10;
     hwInfo.rewVal.ClosedValue = 0;
     hwInfo.rewVal.close;
-    
     
     hwInfo.rewVal.prepareRewardDelivery(rigInfo.PASSvalveTime,'s');
     hwInfo.rewVal.prepareDigitalTrigger()
@@ -158,7 +157,6 @@ runInfo.vrEnvIdx = [];
 runInfo.pdLevel = 0; % always start at 0 because we have a ramp up from 0 indicating the ITI!
 runInfo.totalValveOpenTime = 0; % for tracking duration of reward delivery
 runInfo.trialStartTime = []; % timer for tracking duration of trial
-runInfo.trainingTimer = tic;
 
 % Load VR Environment File(s)
 numOptions = length(expSettings.vrOptions);
@@ -219,21 +217,9 @@ trialInfo.frameIdx = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'doub
 trialInfo.pdLevel = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'double')); % whether the photodiode is up or down
 
 
-%% 6. Open vrTrainingWindow
+%% 6. Open vrUpdateWindow
 
-trainingWindow = vrControlTrainingWindow();
-trainingWindow.setAvailableEnvironments(unique(expInfo.envIndex), expInfo.getEnvName);
-trainingWindow.setCurrentTrial(1);
-trainingWindow.envIdx.Value = expInfo.envIndex(1);
-trainingWindow.minimumITI.Value = expInfo.intertrialInterval(1);
-trainingWindow.envLength.Value = expInfo.roomLength(1);
-trainingWindow.mvmtGain.Value = expInfo.mvmtGain(1);
-trainingWindow.rewardPosition.Value = expInfo.rewardPosition(1);
-trainingWindow.rewardTolerance.Value = expInfo.rewardTolerance(1);
-trainingWindow.probReward.Value = expInfo.probReward(1);
-trainingWindow.lickRequired.Value = expInfo.activeLick(1);
-trainingWindow.stopRequired.Value = logical(expInfo.activeStop(1));
-trainingWindow.stopDuration.Value = expInfo.activeStop(1);
+if expInfo.useUpdateWindow, updateWindow = updateWindow(); end
 
 
 %% -- now, prepare vrcontrol loop --
@@ -251,8 +237,8 @@ try
     VRLogMessage(expInfo, VRmessage);
     if expInfo.useUpdateWindow
         disp('Press yellow start button to continue after confirming Timeline has started...')
-        trainingWindow.enableStart();
-        waitfor(trainingWindow, 'timelineActive', true);
+        updateWindow.enableStart();
+        waitfor(updateWindow, 'timelineActive', true);
     else
         disp('Press key to continue after confirming Timeline has started...')
         pause()
@@ -261,13 +247,13 @@ catch
     keyboard
 end
 
-runInfo.ititimer = tic; % Initialize this here (usually reset in vrControlOperateTrial)
-fhandle = @vrControlPrepareTrial;
+runInfo.ititimer = tic; % Initialize this here (usually reset in operateTrial)
+fhandle = @prepareTrial;
 while ~isempty(fhandle) 
     % main loop, active during experiment
-    [fhandle, runInfo, trialInfo, expInfo] = feval(fhandle, rigInfo, hwInfo, expInfo, runInfo, trialInfo, trainingWindow);
+    [fhandle, runInfo, trialInfo] = feval(fhandle, rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow);
 end
 
 fprintf(['TotalValveOpen = ' num2str(runInfo.totalValveOpenTime) ' ul\n']);
-
+close all;
 end

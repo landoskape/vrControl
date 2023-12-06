@@ -1,4 +1,4 @@
-function [fhandle, runInfo, trialInfo, expInfo] = vrControlTrialEnd(rigInfo, ~, expInfo, runInfo, trialInfo, ~)
+function [fhandle, runInfo, trialInfo, expInfo] = trialEnd(rigInfo, ~, expInfo, runInfo, trialInfo, ~)
 
 VRmessage = ['TrialEnd ' expInfo.animalName ' ' expInfo.dateStr ' ' expInfo.sessionName];
 rigInfo.sendUDPmessage(rigInfo, VRmessage);
@@ -10,11 +10,11 @@ if runInfo.currTrial > 0
 end
 
 if runInfo.currTrial >= expInfo.maxTrials || runInfo.abort
-    fhandle = @vrControlExperimentEnd;
+    fhandle = @experimentEnd;
     return;
 end
 
 % Otherwise go to next trial
-fhandle = @vrControlPrepareTrial;
+fhandle = @prepareTrial;
 
 

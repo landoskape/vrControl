@@ -1,4 +1,4 @@
-function trialStructure = vrControlTrialStructure(settings)
+function trialStructure = trialStructure(settings)
 
 % How many trials
 trialStructure.maxTrials = settings.maxTrialNumber;
@@ -34,7 +34,7 @@ end
 
 % Perform environment selection
 cTrial = initBlockLength;
-idxActive = vrControlReturnOrder(settings.vrOrder, settings.vrActive);
+idxActive = returnOrder(settings.vrOrder, settings.vrActive);
 numActive = length(idxActive);
 if numActive > 1
     if ~isempty(settings.initEnvIdx)

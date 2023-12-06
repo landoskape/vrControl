@@ -1,4 +1,4 @@
-function rigInfo = vrControlRigParameters(hostname)
+function rigInfo = rigParameters(hostname)
 
 if nargin==0
     [~,hostname] = system('hostname');
@@ -56,7 +56,7 @@ if ~exist(calibFilePath, 'file')
     if ~exist(defaultCalibration, 'file')
         error('No default calibration found. Check existing installation or github.'); 
     end
-    vrControlCreateCalibrationFromDefault(defaultCalibration,calibFilePath);
+    createCalibrationFromDefault(defaultCalibration,calibFilePath);
 end
 
 if contains(upper(hostname), 'ANDREWS-MBP')

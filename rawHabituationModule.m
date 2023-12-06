@@ -1,7 +1,7 @@
-function habMod = vrControlRawHabituationModule()
+function habMod = rawHabituationModule()
 
 % Get RigInfo
-rigInfo = vrControlRigParameters(); 
+rigInfo = rigParameters(); 
 rigInfo.wheelCircumference = 2*pi*rigInfo.wheelRadius; % ATTENTION TO MINUTE DETAIL
 
 % Set up rotary encoder
@@ -9,7 +9,7 @@ habMod.BALLPort = 9999;
 % Setup wheel hardware info
 habMod.session = daq.createSession('ni');
 habMod.session.Rate = rigInfo.NIsessRate;
-habMod.rotEnc = DaqRotaryEncoder;
+habMod.rotEnc = hw.DaqRotaryEncoder;
 habMod.rotEnc.DaqSession = habMod.session;
 habMod.rotEnc.DaqId = rigInfo.NIdevID;
 habMod.rotEnc.DaqChannelId = rigInfo.NIRotEnc;
@@ -19,7 +19,7 @@ habMod.rotEnc.zero();
 % Set up reward valve
 habMod.sessionVal = daq.createSession('ni');
 habMod.sessionVal.Rate = rigInfo.NIsessRate;
-habMod.rewVal = DaqRewardValve;
+habMod.rewVal = hw.DaqRewardValve;
 load(rigInfo.WaterCalibrationFile);
 habMod.rewVal.DaqSession = habMod.sessionVal;
 habMod.rewVal.DaqId = rigInfo.NIdevID;

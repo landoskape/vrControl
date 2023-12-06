@@ -1,6 +1,6 @@
-function [fhandle, runInfo, trialInfo, expInfo] = vrControlPrepareTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow)
+function [fhandle, runInfo, trialInfo, expInfo] = prepareTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow)
 
-fhandle =  @vrControlOperateTrial;
+fhandle =  @operateTrial;
 
 runInfo.currTrial = runInfo.currTrial + 1; 
 runInfo.flipIdx = 0; % Counts flips throughout trial to store data in trialInfo
