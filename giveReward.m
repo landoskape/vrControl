@@ -8,20 +8,7 @@ if strcmp(runInfo.rewardStartT.Running, 'off') ...
         runInfo.currTrial,runInfo.flipIdx, tag);
     fprintf([VRmessage,'\n']);
     VRLogMessage(expInfo, VRmessage);
-
-
-
-
-    rigInfo.STOPvalveTime = 0.0;
-        rigInfo.BASEvalveTime = 0.025;
-        rigInfo.PASSvalveTime = 0.025;
-        rigInfo.ACTVvalveTime = 0.025;
-        rigInfo.waterVolumeSTOP = 0.0;
-        rigInfo.waterVolumeBASE = 8;
-        rigInfo.waterVolumePASS = 8;
-        rigInfo.waterVolumeACTV = 8;
-
-
+    
 
     switch tag
         case 'ACTIVE'
