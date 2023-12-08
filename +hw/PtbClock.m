@@ -1,4 +1,4 @@
-classdef PtbClock < Clock
+classdef PtbClock < hw.Clock
   %PTBCLOCK A Clock that uses Psychtoolbox GetSecs
   %   This clock returns time as counted by Psychtoolbox's GetSecs 
   % function. See Clock superclass for general description.

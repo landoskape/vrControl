@@ -1,6 +1,6 @@
-function [fhandle, runInfo, trialInfo, expInfo] = vrControlOperateTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow)
+function [fhandle, runInfo, trialInfo, expInfo] = operateTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow)
 
-fhandle = @vrControlTrialEnd;
+fhandle = @trialEnd;
 
 % make a flip here to establish vbl
 ifi = Screen('GetFlipInterval',hwInfo.screenInfo.windowPtr);
@@ -190,7 +190,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
             % Give reward if in reward zone and lickValid and stopValid
             if lickValid && stopValid
                 if ~rigInfo.useKeyboard
-                    runInfo = vrControlGiveReward('PASSIVE', expInfo, runInfo, hwInfo, rigInfo);
+                    runInfo = giveReward('PASSIVE', expInfo, runInfo, hwInfo, rigInfo);
                 else
                     fprintf(1, 'Reward would be delivered now!\n');
                 end
@@ -246,7 +246,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
             hwInfo.session.outputSingleScan(false);
         end
     elseif keyPressed == 2
-        runInfo = vrControlGiveReward('USER', expInfo, runInfo, hwInfo, rigInfo);
+        runInfo = giveReward('USER', expInfo, runInfo, hwInfo, rigInfo);
         trialInfo.userRewardNumber(runInfo.currTrial) = trialInfo.userRewardNumber(runInfo.currTrial) + 1;
         trialInfo.userRewardFrames{runInfo.currTrial}(end+1) = runInfo.flipIdx;
     end

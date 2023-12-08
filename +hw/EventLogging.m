@@ -19,7 +19,7 @@ classdef EventLogging < handle
       %   we use a PtbTimekeeper by default, which just uses Psychtoolboxes
       %   GetSecs function for the current time
       if nargin < 1
-        clock = PtbClock; % use Psychtoolbox Timekeeper by default
+        clock = hw.PtbClock; % use Psychtoolbox Timekeeper by default
       end
       obj.Clock = clock;
     end
@@ -68,4 +68,3 @@ classdef EventLogging < handle
   end
   
 end
-

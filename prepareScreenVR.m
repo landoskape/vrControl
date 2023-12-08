@@ -1,4 +1,4 @@
-function screenInfo = prepareScreenVR(whichScreen,rigInfo)
+function screenInfo = prepareScreenVR(whichScreen, rigInfo)
 % initializes screen: ltScreenInitialize [Screen('OpenWindow',...)]
 % loads calibration: ltLoadCalibration
 % asks for screen distance 
@@ -23,13 +23,15 @@ evalc('screenInfo.FrameRate = FrameRate(whichScreen);');
 transformFile = fullfile(rigInfo.dirScreenCalib, rigInfo.filenameScreenCalib);
 [~,~,extension] = fileparts(transformFile);
 PsychImagingNonverbose('PrepareConfiguration');
-if exist(transformFile,'file') && strcmp(extension, '.mat')
+if exist(transformFile,'file') && strcmp(extension, '.mat') && rigInfo.doScreenTransform
     PsychImagingNonverbose('AddTask', 'AllViews', 'GeometryCorrection', transformFile);
 else
     fprintf(2,'No transform file for psychtoolbox exists! Continuing without one...\n');
 end
 
-PsychImagingNonverbose('AddTask', 'AllViews', 'FlipHorizontal');
+if rigInfo.doScreenFlip
+    PsychImagingNonverbose('AddTask', 'AllViews', 'FlipHorizontal');
+end
 evalc('[screenInfo.windowPtr, screenInfo.screenRect] = PsychImaging(''OpenWindow'', whichScreen, screenInfo.grayIndex);');
 
 screenInfo.Xmax = RectWidth(screenInfo.screenRect);

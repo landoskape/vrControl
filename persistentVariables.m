@@ -1,4 +1,4 @@
-function output = vrControlPersistent(name, setValue)
+function output = persistentVariables(name, setValue)
 
 % Define perVar="persistent variables structure"
 % Add all required variables here, then use dynamic field notation for
@@ -12,6 +12,7 @@ if ~isfield(perVar,'maxTrialNumber'), perVar.maxTrialNumber = []; end
 if ~isfield(perVar,'maxTrialDuration'), perVar.maxTrialDuration = []; end
 if ~isfield(perVar,'settingsName'), perVar.settingsName = ''; end
 if ~isfield(perVar,'useUpdateWindow'), perVar.useUpdateWindow = true; end
+if ~isfield(perVar,'useTrainingMode'), perVar.useTrainingMode = true; end
 
 
 % Now update and/or return requested variable

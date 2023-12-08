@@ -1,6 +1,6 @@
-function vrControlCalibrateRewardSize(numDelivery, openTime)
+function calibrateRewardSize(numDelivery, openTime)
 
-rigInfo = vrControlRigParameters();
+rigInfo = rigParameters();
 
 % Setup hardware info
 hwInfo.sessionVal = daq.createSession('ni');

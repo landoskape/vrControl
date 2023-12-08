@@ -5,7 +5,7 @@ for i = 1:length(channels)
   c = channels(i);
   if isa(c, 'daq.DigitalChannel')
     dirs{i} = c.Direction;      
-  elseif isa(c, 'daq.CounterInputChannel') || isa(c, 'daq.CounterInputChannel')
+  elseif isa(c, 'daq.CounterInputChannel')
     dirs{i} = 'Input';
   else
     dirs{i} = 'Output';

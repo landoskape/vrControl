@@ -7,7 +7,7 @@ classdef DataLogging < handle
   % 2012-11 CB created
   
   properties
-    Clock = hw.ptb.Clock
+    Clock = hw.PtbClock
   end
   
   properties (SetAccess = protected)
