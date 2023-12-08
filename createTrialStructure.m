@@ -6,6 +6,8 @@ trialStructure.maxDuration = settings.maxTrialDuration;
 trialStructure.preventBackwardMovement = settings.preventBackwardMovement;
 
 % Inline for getting path to vrEnv files
+trialStructure.envNames = settings.vrOptions;
+trialStructure.envPaths = settings.vrDirectory;
 trialStructure.getEnvName = @(idx) settings.vrOptions{idx};
 trialStructure.getEnvPath = @(idx) fullfile(settings.vrDirectory, ...
     sprintf('%s%s',settings.vrOptions{idx},settings.vrExtension));
