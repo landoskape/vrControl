@@ -1,4 +1,4 @@
-function trialStructure = trialStructure(settings)
+function trialStructure = createTrialStructure(settings)
 
 % How many trials
 trialStructure.maxTrials = settings.maxTrialNumber;

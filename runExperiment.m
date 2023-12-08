@@ -28,7 +28,7 @@ rigInfo = rigInfo.initialiseUDPports(rigInfo);
 
 %% 2. Handle expInfo (trial parameters and experimental settings & info)
 
-expInfo.trainingMode = false;
+expInfo.trainingMode = expSettings.useTrainingMode;
 expInfo.animalName = expSettings.animalName;
 expInfo.sessionName = expSettings.sessionOffset + 1; 
 expInfo.dateStr = datestr(now, 'yyyymmdd');
@@ -50,12 +50,12 @@ expInfo.ServerDir = dat.expPath(expInfo.expRef, 'main', 'master');
 expInfo.AnimalDir = fullfile(expInfo.ServerDir, expInfo.animalName);
 if ~isfolder(expInfo.AnimalDir), mkdir(expInfo.AnimalDir); end
 if ~isfolder(expInfo.LocalDir), mkdir(expInfo.LocalDir); end
-expInfo.SESSION_NAME=[expInfo.LocalDir filesep  expInfo.expRef '_VRBehavior'];
-expInfo.centralLogName = [rigInfo.dirSave filesep 'centralLog'];
+expInfo.SESSION_NAME = fullfile(expInfo.LocalDir, [expInfo.expRef, '_VRBehavior']);
+expInfo.centralLogName = fullfile(rigInfo.dirSave, 'centralLog');
 expInfo.animalLogName  = [expInfo.AnimalDir filesep expInfo.animalName '_log'];
-expInfo.useUpdateWindow = expSettings.useUpdateWindow;
+expInfo.useUpdateWindow = true;
 
-trialStructure = trialStructure(expSettings); % convert expSettings to trialStructure
+trialStructure = createTrialStructure(expSettings); % convert expSettings to trialStructure
 
 % Copy trial data from trial structure to expInfo
 fields2copy = {'maxTrials','maxDuration','preventBackwardMovement','envIndex','roomLength','rewardPosition',...
@@ -98,7 +98,7 @@ if ~rigInfo.useKeyboard
     hwInfo.rotEnc.createDaqChannel;
     hwInfo.rotEnc.zero();
     
-    if expInfo.lickEncoder
+    if expInfo.lickEncoder && ~isempty(rigInfo.NILicEnc)
         % Then we need to add a lick encoder
         hwInfo.likEnc = hw.DaqLickEncoder;
         hwInfo.likEnc.DaqSession = hwInfo.session;
@@ -110,7 +110,11 @@ if ~rigInfo.useKeyboard
     hwInfo.sessionVal = daq.createSession('ni');
     hwInfo.sessionVal.Rate = rigInfo.NIsessRate;
     
-    hwInfo.rewVal = hw.DaqRewardValve;
+    if rigInfo.useAnalogRewardValve
+        hwInfo.rewVal = hw.DaqRewardValve_Analog;
+    else
+        hwInfo.rewVal = hw.DaqRewardValve;
+    end
     load(rigInfo.WaterCalibrationFile);
     hwInfo.rewVal.DaqSession = hwInfo.sessionVal;
     hwInfo.rewVal.DaqId = rigInfo.NIdevID;
@@ -121,9 +125,15 @@ if ~rigInfo.useKeyboard
     hwInfo.rewVal.ClosedValue = 0;
     hwInfo.rewVal.close;
     
-    hwInfo.rewVal.prepareRewardDelivery(rigInfo.PASSvalveTime,'s');
-    hwInfo.rewVal.prepareDigitalTrigger()
-    
+    if ~rigInfo.useAnalogRewardValve
+        if rigInfo.rewardSizeByVolume
+            hwInfo.rewVal.prepareRewardDelivery(rigInfo.waterVolumePASS, 'ul');
+        else
+            hwInfo.rewVal.prepareRewardDelivery(rigInfo.PASSvalveTime, 's');
+        end
+        hwInfo.rewVal.prepareDigitalTrigger()
+    end
+
 else
     % setup keyboard situation
     KbName('UnifyKeyNames');
@@ -157,6 +167,7 @@ runInfo.vrEnvIdx = [];
 runInfo.pdLevel = 0; % always start at 0 because we have a ramp up from 0 indicating the ITI!
 runInfo.totalValveOpenTime = 0; % for tracking duration of reward delivery
 runInfo.trialStartTime = []; % timer for tracking duration of trial
+runInfo.trainingTimer = tic;
 
 % Load VR Environment File(s)
 numOptions = length(expSettings.vrOptions);
@@ -219,7 +230,26 @@ trialInfo.pdLevel = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'doubl
 
 %% 6. Open vrUpdateWindow
 
-if expInfo.useUpdateWindow, updateWindow = updateWindow(); end
+if expInfo.trainingMode
+    expInfo.useUpdateWindow = true;
+    updateWindow = vrControlTrainingWindow();
+    updateWindow.setAvailableEnvironments(unique(expInfo.envIndex), expInfo.getEnvName);
+    updateWindow.setCurrentTrial(1);
+    updateWindow.envIdx.Value = expInfo.envIndex(1);
+    updateWindow.minimumITI.Value = expInfo.intertrialInterval(1);
+    updateWindow.envLength.Value = expInfo.roomLength(1);
+    updateWindow.mvmtGain.Value = expInfo.mvmtGain(1);
+    updateWindow.rewardPosition.Value = expInfo.rewardPosition(1);
+    updateWindow.rewardTolerance.Value = expInfo.rewardTolerance(1);
+    updateWindow.probReward.Value = expInfo.probReward(1);
+    updateWindow.lickRequired.Value = expInfo.activeLick(1);
+    updateWindow.stopRequired.Value = logical(expInfo.activeStop(1));
+    updateWindow.stopDuration.Value = expInfo.activeStop(1);
+else
+    if expInfo.useUpdateWindow
+        updateWindow = vrControlUpdateWindow(); 
+    end
+end
 
 
 %% -- now, prepare vrcontrol loop --
@@ -251,7 +281,7 @@ runInfo.ititimer = tic; % Initialize this here (usually reset in operateTrial)
 fhandle = @prepareTrial;
 while ~isempty(fhandle) 
     % main loop, active during experiment
-    [fhandle, runInfo, trialInfo] = feval(fhandle, rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow);
+    [fhandle, runInfo, trialInfo, expInfo] = feval(fhandle, rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow);
 end
 
 fprintf(['TotalValveOpen = ' num2str(runInfo.totalValveOpenTime) ' ul\n']);

@@ -1,4 +1,4 @@
-classdef DaqRotaryEncoder < PositionSensor
+classdef DaqRotaryEncoder < hw.PositionSensor
   %ROTARYENCODER Tracks rotary encoder position from a DAQ
   %   Communicates with rotary encoder via a DAQ. Will configure a DAQ
   % session counter channel for you, log position and times every time you
