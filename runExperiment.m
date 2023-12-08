@@ -59,7 +59,7 @@ trialStructure = createTrialStructure(expSettings); % convert expSettings to tri
 
 % Copy trial data from trial structure to expInfo
 fields2copy = {'maxTrials','maxDuration','preventBackwardMovement','envIndex','roomLength','rewardPosition',...
-    'rewardTolerance','intertrialInterval','probReward','activeLick','activeStop','mvmtGain','getEnvName','envName','envPath'};
+    'rewardTolerance','intertrialInterval','probReward','activeLick','activeStop','mvmtGain','getEnvName','envNames','envPaths'};
 for f = 1:length(fields2copy), expInfo.(fields2copy{f}) = trialStructure.(fields2copy{f}); end
 
 expInfo.lickEncoder = rigInfo.lickEncoderAvailable && ...
