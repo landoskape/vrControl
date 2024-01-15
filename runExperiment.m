@@ -123,9 +123,10 @@ if ~rigInfo.useKeyboard
     hwInfo.rewVal.MeasuredDeliveries = Water_calibs(end).measuredDeliveries;
     hwInfo.rewVal.OpenValue = 10;
     hwInfo.rewVal.ClosedValue = 0;
-    hwInfo.rewVal.close;
     
-    if ~rigInfo.useAnalogRewardValve
+    if rigInfo.useAnalogRewardValve
+        hwInfo.rewVal.close;
+    else
         if rigInfo.rewardSizeByVolume
             hwInfo.rewVal.prepareRewardDelivery(rigInfo.waterVolumePASS, 'ul');
         else
