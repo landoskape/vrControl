@@ -191,11 +191,6 @@ switch upper(hostname)
         rigInfo.connectPCs{2} = 'ZOOLAND';
         rigInfo.connectPortnr{2} = 1001;
 
-        % EYE CAMERA
-        rigInfo.connectIPs{3} = '128.40.198.227';
-        rigInfo.connectPCs{3} = 'ZOOLAND';
-        rigInfo.connectPortnr{3} = 1002;
-
         rigInfo.numConnect = length(rigInfo.connectIPs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync
         rigInfo.TTLchannel = 'Port0/Line0'; %might be flipped.
@@ -256,11 +251,6 @@ switch upper(hostname)
         rigInfo.connectPCs{2} = 'ZOOLAND';
         rigInfo.connectPortnr{2} = 1001;
 
-        % EYE CAMERA
-        rigInfo.connectIPs{3} = '128.40.198.227';
-        rigInfo.connectPCs{3} = 'ZOOLAND';
-        rigInfo.connectPortnr{3} = 1002;
-
         rigInfo.numConnect = length(rigInfo.connectIPs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync
         rigInfo.TTLchannel = 'Port0/Line0'; %might be flipped.
@@ -289,10 +279,10 @@ end
 
 function rigInfo = initialiseUDPports(rigInfo)
     if rigInfo.numConnect>0
-        for iIP = 1:rigInfo.numConnect
-            rigInfo.activePorts{iIP} = pnet('udpsocket', 1001);
-            pnet(rigInfo.activePorts{iIP}, 'udpconnect', rigInfo.connectIPs{iIP}, rigInfo.connectPortnr{iIP});
-            fprintf('Sent message to %s\n',rigInfo.connectPCs{iIP});
+        for iPC = 1:rigInfo.numConnect
+            rigInfo.activePorts{iPC} = pnet('udpsocket', 1001);
+            pnet(rigInfo.activePorts{iPC}, 'udpconnect', rigInfo.connectPCs{iPC}, rigInfo.connectPortnr{iPC});
+            fprintf('Sent message to %s\n',rigInfo.connectPCs{iPC});
         end
     end
 end
@@ -300,14 +290,15 @@ end
 function rigInfo = sendUDPmessage(rigInfo, message, sendIdx_iIP)
     if rigInfo.numConnect>0
         if nargin < 3
-            for iIP = 1:rigInfo.numConnect
-                pnet(rigInfo.activePorts{iIP},'write',message);
-                pnet(rigInfo.activePorts{iIP}, 'writePacket');
+            for iPC = 1:rigInfo.numConnect
+                disp(iPC)
+                pnet(rigInfo.activePorts{iPC},'write', message);
+                pnet(rigInfo.activePorts{iPC}, 'writePacket');
             end
         else
-            for iIP = sendIdx_iIP
-                pnet(rigInfo.activePorts{iIP},'write',message);
-                pnet(rigInfo.activePorts{iIP}, 'writePacket');
+            for iPC = sendIdx_iIP
+                pnet(rigInfo.activePorts{iPC},'write',message);
+                pnet(rigInfo.activePorts{iPC}, 'writePacket');
             end
         end
     end
@@ -319,8 +310,8 @@ end
 
 function rigInfo = closeUDPports(rigInfo)
     if rigInfo.numConnect>0
-        for iIP = 1:rigInfo.numConnect
-            pnet(rigInfo.activePorts{iIP},'close');
+        for iPC = 1:rigInfo.numConnect
+            pnet(rigInfo.activePorts{iPC},'close');
         end
     end
 end
