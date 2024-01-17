@@ -41,7 +41,6 @@ rigInfo.doScreenTransform = true;
 rigInfo.doScreenFlip = true;
 rigInfo.expSettingsDir = fullfile(fileparts(mfilename('fullpath')),'settingsFolder'); % Part of the github repository...
 rigInfo.numConnect = 0;
-rigInfo.connectIPs = [];
 rigInfo.connectPCs = [];
 rigInfo.activePorts = [];
 rigInfo.sendTTL = 0;
@@ -118,21 +117,18 @@ switch upper(hostname)
 
         % External computer connection info -- NEEDS CHECKING
         % SCANIMAGE
-        rigInfo.connectIPs{1} = '128.40.198.105';
         rigInfo.connectPCs{1} = 'ZYLVIA';
         rigInfo.connectPortnr{1} = 1001;                   
 
         % Timeline
-        rigInfo.connectIPs{2} = '128.40.198.101';
         rigInfo.connectPCs{2} = 'ZODIAC';
         rigInfo.connectPortnr{2} = 1001;
         
         % EYE CAMERA
-        rigInfo.connectIPs{3} = '128.40.198.102';
         rigInfo.connectPCs{3} = 'ZEITGEIST';
         rigInfo.connectPortnr{3} = 1001;
 
-        rigInfo.numConnect = length(rigInfo.connectIPs);
+        rigInfo.numConnect = length(rigInfo.connectPCs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync
         rigInfo.TTLchannel = 'Port0/Line0'; %might be flipped.
 
@@ -182,16 +178,14 @@ switch upper(hostname)
         rigInfo.WaterCalibrationFile = 'Zeeland_water_calibs'; %Change!!
 
         % Timeline
-        rigInfo.connectIPs{1} = '128.40.198.104';
         rigInfo.connectPCs{1} = 'ZEELAND';
         rigInfo.connectPortnr{1} = 1001;
 
         % EYE CAMERA
-        rigInfo.connectIPs{2} = '128.40.198.227';
         rigInfo.connectPCs{2} = 'ZOOLAND';
         rigInfo.connectPortnr{2} = 1001;
 
-        rigInfo.numConnect = length(rigInfo.connectIPs);
+        rigInfo.numConnect = length(rigInfo.connectPCs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync
         rigInfo.TTLchannel = 'Port0/Line0'; %might be flipped.
         
@@ -242,16 +236,14 @@ switch upper(hostname)
         rigInfo.WaterCalibrationFile = 'Zeeland_water_calibs'; %Change!!
 
         % Timeline
-        rigInfo.connectIPs{1} = '128.40.198.104';
         rigInfo.connectPCs{1} = 'ZAANLAND';
         rigInfo.connectPortnr{1} = 1001;
 
         % EYE CAMERA
-        rigInfo.connectIPs{2} = '128.40.198.227';
         rigInfo.connectPCs{2} = 'ZOOLAND';
         rigInfo.connectPortnr{2} = 1001;
 
-        rigInfo.numConnect = length(rigInfo.connectIPs);
+        rigInfo.numConnect = length(rigInfo.connectPCs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync
         rigInfo.TTLchannel = 'Port0/Line0'; %might be flipped.
 
