@@ -204,12 +204,12 @@ switch upper(hostname)
     case 'ZAANLAND'
         % Local computer info (basic)
         rigInfo.computerName = 'ZAANLAND';
-        rigInfo.localFigurePosition = [4400 -85];
+        rigInfo.localFigurePosition = [1800 -1065];
         rigInfo.screenNumber = 2; % Checked
         rigInfo.screenDist = 10; 
-        rigInfo.dialogueXYPosition = [4400 -85]; %to check (parameters for GUI)
+        rigInfo.dialogueXYPosition = [1800 -1065]; %to check (parameters for GUI)
         
-        rigInfo.NIdevID = 'Dev2';
+        rigInfo.NIdevID = 'Dev1';
         rigInfo.NIsessRate = 5000;
         rigInfo.NIRotEnc = 'ctr1';
         rigInfo.NILicEnc = ''; 
@@ -247,17 +247,17 @@ switch upper(hostname)
         rigInfo.WaterCalibrationFile = 'Zeeland_water_calibs'; %Change!!
 
         % Timeline
-        rigInfo.connectIPs{1} = '128.40.198.104';
+        rigInfo.connectIPs{1} = 'ZAANLAND';
         rigInfo.connectPCs{1} = 'ZAANLAND';
         rigInfo.connectPortnr{1} = 1001;
 
         % EYE CAMERA
-        rigInfo.connectIPs{2} = '128.40.198.227';
+        rigInfo.connectIPs{2} = 'ZOOLAND';
         rigInfo.connectPCs{2} = 'ZOOLAND';
         rigInfo.connectPortnr{2} = 1001;
 
         % EYE CAMERA
-        rigInfo.connectIPs{3} = '128.40.198.227';
+        rigInfo.connectIPs{3} = 'ZOOLAND';
         rigInfo.connectPCs{3} = 'ZOOLAND';
         rigInfo.connectPortnr{3} = 1002;
 
