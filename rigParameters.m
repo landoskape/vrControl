@@ -41,7 +41,6 @@ rigInfo.doScreenTransform = true;
 rigInfo.doScreenFlip = true;
 rigInfo.expSettingsDir = fullfile(fileparts(mfilename('fullpath')),'settingsFolder'); % Part of the github repository...
 rigInfo.numConnect = 0;
-rigInfo.connectIPs = [];
 rigInfo.connectPCs = [];
 rigInfo.activePorts = [];
 rigInfo.sendTTL = 0;
@@ -98,9 +97,9 @@ switch upper(hostname)
         rigInfo.PASSvalveTime = 0.025;
         rigInfo.ACTVvalveTime = 0.025;
         rigInfo.waterVolumeSTOP = 0.0;
-        rigInfo.waterVolumeBASE = 8;
-        rigInfo.waterVolumePASS = 8;
-        rigInfo.waterVolumeACTV = 8;
+        rigInfo.waterVolumeBASE = 6;
+        rigInfo.waterVolumePASS = 6;
+        rigInfo.waterVolumeACTV = 6;
 
         rigInfo.rewardSizeByVolume = true;
         rigInfo.useAnalogRewardValve = false;
@@ -118,21 +117,18 @@ switch upper(hostname)
 
         % External computer connection info -- NEEDS CHECKING
         % SCANIMAGE
-        rigInfo.connectIPs{1} = '128.40.198.105';
         rigInfo.connectPCs{1} = 'ZYLVIA';
         rigInfo.connectPortnr{1} = 1001;                   
 
         % Timeline
-        rigInfo.connectIPs{2} = '128.40.198.101';
         rigInfo.connectPCs{2} = 'ZODIAC';
         rigInfo.connectPortnr{2} = 1001;
         
         % EYE CAMERA
-        rigInfo.connectIPs{3} = '128.40.198.102';
         rigInfo.connectPCs{3} = 'ZEITGEIST';
         rigInfo.connectPortnr{3} = 1001;
 
-        rigInfo.numConnect = length(rigInfo.connectIPs);
+        rigInfo.numConnect = length(rigInfo.connectPCs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync
         rigInfo.TTLchannel = 'Port0/Line0'; %might be flipped.
 
@@ -140,10 +136,10 @@ switch upper(hostname)
     case 'ZEELAND'
         % Local computer info (basic)
         rigInfo.computerName = 'ZEELAND';
-        rigInfo.localFigurePosition = [4400 200];
+        rigInfo.localFigurePosition = [2040 -650];
         rigInfo.screenNumber = 2; % Checked
         rigInfo.screenDist = 10; 
-        rigInfo.dialogueXYPosition = [4400 200]; %to check (parameters for GUI)
+        rigInfo.dialogueXYPosition = [2040 -650]; %to check (parameters for GUI)
         
         rigInfo.NIdevID = 'Dev1';
         rigInfo.NIsessRate = 5000;
@@ -182,21 +178,14 @@ switch upper(hostname)
         rigInfo.WaterCalibrationFile = 'Zeeland_water_calibs'; %Change!!
 
         % Timeline
-        rigInfo.connectIPs{1} = '128.40.198.104';
         rigInfo.connectPCs{1} = 'ZEELAND';
         rigInfo.connectPortnr{1} = 1001;
 
         % EYE CAMERA
-        rigInfo.connectIPs{2} = '128.40.198.227';
         rigInfo.connectPCs{2} = 'ZOOLAND';
         rigInfo.connectPortnr{2} = 1001;
 
-        % EYE CAMERA
-        rigInfo.connectIPs{3} = '128.40.198.227';
-        rigInfo.connectPCs{3} = 'ZOOLAND';
-        rigInfo.connectPortnr{3} = 1002;
-
-        rigInfo.numConnect = length(rigInfo.connectIPs);
+        rigInfo.numConnect = length(rigInfo.connectPCs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync
         rigInfo.TTLchannel = 'Port0/Line0'; %might be flipped.
         
@@ -247,21 +236,14 @@ switch upper(hostname)
         rigInfo.WaterCalibrationFile = 'Zeeland_water_calibs'; %Change!!
 
         % Timeline
-        rigInfo.connectIPs{1} = 'ZAANLAND';
         rigInfo.connectPCs{1} = 'ZAANLAND';
         rigInfo.connectPortnr{1} = 1001;
 
         % EYE CAMERA
-        rigInfo.connectIPs{2} = 'ZOOLAND';
         rigInfo.connectPCs{2} = 'ZOOLAND';
         rigInfo.connectPortnr{2} = 1001;
 
-        % EYE CAMERA
-        rigInfo.connectIPs{3} = 'ZOOLAND';
-        rigInfo.connectPCs{3} = 'ZOOLAND';
-        rigInfo.connectPortnr{3} = 1002;
-
-        rigInfo.numConnect = length(rigInfo.connectIPs);
+        rigInfo.numConnect = length(rigInfo.connectPCs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync
         rigInfo.TTLchannel = 'Port0/Line0'; %might be flipped.
 
@@ -289,10 +271,10 @@ end
 
 function rigInfo = initialiseUDPports(rigInfo)
     if rigInfo.numConnect>0
-        for iIP = 1:rigInfo.numConnect
-            rigInfo.activePorts{iIP} = pnet('udpsocket', 1001);
-            pnet(rigInfo.activePorts{iIP}, 'udpconnect', rigInfo.connectIPs{iIP}, rigInfo.connectPortnr{iIP});
-            fprintf('Sent message to %s\n',rigInfo.connectPCs{iIP});
+        for iPC = 1:rigInfo.numConnect
+            rigInfo.activePorts{iPC} = pnet('udpsocket', 1001);
+            pnet(rigInfo.activePorts{iPC}, 'udpconnect', rigInfo.connectPCs{iPC}, rigInfo.connectPortnr{iPC});
+            fprintf('Sent message to %s\n',rigInfo.connectPCs{iPC});
         end
     end
 end
@@ -300,14 +282,14 @@ end
 function rigInfo = sendUDPmessage(rigInfo, message, sendIdx_iIP)
     if rigInfo.numConnect>0
         if nargin < 3
-            for iIP = 1:rigInfo.numConnect
-                pnet(rigInfo.activePorts{iIP},'write',message);
-                pnet(rigInfo.activePorts{iIP}, 'writePacket');
+            for iPC = 1:rigInfo.numConnect
+                pnet(rigInfo.activePorts{iPC},'write', message);
+                pnet(rigInfo.activePorts{iPC}, 'writePacket');
             end
         else
-            for iIP = sendIdx_iIP
-                pnet(rigInfo.activePorts{iIP},'write',message);
-                pnet(rigInfo.activePorts{iIP}, 'writePacket');
+            for iPC = sendIdx_iIP
+                pnet(rigInfo.activePorts{iPC},'write',message);
+                pnet(rigInfo.activePorts{iPC}, 'writePacket');
             end
         end
     end
@@ -319,8 +301,8 @@ end
 
 function rigInfo = closeUDPports(rigInfo)
     if rigInfo.numConnect>0
-        for iIP = 1:rigInfo.numConnect
-            pnet(rigInfo.activePorts{iIP},'close');
+        for iPC = 1:rigInfo.numConnect
+            pnet(rigInfo.activePorts{iPC},'close');
         end
     end
 end
