@@ -283,7 +283,6 @@ function rigInfo = sendUDPmessage(rigInfo, message, sendIdx_iIP)
     if rigInfo.numConnect>0
         if nargin < 3
             for iPC = 1:rigInfo.numConnect
-                disp(iPC)
                 pnet(rigInfo.activePorts{iPC},'write', message);
                 pnet(rigInfo.activePorts{iPC}, 'writePacket');
             end
