@@ -1,59 +1,40 @@
 classdef DaqRotaryEncoder < hw.PositionSensor
-  %HW.DAQROTARYENCODER Tracks rotary encoder position from a DAQ
+  %ROTARYENCODER Tracks rotary encoder position from a DAQ
   %   Communicates with rotary encoder via a DAQ. Will configure a DAQ
-  %   session counter channel for you, log position and times every time you
-  %   call readPosition, and allows 'zeroing' at the current position. Also
-  %   takes care of the DAQ counter overflow when ticking over backwards.
+  % session counter channel for you, log position and times every time you
+  % call readPosition, and allows 'zeroing' at the current position. Also takes 
+  % care of the DAQ counter overflow when ticking over backwards. 
   %
-  %   e.g. use:
-  %     session = daq.createSession('ni')
-  %     enc = RotaryEncoder
-  %     enc.DaqSession = session
-  %     enc.DaqId = 'Dev1'
-  %     enc.createDaqChannel
-  %     [x, time] = enc.readPosition
-  %     enc.zero
-  %     [x, time] = enc.readPosition
-  %     X = enc.Positions
-  %     T = enc.PositionTimes
+  % e.g. use:
+  % session = daq.createSession('ni')
+  % enc = DaqRotaryEncoder
+  % enc.DaqSession = session
+  % enc.DaqId = 'Dev1'
+  % enc.createDaqChannel
+  % [x, time] = enc.readPosition
+  % enc.zero
+  % [x, time] = enc.readPosition
+  % X = enc.Positions
+  % T = enc.PositionTimes
   %
-  %   If using a KÜBLER 2400 series encoder and an NI DAQ, calling
-  %   createDaqChannel, then wiringInfo will give a specific wiring message
+  % If using a KÜBLER 2400 series encoder and an NI DAQ, calling
+  % createDaqChannel, then wiringInfo will give a specific wiring message
   %
-  %   Note 1: using X4 encoding, we record all edges (up and down) from both
-  %   channels for maximum resolution. This means that e.g. a KÜBLER 2400 with
-  %   100 pulses per revolution will actually generate *400* position ticks per
-  %   full revolution.
-  %
-  %   Note 2: For mouse standard Lego wheel & rotary encoder, set
-  %   MillimetresFactor to 0.4869. This applies to Lego wheel used for mouse
-  %   with 31mm radius. The standard KÜBLER rotary encoder is 100 pulses per
-  %   revolution means the wheel period is 400 (see Note 1 above).
-  %   Thus, 31*2*pi/400 ~ 0.4869 (i.e. this gives accuracy down to ~0.5mm)
-  %
-  % Part of Rigbox
-  
-  % 2013-01 CB created
+  % Note because we use X4 encoding, we record all pulses from both
+  % channels for maximum resolution. This means that e.g. a KÜBLER 2400 with 
+  % 100 pulses per revolution will actually generate *400* position ticks per
+  % full turn.
   
   properties
-    DaqSession = [] %DAQ session for input (see session-based interface docs)
-    DaqId = 'Dev1' %DAQ's device ID, e.g. 'Dev1'
-    DaqChannelId = 'ctr0' %DAQ's ID for the counter channel. e.g. 'ctr0'
-    %Size of DAQ counter range for detecting over- and underflows (e.g. if
-    %the DAQ's counter is 32-bit, this should be 2^32)
-    DaqCounterPeriod = 2^32
+    DaqSession = []; % the DAQ session (see session-based interface docs)
+    DaqId = 'Dev1'; % the DAQ's device ID, e.g. 'Dev1'
+    DaqChannelId = 'ctr0'; % the DAQ's ID for the counter channel. e.g. 'ctr0'
   end
   
   properties (Access = protected)
-    %Created when listenForAvailableData is called, allowing logging of
-    %positions during DAQ background acquision
-    DaqListener
-    DaqInputChannelIdx %Index into acquired input data matrices for our channel
-    LastDaqValue %Last value obtained from the DAQ counter
-    %Accumulated cycle number for position (i.e. when the DAQ's counter has
-    %over- or underflowed its range, this is incremented or decremented
-    %accordingly)
-    Cycle
+    DaqListener % created when listenForAvailableData is called
+    % Allows us to log positions during DAQ background acquision
+    DaqInputChannelIdx % index into acquired input data matrices for our channel
   end
   
   properties (Dependent)
@@ -61,45 +42,54 @@ classdef DaqRotaryEncoder < hw.PositionSensor
   end
   
   methods
+      function [x,z] = readPosition(obj)
+          % x is curr position (zero offset)
+          % z is curr position (without offset)
+          z = obj.DaqSession.inputSingleScan;
+          z = z(obj.DaqChannelIdx);
+          x = z - obj.ZeroOffset;
+          if x > 2^31, x = x-2^32; end % account for wraps
+          if x < -2^31, x = x+2^32; end
+      end
+      function obj = zero(obj)
+          [~,obj.ZeroOffset] = obj.readPosition();
+          %obj.DaqSession.resetCounters %#ATL: used to be this
+      end
+      function [currPos,obj] = readPositionAndZero(obj)
+          [currPos,obj.ZeroOffset] = obj.readPosition();
+      end
+  end
+  
+  methods
     function value = get.DaqChannelIdx(obj)
-      inputs = find(strcmpi('input', io.daqSessionChannelDirections(obj.DaqSession)));
+      inputs = find(strcmpi('input', hw.daqSessionChannelDirections(obj.DaqSession)));
       value = inputs(obj.DaqInputChannelIdx);
     end
-    
-    function set.DaqChannelIdx(obj, value)
-      % get directions of all channels on this session
-      dirs = io.daqSessionChannelDirections(obj.DaqSession);
-      % logical array flagging all input channels
-      inputsUptoChannel = strcmp(dirs(1:value), 'Input');
-      % ensure the channel we're setting is an input
-      assert(inputsUptoChannel(value), 'Channel %i is not an input', value);
-      % find channel number counting inputs only
-      obj.DaqInputChannelIdx = sum(inputsUptoChannel);
+    function obj = set.DaqChannelIdx(obj, value)
+      obj.DaqInputChannelIdx = hw.daqSessionDirectionalIdx(obj.DaqSession, value, 'Input');
     end
-    
     function createDaqChannel(obj)
       [ch, idx] = obj.DaqSession.addCounterInputChannel(obj.DaqId, obj.DaqChannelId, 'Position');
       % quadrature encoding where each pulse from the channel updates
       % the counter - ie. maximum resolution (see http://www.ni.com/white-paper/7109/en)
       ch.EncoderType = 'X4';
-      obj.DaqChannelIdx = idx; % record the index of the channel
-      %initialise LastDaqValue with current counter value
-      daqValue = obj.DaqSession.inputSingleScan();
-      obj.LastDaqValue = daqValue(obj.DaqInputChannelIdx);
-      %reset cycle number
-      obj.Cycle = 0;
+      obj.DaqChannelIdx = idx;
     end
-    
     function msg = wiringInfo(obj)
       ch = obj.DaqSession.Channels(obj.DaqChannelIdx);
-      s1 = sprintf('Terminals: A = %s, B = %s\n', ...
-        ch.TerminalA, ch.TerminalB);
+      s1 = sprintf('Terminals: A = %s, B = %s, Z = %s\n', ...
+        ch.TerminalA, ch.TerminalB, ch.TerminalZ);
       s2 = sprintf('For KÜBLER 2400 series wiring is:\n');
-      s3 = sprintf('GREEN -> %s, GREY -> %s, BROWN -> +5V, WHITE -> DGND\n',...
-        ch.TerminalA, ch.TerminalB);
+      s3 = sprintf('GREEN -> %s, GREY -> %s, BLUE -> %s [Optional], BROWN -> +5V, WHITE -> DGND\n',...
+        ch.TerminalA, ch.TerminalB, ch.TerminalZ);
       msg = [s1 s2 s3];
     end
-    
+    function setZeroResetEnabled(obj, enabled)
+      % Enable or disable resetting the position to zero at the encoders
+      % zero phase position. To use this you need to plugin the encoders
+      % zero line to the DAQ.
+      obj.DaqSession.Channels(obj.DaqChannelIdx).ZResetEnable = enabled;
+    end
     function listenForAvailableData(obj)
       % adds a listener to the DAQ session that will receive and process
       % data when the DAQ is acquiring data in the background (i.e.
@@ -108,49 +98,35 @@ classdef DaqRotaryEncoder < hw.PositionSensor
       obj.DaqListener = obj.DaqSession.addlistener('DataAvailable', ...
         @(src, event) daqListener(obj, src, event));
     end
-    
     function delete(obj)
       deleteListeners(obj);
     end
-    
     function deleteListeners(obj)
       if ~isempty(obj.DaqListener)
         delete(obj.DaqListener);
       end;
     end
-    
-    function x = decodeDaq(obj, newValue)
-      %correct for 32-bit overflow/underflow
-      d = diff([obj.LastDaqValue; newValue]);
-      %decrement cycle for 'underflows', i.e. below 0 to a large value
-      %increment cycle for 'overflows', i.e. past max value to small values
-      cycle = obj.Cycle + cumsum(d < -0.5*obj.DaqCounterPeriod)...
-        - cumsum(d > 0.5*obj.DaqCounterPeriod);
-      x = obj.DaqCounterPeriod*cycle + newValue;
-      obj.Cycle = cycle(end);
-      obj.LastDaqValue = newValue(end);
-    end
   end
-  
+
   methods (Access = protected)
-    function [x, time] = readAbsolutePosition(obj)
-      if obj.DaqSession.IsRunning
-        disp('waiting for session');
-        obj.DaqSession.wait;
-        disp('done waiting');
-      end
+    function [x1, x2, time] = readAbsolutePosition(obj)
       preTime = obj.Clock.now;
-      daqVal = obj.DaqSession.inputSingleScan();
-      x = decodeDaq(obj, daqVal(obj.DaqInputChannelIdx));
+      [x1, x2] = obj.DaqSession.inputSingleScan;
+      x1 = decode(obj, x1);
       postTime = obj.Clock.now;
-      time = 0.5*(preTime + postTime); % time is mean of before & after
+      time = (preTime + postTime)/2;
     end
-    
+    function x = decode(obj, x)
+      % correct for 32-bit overflow when going down from zero
+      midBound = 2^16;
+      x(x > midBound) = x(x > midBound) - 2^32;
+    end
     function daqListener(obj, src, event)
       acqStartTime = obj.Clock.fromMatlab(event.TriggerTime);
+%       fprintf('called at %g with %i samples\n', acqStartTime, size(event.Data,1));
       values = decode(obj, event.Data(:,obj.DaqInputChannelIdx)) - obj.ZeroOffset;
       times = acqStartTime + event.TimeStamps(:,obj.DaqInputChannelIdx);
-      logSamples(obj, values, times);
+      logEvents(obj, values, times);
     end
   end
 end
