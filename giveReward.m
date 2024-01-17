@@ -35,6 +35,15 @@ if strcmp(runInfo.rewardStartT.Running, 'off') ...
                 hwInfo.rewVal.activateDigitalDelivery(); 
                 runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
             end
+            
+        case 'USER'
+            if rigInfo.useAnalogRewardValve
+                hwInfo.rewVal.deliverBackground(rigInfo.waterVolumeBASE, 'ul');
+                runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.waterVolumeBASE;
+            else
+                hwInfo.rewVal.activateDigitalDelivery(); 
+                runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
+            end
 
         otherwise
             fprintf(2, 'giveReward tag (%s) not recognized, reward not delivered...\n', tag);

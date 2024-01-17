@@ -98,9 +98,9 @@ switch upper(hostname)
         rigInfo.PASSvalveTime = 0.025;
         rigInfo.ACTVvalveTime = 0.025;
         rigInfo.waterVolumeSTOP = 0.0;
-        rigInfo.waterVolumeBASE = 8;
-        rigInfo.waterVolumePASS = 8;
-        rigInfo.waterVolumeACTV = 8;
+        rigInfo.waterVolumeBASE = 6;
+        rigInfo.waterVolumePASS = 6;
+        rigInfo.waterVolumeACTV = 6;
 
         rigInfo.rewardSizeByVolume = true;
         rigInfo.useAnalogRewardValve = false;
