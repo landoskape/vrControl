@@ -41,7 +41,6 @@ rigInfo.doScreenTransform = true;
 rigInfo.doScreenFlip = true;
 rigInfo.expSettingsDir = fullfile(fileparts(mfilename('fullpath')),'settingsFolder'); % Part of the github repository...
 rigInfo.numConnect = 0;
-rigInfo.connectIPs = [];
 rigInfo.connectPCs = [];
 rigInfo.activePorts = [];
 rigInfo.sendTTL = 0;
@@ -98,9 +97,9 @@ switch upper(hostname)
         rigInfo.PASSvalveTime = 0.025;
         rigInfo.ACTVvalveTime = 0.025;
         rigInfo.waterVolumeSTOP = 0.0;
-        rigInfo.waterVolumeBASE = 8;
-        rigInfo.waterVolumePASS = 8;
-        rigInfo.waterVolumeACTV = 8;
+        rigInfo.waterVolumeBASE = 6;
+        rigInfo.waterVolumePASS = 6;
+        rigInfo.waterVolumeACTV = 6;
 
         rigInfo.rewardSizeByVolume = true;
         rigInfo.useAnalogRewardValve = false;
@@ -129,7 +128,7 @@ switch upper(hostname)
         rigInfo.connectPCs{3} = 'ZEITGEIST';
         rigInfo.connectPortnr{3} = 1001;
 
-        rigInfo.numConnect = length(rigInfo.connectIPs);
+        rigInfo.numConnect = length(rigInfo.connectPCs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync
         rigInfo.TTLchannel = 'Port0/Line0'; %might be flipped.
 
@@ -186,7 +185,7 @@ switch upper(hostname)
         rigInfo.connectPCs{2} = 'ZOOLAND';
         rigInfo.connectPortnr{2} = 1001;
 
-        rigInfo.numConnect = length(rigInfo.connectIPs);
+        rigInfo.numConnect = length(rigInfo.connectPCs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync
         rigInfo.TTLchannel = 'Port0/Line0'; %might be flipped.
         
@@ -237,16 +236,14 @@ switch upper(hostname)
         rigInfo.WaterCalibrationFile = 'Zeeland_water_calibs'; %Change!!
 
         % Timeline
-        rigInfo.connectIPs{1} = '128.40.198.104';
         rigInfo.connectPCs{1} = 'ZAANLAND';
         rigInfo.connectPortnr{1} = 1001;
 
         % EYE CAMERA
-        rigInfo.connectIPs{2} = '128.40.198.227';
         rigInfo.connectPCs{2} = 'ZOOLAND';
         rigInfo.connectPortnr{2} = 1001;
 
-        rigInfo.numConnect = length(rigInfo.connectIPs);
+        rigInfo.numConnect = length(rigInfo.connectPCs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync
         rigInfo.TTLchannel = 'Port0/Line0'; %might be flipped.
 
