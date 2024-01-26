@@ -19,7 +19,7 @@ habMod.rotEnc.zero();
 % Set up reward valve
 habMod.sessionVal = daq.createSession('ni');
 habMod.sessionVal.Rate = rigInfo.NIsessRate;
-habMod.rewVal = hw.DaqRewardValve;
+habMod.rewVal = hw.DaqRewardValve_Analog;
 load(rigInfo.WaterCalibrationFile);
 habMod.rewVal.DaqSession = habMod.sessionVal;
 habMod.rewVal.DaqId = rigInfo.NIdevID;

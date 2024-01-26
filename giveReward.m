@@ -10,6 +10,12 @@ if strcmp(runInfo.rewardStartT.Running, 'off') ...
     VRLogMessage(expInfo, VRmessage);
     
 
+    if rigInfo.rewardSizeByVolume
+            hwInfo.rewVal.prepareRewardDelivery(rigInfo.waterVolumePASS, 'ul');
+        else
+            hwInfo.rewVal.prepareRewardDelivery(rigInfo.PASSvalveTime, 's');
+    end
+        
     switch tag
         case 'ACTIVE'
             if rigInfo.useAnalogRewardValve
@@ -17,7 +23,11 @@ if strcmp(runInfo.rewardStartT.Running, 'off') ...
                 runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.waterVolumeACTV;
             else
                 hwInfo.rewVal.activateDigitalDelivery(); 
-                runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
+                if rigInfo.rewardSizeByVolume
+                    runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.waterVolumePASS;
+                else
+                    runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
+                end
             end
         case 'PASSIVE'
             if rigInfo.useAnalogRewardValve
@@ -25,7 +35,11 @@ if strcmp(runInfo.rewardStartT.Running, 'off') ...
                 runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.waterVolumePASS;
             else
                 hwInfo.rewVal.activateDigitalDelivery(); 
-                runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
+                if rigInfo.rewardSizeByVolume
+                    runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.waterVolumePASS;
+                else
+                    runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
+                end
             end
         case 'BASE'
             if rigInfo.useAnalogRewardValve
@@ -33,7 +47,11 @@ if strcmp(runInfo.rewardStartT.Running, 'off') ...
                 runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.waterVolumeBASE;
             else
                 hwInfo.rewVal.activateDigitalDelivery(); 
-                runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
+                if rigInfo.rewardSizeByVolume
+                    runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.waterVolumePASS;
+                else
+                    runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
+                end
             end
             
         case 'USER'
@@ -42,7 +60,11 @@ if strcmp(runInfo.rewardStartT.Running, 'off') ...
                 runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.waterVolumeBASE;
             else
                 hwInfo.rewVal.activateDigitalDelivery(); 
-                runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
+                if rigInfo.rewardSizeByVolume
+                    runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.waterVolumePASS;
+                else
+                    runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.PASSvalveTime;
+                end
             end
 
         otherwise
