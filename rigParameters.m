@@ -193,12 +193,12 @@ switch upper(hostname)
     case 'ZAANLAND'
         % Local computer info (basic)
         rigInfo.computerName = 'ZAANLAND';
-        rigInfo.localFigurePosition = [4400 -85];
+        rigInfo.localFigurePosition = [1800 -1065];
         rigInfo.screenNumber = 2; % Checked
         rigInfo.screenDist = 10; 
-        rigInfo.dialogueXYPosition = [4400 -85]; %to check (parameters for GUI)
+        rigInfo.dialogueXYPosition = [1800 -1065]; %to check (parameters for GUI)
         
-        rigInfo.NIdevID = 'Dev2';
+        rigInfo.NIdevID = 'Dev1';
         rigInfo.NIsessRate = 5000;
         rigInfo.NIRotEnc = 'ctr1';
         rigInfo.NILicEnc = ''; 
