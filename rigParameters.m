@@ -25,12 +25,10 @@ rigInfo.wheelRadius = 9.75;
 rigInfo.minimumPosition = 0.01; % this helped with something, I forgot what, better to keep it positive but very small
 rigInfo.maxSpeed = 200; % 200 cm / s is the max speed allowed without reporting to user
 rigInfo.lickEncoderAvailable = true; 
+rigInfo.STOPvalveTime = 0.0;
 rigInfo.BASEvalveTime = 0.02;
-rigInfo.PASSvalveTime = 0.02;
-rigInfo.ACTVvalveTime = 0.02;
+rigInfo.waterVolumeSTOP = 0.0;
 rigInfo.waterVolumeBASE = 8;
-rigInfo.waterVolumePASS = 8;
-rigInfo.waterVolumeACTV = 8;
 rigInfo.useAnalogRewardValve = true;
 rigInfo.rewardSizeByVolume = true;
 rigInfo.PrefRefreshRate = 30; % hz
@@ -94,12 +92,8 @@ switch upper(hostname)
 
         rigInfo.STOPvalveTime = 0.0;
         rigInfo.BASEvalveTime = 0.025;
-        rigInfo.PASSvalveTime = 0.025;
-        rigInfo.ACTVvalveTime = 0.025;
         rigInfo.waterVolumeSTOP = 0.0;
         rigInfo.waterVolumeBASE = 6;
-        rigInfo.waterVolumePASS = 6;
-        rigInfo.waterVolumeACTV = 6;
 
         rigInfo.rewardSizeByVolume = true;
         rigInfo.useAnalogRewardValve = false;
@@ -156,12 +150,8 @@ switch upper(hostname)
 
         rigInfo.STOPvalveTime = 0.0;
         rigInfo.BASEvalveTime = 0.025;
-        rigInfo.PASSvalveTime = 0.025;
-        rigInfo.ACTVvalveTime = 0.025;
         rigInfo.waterVolumeSTOP = 0.0;
         rigInfo.waterVolumeBASE = 8;
-        rigInfo.waterVolumePASS = 8;
-        rigInfo.waterVolumeACTV = 8;
         
         rigInfo.rewardSizeByVolume = true;
         rigInfo.useAnalogRewardValve = true;
@@ -193,10 +183,10 @@ switch upper(hostname)
     case 'ZAANLAND'
         % Local computer info (basic)
         rigInfo.computerName = 'ZAANLAND';
-        rigInfo.localFigurePosition = [1800 -1065];
+        rigInfo.localFigurePosition = [4500 0];
         rigInfo.screenNumber = 2; % Checked
         rigInfo.screenDist = 10; 
-        rigInfo.dialogueXYPosition = [1800 -1065]; %to check (parameters for GUI)
+        rigInfo.dialogueXYPosition = [4500 0]; %to check (parameters for GUI)
         
         rigInfo.NIdevID = 'Dev1';
         rigInfo.NIsessRate = 5000;
@@ -213,12 +203,8 @@ switch upper(hostname)
 
         rigInfo.STOPvalveTime = 0.0;
         rigInfo.BASEvalveTime = 0.025;
-        rigInfo.PASSvalveTime = 0.025;
-        rigInfo.ACTVvalveTime = 0.025;
         rigInfo.waterVolumeSTOP = 0.0;
         rigInfo.waterVolumeBASE = 8;
-        rigInfo.waterVolumePASS = 8;
-        rigInfo.waterVolumeACTV = 8;
         
         rigInfo.rewardSizeByVolume = true;
         rigInfo.useAnalogRewardValve = true;
