@@ -11,7 +11,7 @@ if strcmp(runInfo.rewardStartT.Running, 'off') ...
     
     if rigInfo.useAnalogRewardValve
         hwInfo.rewVal.deliverBackground(expInfo.rewardSize, 'ul');
-        runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.waterVolumeBASE;
+        runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + expInfo.rewardSize;
     else
         hwInfo.rewVal.activateDigitalDelivery(); 
         runInfo.totalValveOpenTime = runInfo.totalValveOpenTime + rigInfo.BASEvalveTime;
