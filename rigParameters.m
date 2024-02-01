@@ -169,7 +169,7 @@ switch upper(hostname)
 
         % Timeline
         rigInfo.connectPCs{1} = 'ZEELAND';
-        rigInfo.connectPortnr{1} = 1001;
+        rigInfo.connectPortnr{1} = 1004; % enny indicated that this changed recently (19/1/24)
 
         % EYE CAMERA
         rigInfo.connectPCs{2} = 'ZOOLAND';
@@ -223,7 +223,7 @@ switch upper(hostname)
 
         % Timeline
         rigInfo.connectPCs{1} = 'ZAANLAND';
-        rigInfo.connectPortnr{1} = 1001;
+        rigInfo.connectPortnr{1} = 1004; % enny indicated that this changed recently (19/1/24)
 
         % EYE CAMERA
         rigInfo.connectPCs{2} = 'ZOOLAND';
