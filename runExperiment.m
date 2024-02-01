@@ -64,6 +64,7 @@ for f = 1:length(fields2copy), expInfo.(fields2copy{f}) = trialStructure.(fields
 
 expInfo.lickEncoder = rigInfo.lickEncoderAvailable && ...
     any(expInfo.activeLick); % use for dynamically engaging with the lick encoder hardware
+expInfo.rewardSize = expSettings.rewardSize;
 
 %% 3. Prepare hwInfo structure
 
@@ -128,7 +129,7 @@ if ~rigInfo.useKeyboard
         hwInfo.rewVal.close;
     else
         if rigInfo.rewardSizeByVolume
-            hwInfo.rewVal.prepareRewardDelivery(rigInfo.waterVolumePASS, 'ul');
+            hwInfo.rewVal.prepareRewardDelivery(expInfo.rewardSize, 'ul');
         else
             hwInfo.rewVal.prepareRewardDelivery(rigInfo.PASSvalveTime, 's');
         end
