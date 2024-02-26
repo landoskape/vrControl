@@ -179,7 +179,7 @@ switch upper(hostname)
         rigInfo.connectPCs{3} = 'ZOOLAND';
         rigInfo.connectPortnr{3} = 1001;
 
-
+     
         rigInfo.numConnect = length(rigInfo.connectPCs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync
         rigInfo.TTLchannel = 'Port0/Line0'; %might be flipped.
@@ -237,6 +237,7 @@ switch upper(hostname)
         % Belly camera
         rigInfo.connectPCs{3} = 'ZOOLAND';
         rigInfo.connectPortnr{3} = 1003;
+
 
         rigInfo.numConnect = length(rigInfo.connectPCs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync
