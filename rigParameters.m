@@ -137,7 +137,7 @@ switch upper(hostname)
         
         rigInfo.NIdevID = 'Dev1';
         rigInfo.NIsessRate = 5000;
-        rigInfo.NIRotEnc = 'ctr1';
+        rigInfo.NIRotEnc = 'ctr0';
         rigInfo.NILicEnc = ''; 
         rigInfo.NIRewVal = 'ao0';
         rigInfo.photodiodePos  = 'right';
@@ -171,9 +171,14 @@ switch upper(hostname)
         rigInfo.connectPCs{1} = 'ZEELAND';
         rigInfo.connectPortnr{1} = 1004; % enny indicated that this changed recently (19/1/24)
 
-        % EYE CAMERA
+        % front CAMERA
         rigInfo.connectPCs{2} = 'ZOOLAND';
-        rigInfo.connectPortnr{2} = 1001;
+        rigInfo.connectPortnr{2} = 1002;
+
+        % Belly CAMERA
+        rigInfo.connectPCs{3} = 'ZOOLAND';
+        rigInfo.connectPortnr{3} = 1001;
+
 
         rigInfo.numConnect = length(rigInfo.connectPCs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync
@@ -190,7 +195,7 @@ switch upper(hostname)
         
         rigInfo.NIdevID = 'Dev1';
         rigInfo.NIsessRate = 5000;
-        rigInfo.NIRotEnc = 'ctr1';
+        rigInfo.NIRotEnc = 'ctr0';
         rigInfo.NILicEnc = ''; 
         rigInfo.NIRewVal = 'ao0';
         rigInfo.photodiodePos  = 'right';
@@ -219,15 +224,19 @@ switch upper(hostname)
         rigInfo.doScreenTransform = true;
         rigInfo.doScreenFlip = true;
         
-        rigInfo.WaterCalibrationFile = 'Zeeland_water_calibs'; %Change!!
+        rigInfo.WaterCalibrationFile = 'Zaanland_water_calibs'; %Change!!
 
         % Timeline
         rigInfo.connectPCs{1} = 'ZAANLAND';
         rigInfo.connectPortnr{1} = 1004; % enny indicated that this changed recently (19/1/24)
 
-        % EYE CAMERA
+        % Front CAMERA
         rigInfo.connectPCs{2} = 'ZOOLAND';
-        rigInfo.connectPortnr{2} = 1001;
+        rigInfo.connectPortnr{2} = 1004;
+
+        % Belly camera
+        rigInfo.connectPCs{3} = 'ZOOLAND';
+        rigInfo.connectPortnr{3} = 1003;
 
         rigInfo.numConnect = length(rigInfo.connectPCs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync
