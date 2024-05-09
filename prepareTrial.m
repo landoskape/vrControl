@@ -103,6 +103,11 @@ while toc(runInfo.ititimer) < expInfo.intertrialInterval(runInfo.currTrial)
     pause(0.0001) 
 end
 
+% Wait if updateWindow is in paused mode
+while updateWindow.paused
+    pause(0.1)
+end
+
 trialInfo.iti(runInfo.currTrial) =  toc(runInfo.ititimer);
 
 
