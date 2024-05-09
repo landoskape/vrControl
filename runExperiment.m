@@ -218,6 +218,7 @@ trialInfo.rewardDeliveryFrame = sparse(zeros(expSettings.maxTrialNumber,1)); % t
 trialInfo.rewardAvailable = sparse(zeros(expSettings.maxTrialNumber,1)); % boolean if reward was available on trial 
 trialInfo.userRewardNumber = sparse(zeros(expSettings.maxTrialNumber,1)); % the number of user rewards given (using spacebar)
 trialInfo.userRewardFrames = cell(expSettings.maxTrialNumber,1); % the frame idx during user reward delivery
+trialInfo.paused = sparse(zeros(expSettings.maxTrialNumber,1)); % if the experiment was paused before any trial
 
 % Preallocate arrays for tracking data related to each frame
 trialInfo.time = sparse(zeros(expSettings.maxTrialNumber, overAllocate,'double'));
