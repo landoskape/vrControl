@@ -110,7 +110,37 @@ if updateWindow.paused
     % Wait if updateWindow is in paused mode
     while updateWindow.paused
         pause(0.1)
+        
+        % check if user is aborting during the ITI (only permitted during a
+        % pause
+        keyPressed = checkKeyboard;
+        if keyPressed == 1
+            runInfo.abort = 1;
+            if runInfo.rewardAvailable
+                % Mouse didn't receive a reward
+                trialInfo.outcome(runInfo.currTrial) = 0;
+            end
+            VRmessage = sprintf('Manual Abort for animal %s, on date %s, session %s, trialNum %d.',...
+                    expInfo.animalName, expInfo.dateStr, expInfo.sessionName, runInfo.currTrial);
+            rigInfo = rigInfo.sendUDPmessage(rigInfo, VRmessage); 
+            VRLogMessage(expInfo, VRmessage);
+            if rigInfo.sendTTL
+                hwInfo.session.outputSingleScan(false);
+            end
+            
+            % skip the operateTrial function and skip to trial end
+            fhandle = @trialEnd;
+            if ~rigInfo.useKeyboard
+                myPort = pnet('udpsocket', hwInfo.BALLPort); % open udp port
+                pnet(myPort, 'close')
+            end
+            ListenChar(0);
+            Priority(0);
+            
+            break
+        end
     end
+    
 end
 
 % Mark the ITI
