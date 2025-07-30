@@ -286,6 +286,6 @@ while ~isempty(fhandle)
     [fhandle, runInfo, trialInfo, expInfo] = feval(fhandle, rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow);
 end
 
-fprintf(['TotalValveOpen = ' num2str(runInfo.totalValveOpenTime) ' ul\n']);
+fprintf(['TotalValveOpen = ' num2str(runInfo.totalValveOpenTime/0.07*1.7) ' ul\n']);
 close all;
 end
