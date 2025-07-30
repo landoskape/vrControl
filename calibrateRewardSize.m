@@ -6,7 +6,7 @@ rigInfo = rigParameters();
 hwInfo.sessionVal = daq.createSession('ni');
 hwInfo.sessionVal.Rate = rigInfo.NIsessRate;
 
-hwInfo.rewVal = DaqRewardValve;
+hwInfo.rewVal = hw.DaqRewardValve;
 load(rigInfo.WaterCalibrationFile);
 hwInfo.rewVal.DaqSession = hwInfo.sessionVal;
 hwInfo.rewVal.DaqId = rigInfo.NIdevID;
@@ -15,15 +15,13 @@ hwInfo.rewVal.createDaqChannel;
 hwInfo.rewVal.MeasuredDeliveries = Water_calibs(end).measuredDeliveries;
 hwInfo.rewVal.OpenValue = 10;
 hwInfo.rewVal.ClosedValue = 0;
-hwInfo.rewVal.close;
-
 hwInfo.rewVal.prepareRewardDelivery(openTime,'s');
 hwInfo.rewVal.prepareDigitalTrigger();
 
 msg = '';
 for delivery = 1:numDelivery
     hwInfo.rewVal.activateDigitalDelivery(); 
-    pause(0.4);
+    pause(max(0.5, openTime * 1.5));
     fprintf(repmat('\b',1,length(msg)));
     msg = sprintf('%i/%i rewards delivered for opentime=%.4f seconds \n', delivery, numDelivery, openTime);
     fprintf(msg);
