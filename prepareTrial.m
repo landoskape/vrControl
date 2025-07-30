@@ -1,6 +1,11 @@
 function [fhandle, runInfo, trialInfo, expInfo] = prepareTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow)
 
-fhandle =  @operateTrial;
+if ~isvalid(updateWindow)
+    fhandle = @experimentEnd;
+    return
+else
+    fhandle =  @operateTrial;
+end
 
 runInfo.currTrial = runInfo.currTrial + 1; 
 runInfo.flipIdx = 0; % Counts flips throughout trial to store data in trialInfo

@@ -1,6 +1,11 @@
 function [fhandle, runInfo, trialInfo, expInfo] = operateTrial(rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow)
 
-fhandle = @trialEnd;
+if ~isvalid(updateWindow)
+    fhandle = @experimentEnd;
+    return
+else
+    fhandle = @trialEnd;
+end
 
 % make a flip here to establish vbl
 ifi = Screen('GetFlipInterval',hwInfo.screenInfo.windowPtr);
@@ -232,7 +237,7 @@ while ~runInfo.move2NextTrial && ~runInfo.abort
     
     % --- check for manual abort or reward delivery ---
     keyPressed = checkKeyboard;
-    if keyPressed == 1
+    if (keyPressed == 1) || ~isvalid(updateWindow)
         runInfo.abort = 1;
         if runInfo.rewardAvailable
             % Mouse didn't receive a reward
