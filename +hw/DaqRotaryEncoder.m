@@ -104,11 +104,8 @@ classdef DaqRotaryEncoder < hw.PositionSensor
     function deleteListeners(obj)
       if ~isempty(obj.DaqListener)
         delete(obj.DaqListener);
-      end;
+      end
     end
-  end
-
-  methods (Access = protected)
     function [x1, x2, time] = readAbsolutePosition(obj)
       preTime = obj.Clock.now;
       [x1, x2] = obj.DaqSession.inputSingleScan;
@@ -116,6 +113,9 @@ classdef DaqRotaryEncoder < hw.PositionSensor
       postTime = obj.Clock.now;
       time = (preTime + postTime)/2;
     end
+  end
+
+  methods (Access = protected)
     function x = decode(obj, x)
       % correct for 32-bit overflow when going down from zero
       midBound = 2^16;

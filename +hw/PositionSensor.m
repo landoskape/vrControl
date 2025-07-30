@@ -12,7 +12,7 @@ classdef PositionSensor < hw.EventLogging
     ZeroOffset = 0;
   end
 
-  methods (Abstract, Access = protected)
+  methods
     [x, time] = readAbsolutePosition(obj)
   end
   
