@@ -286,6 +286,9 @@ while ~isempty(fhandle)
     [fhandle, runInfo, trialInfo, expInfo] = feval(fhandle, rigInfo, hwInfo, expInfo, runInfo, trialInfo, updateWindow);
 end
 
-fprintf(['TotalValveOpen = ' num2str(runInfo.totalValveOpenTime/0.07*1.7) ' ul\n']);
+numRewards = runInfo.totalValveOpenTime / rigInfo.PASSvalveTime;
+manualEstimateWaterPerDelivery = 1.7; % ul
+totalWater = numRewards * manualEstimateWaterPerDelivery; 
+fprintf(['Total Reward = ' num2str(totalWater) 'ul\n']);
 close all;
 end
