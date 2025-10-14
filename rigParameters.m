@@ -25,9 +25,7 @@ rigInfo.wheelRadius = 9.75;
 rigInfo.minimumPosition = 0.01; % this helped with something, I forgot what, better to keep it positive but very small
 rigInfo.maxSpeed = 200; % 200 cm / s is the max speed allowed without reporting to user
 rigInfo.lickEncoderAvailable = true; 
-rigInfo.STOPvalveTime = 0.0;
-rigInfo.BASEvalveTime = 0.02;
-rigInfo.waterVolumeSTOP = 0.0;
+rigInfo.waterValveTime = 0.02;
 rigInfo.waterVolumeBASE = 8;
 rigInfo.useAnalogRewardValve = true;
 rigInfo.rewardSizeByVolume = true;
@@ -91,7 +89,7 @@ switch upper(hostname)
         rigInfo.lickEncoderAvailable = true; 
 
         rigInfo.STOPvalveTime = 0.0;
-        rigInfo.BASEvalveTime = 0.025;
+        rigInfo.waterValveTime = 0.025;
         rigInfo.waterVolumeSTOP = 0.0;
         rigInfo.waterVolumeBASE = 6;
 
@@ -149,7 +147,7 @@ switch upper(hostname)
         rigInfo.lickEncoderAvailable = false; 
 
         rigInfo.STOPvalveTime = 0.0;
-        rigInfo.BASEvalveTime = 0.025;
+        rigInfo.waterValveTime = 0.025;
         rigInfo.waterVolumeSTOP = 0.0;
         rigInfo.waterVolumeBASE = 8;
         
@@ -207,7 +205,7 @@ switch upper(hostname)
         rigInfo.lickEncoderAvailable = false; 
 
         rigInfo.STOPvalveTime = 0.0;
-        rigInfo.BASEvalveTime = 0.025;
+        rigInfo.waterValveTime = 0.025;
         rigInfo.waterVolumeSTOP = 0.0;
         rigInfo.waterVolumeBASE = 8;
         

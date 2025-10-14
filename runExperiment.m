@@ -21,7 +21,7 @@ function runExperiment(expSettings)
 %% 1. Retrieve rigInfo (hard coded parameters in rigParameters() function)
 
 rigInfo = rigParameters(); 
-rigInfo.wheelCircumference = 2*pi*rigInfo.wheelRadius; % ATTENTION TO MINUTE DETAIL
+rigInfo.wheelCircumference = 2*pi*rigInfo.wheelRadius;
 
 % define the UDP port
 rigInfo = rigInfo.initialiseUDPports(rigInfo);
@@ -154,8 +154,8 @@ end
 
 runInfo = [];
 runInfo.rewardStartT = timer('TimerFcn', 'reward(0.0)');
-runInfo.STOPrewardStopT= timer('TimerFcn', 'reward(1.0)','StartDelay', rigInfo.STOPvalveTime );
-runInfo.BASErewardStopT= timer('TimerFcn', 'reward(1.0)','StartDelay', rigInfo.BASEvalveTime );
+runInfo.STOPrewardStopT= timer('TimerFcn', 'reward(1.0)','StartDelay', 0);
+runInfo.BASErewardStopT= timer('TimerFcn', 'reward(1.0)','StartDelay', rigInfo.waterValveTime );
 runInfo.currTrial = 0;
 runInfo.flipIdx = 0; % Counts flips throughout trial to store data in trialInfo
 runInfo.roomPosition = rigInfo.minimumPosition; % current position
