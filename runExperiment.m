@@ -287,7 +287,7 @@ while ~isempty(fhandle)
 end
 
 numRewards = runInfo.totalValveOpenTime / rigInfo.PASSvalveTime;
-manualEstimateWaterPerDelivery = 1.7; % ul
+manualEstimateWaterPerDelivery = 2.0; % ul
 totalWater = numRewards * manualEstimateWaterPerDelivery; 
 fprintf(['Total Reward = ' num2str(totalWater) 'ul\n']);
 close all;

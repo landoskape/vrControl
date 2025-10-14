@@ -93,9 +93,9 @@ switch upper(hostname)
         rigInfo.lickEncoderAvailable = true; 
 
         rigInfo.STOPvalveTime = 0.0;
-        rigInfo.BASEvalveTime = 0.07;
-        rigInfo.PASSvalveTime = 0.07;
-        rigInfo.ACTVvalveTime = 0.07;
+        rigInfo.BASEvalveTime = 0.05;
+        rigInfo.PASSvalveTime = 0.05;
+        rigInfo.ACTVvalveTime = 0.05;
         rigInfo.waterVolumeSTOP = 0.0;
         rigInfo.waterVolumeBASE = 2;
         rigInfo.waterVolumePASS = 2;
