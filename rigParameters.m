@@ -264,7 +264,7 @@ switch upper(hostname)
         rigInfo.lickEncoderAvailable = false; 
     
     otherwise
-        error('hostname not recognized!!');
+        warning('hostname not recognized!!');
 end 
 
 end
