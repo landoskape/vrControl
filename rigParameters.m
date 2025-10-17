@@ -7,10 +7,10 @@ end
 
 % Default Settings:
 rigInfo.computerName = hostname;
-rigInfo.localFigurePosition = [4072 200];
+rigInfo.localFigurePosition = [100 200];
 rigInfo.screenNumber = 1;
 rigInfo.screenDist = 10;
-rigInfo.dialogueXYPosition = [3900 487];
+rigInfo.dialogueXYPosition = [100 200];
 rigInfo.NIdevID = '';
 rigInfo.NIsessRate = [];
 rigInfo.NIRotEnc = '';
@@ -258,7 +258,7 @@ switch upper(hostname)
         rigInfo.lickEncoderAvailable = false; 
     
     otherwise
-        error('hostname not recognized!!');
+        warning('hostname not recognized!!');
 end 
 
 end
