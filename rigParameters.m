@@ -25,12 +25,10 @@ rigInfo.wheelRadius = 9.75;
 rigInfo.minimumPosition = 0.01; % this helped with something, I forgot what, better to keep it positive but very small
 rigInfo.maxSpeed = 200; % 200 cm / s is the max speed allowed without reporting to user
 rigInfo.lickEncoderAvailable = true; 
+rigInfo.STOPvalveTime = 0.0;
 rigInfo.BASEvalveTime = 0.02;
-rigInfo.PASSvalveTime = 0.02;
-rigInfo.ACTVvalveTime = 0.02;
+rigInfo.waterVolumeSTOP = 0.0;
 rigInfo.waterVolumeBASE = 8;
-rigInfo.waterVolumePASS = 8;
-rigInfo.waterVolumeACTV = 8;
 rigInfo.useAnalogRewardValve = true;
 rigInfo.rewardSizeByVolume = true;
 rigInfo.PrefRefreshRate = 30; % hz
@@ -94,12 +92,8 @@ switch upper(hostname)
 
         rigInfo.STOPvalveTime = 0.0;
         rigInfo.BASEvalveTime = 0.025;
-        rigInfo.PASSvalveTime = 0.025;
-        rigInfo.ACTVvalveTime = 0.025;
         rigInfo.waterVolumeSTOP = 0.0;
         rigInfo.waterVolumeBASE = 6;
-        rigInfo.waterVolumePASS = 6;
-        rigInfo.waterVolumeACTV = 6;
 
         rigInfo.rewardSizeByVolume = true;
         rigInfo.useAnalogRewardValve = false;
@@ -136,14 +130,14 @@ switch upper(hostname)
     case 'ZEELAND'
         % Local computer info (basic)
         rigInfo.computerName = 'ZEELAND';
-        rigInfo.localFigurePosition = [2040 -650];
+        rigInfo.localFigurePosition = [4000 100];
         rigInfo.screenNumber = 2; % Checked
         rigInfo.screenDist = 10; 
-        rigInfo.dialogueXYPosition = [2040 -650]; %to check (parameters for GUI)
+        rigInfo.dialogueXYPosition = [4000 100]; %to check (parameters for GUI)
         
         rigInfo.NIdevID = 'Dev1';
         rigInfo.NIsessRate = 5000;
-        rigInfo.NIRotEnc = 'ctr1';
+        rigInfo.NIRotEnc = 'ctr0';
         rigInfo.NILicEnc = ''; 
         rigInfo.NIRewVal = 'ao0';
         rigInfo.photodiodePos  = 'right';
@@ -156,12 +150,8 @@ switch upper(hostname)
 
         rigInfo.STOPvalveTime = 0.0;
         rigInfo.BASEvalveTime = 0.025;
-        rigInfo.PASSvalveTime = 0.025;
-        rigInfo.ACTVvalveTime = 0.025;
         rigInfo.waterVolumeSTOP = 0.0;
         rigInfo.waterVolumeBASE = 8;
-        rigInfo.waterVolumePASS = 8;
-        rigInfo.waterVolumeACTV = 8;
         
         rigInfo.rewardSizeByVolume = true;
         rigInfo.useAnalogRewardValve = true;
@@ -179,12 +169,17 @@ switch upper(hostname)
 
         % Timeline
         rigInfo.connectPCs{1} = 'ZEELAND';
-        rigInfo.connectPortnr{1} = 1001;
+        rigInfo.connectPortnr{1} = 1004; % enny indicated that this changed recently (19/1/24)
 
-        % EYE CAMERA
+        % front CAMERA
         rigInfo.connectPCs{2} = 'ZOOLAND';
-        rigInfo.connectPortnr{2} = 1001;
+        rigInfo.connectPortnr{2} = 1002;
 
+        % Belly CAMERA
+        rigInfo.connectPCs{3} = 'ZOOLAND';
+        rigInfo.connectPortnr{3} = 1001;
+
+     
         rigInfo.numConnect = length(rigInfo.connectPCs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync
         rigInfo.TTLchannel = 'Port0/Line0'; %might be flipped.
@@ -193,14 +188,14 @@ switch upper(hostname)
     case 'ZAANLAND'
         % Local computer info (basic)
         rigInfo.computerName = 'ZAANLAND';
-        rigInfo.localFigurePosition = [1800 -1065];
+        rigInfo.localFigurePosition = [4500 0];
         rigInfo.screenNumber = 2; % Checked
         rigInfo.screenDist = 10; 
-        rigInfo.dialogueXYPosition = [1800 -1065]; %to check (parameters for GUI)
+        rigInfo.dialogueXYPosition = [4500 0]; %to check (parameters for GUI)
         
         rigInfo.NIdevID = 'Dev1';
         rigInfo.NIsessRate = 5000;
-        rigInfo.NIRotEnc = 'ctr1';
+        rigInfo.NIRotEnc = 'ctr0';
         rigInfo.NILicEnc = ''; 
         rigInfo.NIRewVal = 'ao0';
         rigInfo.photodiodePos  = 'right';
@@ -213,12 +208,8 @@ switch upper(hostname)
 
         rigInfo.STOPvalveTime = 0.0;
         rigInfo.BASEvalveTime = 0.025;
-        rigInfo.PASSvalveTime = 0.025;
-        rigInfo.ACTVvalveTime = 0.025;
         rigInfo.waterVolumeSTOP = 0.0;
         rigInfo.waterVolumeBASE = 8;
-        rigInfo.waterVolumePASS = 8;
-        rigInfo.waterVolumeACTV = 8;
         
         rigInfo.rewardSizeByVolume = true;
         rigInfo.useAnalogRewardValve = true;
@@ -233,15 +224,20 @@ switch upper(hostname)
         rigInfo.doScreenTransform = true;
         rigInfo.doScreenFlip = true;
         
-        rigInfo.WaterCalibrationFile = 'Zeeland_water_calibs'; %Change!!
+        rigInfo.WaterCalibrationFile = 'Zaanland_water_calibs'; %Change!!
 
         % Timeline
         rigInfo.connectPCs{1} = 'ZAANLAND';
-        rigInfo.connectPortnr{1} = 1001;
+        rigInfo.connectPortnr{1} = 1004; % enny indicated that this changed recently (19/1/24)
 
-        % EYE CAMERA
+        % Front CAMERA
         rigInfo.connectPCs{2} = 'ZOOLAND';
-        rigInfo.connectPortnr{2} = 1001;
+        rigInfo.connectPortnr{2} = 1004;
+
+        % Belly camera
+        rigInfo.connectPCs{3} = 'ZOOLAND';
+        rigInfo.connectPortnr{3} = 1003;
+
 
         rigInfo.numConnect = length(rigInfo.connectPCs);
         rigInfo.sendTTL = 0; % ttl not necessary here for timeline sync

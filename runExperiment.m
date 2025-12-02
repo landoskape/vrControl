@@ -64,6 +64,7 @@ for f = 1:length(fields2copy), expInfo.(fields2copy{f}) = trialStructure.(fields
 
 expInfo.lickEncoder = rigInfo.lickEncoderAvailable && ...
     any(expInfo.activeLick); % use for dynamically engaging with the lick encoder hardware
+expInfo.rewardSize = expSettings.rewardSize;
 
 %% 3. Prepare hwInfo structure
 
@@ -128,7 +129,7 @@ if ~rigInfo.useKeyboard
         hwInfo.rewVal.close;
     else
         if rigInfo.rewardSizeByVolume
-            hwInfo.rewVal.prepareRewardDelivery(rigInfo.waterVolumePASS, 'ul');
+            hwInfo.rewVal.prepareRewardDelivery(expInfo.rewardSize, 'ul');
         else
             hwInfo.rewVal.prepareRewardDelivery(rigInfo.PASSvalveTime, 's');
         end
@@ -262,20 +263,18 @@ VRLogMessage(expInfo);
 VRmessage = ['Starting new experiment with animal ' expInfo.animalName ':'];
 VRLogMessage(expInfo, VRmessage);
 VRLogMessage(expInfo);
-try
-    VRmessage = ['ExpStart ' expInfo.animalName ' ' expInfo.dateStr ' ' expInfo.sessionName];
-    rigInfo = rigInfo.sendUDPmessage(rigInfo, VRmessage);
-    VRLogMessage(expInfo, VRmessage);
-    if expInfo.useUpdateWindow
-        disp('Press yellow start button to continue after confirming Timeline has started...')
-        updateWindow.enableStart();
-        waitfor(updateWindow, 'timelineActive', true);
-    else
-        disp('Press key to continue after confirming Timeline has started...')
-        pause()
-    end
-catch
-    keyboard
+
+
+VRmessage = ['ExpStart ' expInfo.animalName ' ' expInfo.dateStr ' ' expInfo.sessionName];
+rigInfo = rigInfo.sendUDPmessage(rigInfo, VRmessage);
+VRLogMessage(expInfo, VRmessage);
+if expInfo.useUpdateWindow
+    disp('Press yellow start button to continue after confirming Timeline has started...')
+    updateWindow.enableStart();
+    waitfor(updateWindow, 'timelineActive', true);
+else
+    disp('Press key to continue after confirming Timeline has started...')
+    pause()
 end
 
 runInfo.ititimer = tic; % Initialize this here (usually reset in operateTrial)
